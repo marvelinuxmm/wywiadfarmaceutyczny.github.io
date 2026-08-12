@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wywiad farmaceutyczny</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Wywiad farmaceutyczny</h1>
+    <p class="sub">Ocena bezpieczeństwa farmakoterapii bólu &middot; dane nie są zapisywane &mdash; użyj eksportu/importu JSON</p>
+  </div>
+  <div class="actions">
+    <button id="btn-nowy" class="btn" type="button">Nowy pacjent</button>
+    <button id="btn-import" class="btn" type="button">Import JSON</button>
+    <button id="btn-export" class="btn btn-primary" type="button">Eksport JSON</button>
+    <input type="file" id="import-file" accept=".json,application/json" hidden>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs" aria-label="Zakładki"></nav>
+
+<main class="layout">
+  <div id="tab-content" class="content"></div>
+  <aside class="flags" id="flags-panel" aria-label="Alerty i flagi"></aside>
+</main>
+
+<div id="status" class="status" hidden></div>
+
+<script src="js/ui.js"></script>
+<script src="js/state.js"></script>
+<script src="js/calculations.js"></script>
+<script src="js/flags.js"></script>
+<script src="js/data/leki.js"></script>
+<script src="js/data/pytania.js"></script>
+<script src="js/data/choroby.js"></script>
+<script src="js/ryzyko.js"></script>
+<script src="js/mars5.js"></script>
+<script src="js/kontrola-logika.js"></script>
+<script src="js/tab1.js"></script>
+<script src="js/tab2.js"></script>
+<script src="js/tab3.js"></script>
+<script src="js/tab4.js"></script>
+<script src="js/tab5.js"></script>
+<script src="js/tab6.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

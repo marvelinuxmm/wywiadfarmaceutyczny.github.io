@@ -1,0 +1,116 @@
+/* Logika oceny i kontroli bólu: sugerowany status kontroli, ryzyko MOH,
+   klasyfikacja migreny, komunikat o poradni leczenia bólu. Logika czysta, testowalna w Node. */
+(function () {
+  const G = typeof window !== 'undefined' ? window : globalThis;
+
+  const DN_POWAZNE = ['krwawienie', 'dusznosc', 'splatanie', 'upadki'];
+
+  function num(v) {
+    if (v === '' || v === null || v === undefined) return null;
+    const n = parseFloat(String(v).replace(',', '.'));
+    return isNaN(n) ? null : n;
+  }
+
+  function anyTrue(obj) {
+    return Object.keys(obj || {}).some(function (x) { return obj[x]; });
+  }
+
+  /* Status kontroli bólu (5.9). k = { nrsAktualne, nrsSrednie, ulga, miedzyDawkami,
+     dnLista, satysfakcja, marsMean }. Zwraca { opcja, powody[] }. */
+  function sugerujStatusKontroli(k) {
+    const akt = num(k.nrsAktualne);
+    const sr = num(k.nrsSrednie);
+    const powody = [];
+    let opcja = 'czesciowa';
+
+    if (sr !== null && sr >= 6) powody.push('średnie natężenie bólu ≥6/10');
+    if (k.ulga === 'mala' || k.ulga === 'brak') powody.push('mała lub brak ulgi po leczeniu');
+    if (k.miedzyDawkami === 'nie') powody.push('ból niekontrolowany między dawkami');
+    if (DN_POWAZNE.some(function (d) { return k.dnLista && k.dnLista[d]; })) {
+      powody.push('istotne działania niepożądane (krwawienie, duszność, splątanie, upadki)');
+    }
+    if (k.marsMean !== null && k.marsMean !== undefined && k.marsMean < 3) {
+      powody.push('istotna nieadherencja (MARS-5 <3/5)');
+    }
+
+    if (powody.length) {
+      opcja = 'niewystarczajaca';
+    } else if (
+      akt !== null && akt <= 3 && sr !== null && sr <= 3 &&
+      (k.ulga === 'calkowita' || k.ulga === 'umiarkowana') &&
+      !anyTrue(k.dnLista) &&
+      (k.satysfakcja === 'duza' || k.satysfakcja === 'umiarkowana')
+    ) {
+      opcja = 'dobra';
+      powody.push('niskie natężenie bólu, ulga całkowita lub umiarkowana, brak działań niepożądanych, satysfakcja z leczenia');
+    } else {
+      powody.push('ból nadal obecny z częściową ulgą lub łagodne działania niepożądane');
+    }
+
+    return { opcja: opcja, powody: powody };
+  }
+
+  /* Ryzyko MOH (7.2). m = { paracetamolNlpz, tryptany, zlozone, opioidy, dniBoluGlowy }. */
+  function sugerujMOH(m) {
+    const an = num(m.paracetamolNlpz);
+    const tz = num(m.tryptany);
+    const zl = num(m.zlozone);
+    const op = num(m.opioidy);
+    const dgl = num(m.dniBoluGlowy);
+    const powody = [];
+    let status = 'niskie';
+
+    if ((tz !== null && tz >= 10) || (zl !== null && zl >= 10) || (op !== null && op >= 10) ||
+        (an !== null && an >= 15) || (dgl !== null && dgl >= 15)) {
+      status = 'wysokie';
+      if (tz !== null && tz >= 10) powody.push('tryptany ≥10 dni/mies.');
+      if (zl !== null && zl >= 10) powody.push('leki złożone ≥10 dni/mies.');
+      if (op !== null && op >= 10) powody.push('opioidy ≥10 dni/mies.');
+      if (an !== null && an >= 15) powody.push('proste analgetyki/NLPZ ≥15 dni/mies.');
+      if (dgl !== null && dgl >= 15) powody.push('ból głowy ≥15 dni/mies. (jeśli utrzymuje się >3 mies. — ryzyko MOH znaczne)');
+    } else if ((tz !== null && tz >= 8) || (zl !== null && zl >= 8) || (op !== null && op >= 8) ||
+               (an !== null && an >= 10)) {
+      status = 'mozliwe';
+      if (tz !== null && tz >= 8) powody.push('tryptany ≥8 dni/mies.');
+      if (zl !== null && zl >= 8) powody.push('leki złożone ≥8 dni/mies.');
+      if (op !== null && op >= 8) powody.push('opioidy ≥8 dni/mies.');
+      if (an !== null && an >= 10) powody.push('proste analgetyki/NLPZ ≥10 dni/mies.');
+    } else {
+      powody.push('liczby dni stosowania leków doraźnych poniżej progów ryzyka');
+    }
+
+    return { status: status, powody: powody };
+  }
+
+  /* Klasyfikacja robocza migreny (SIGN). */
+  function sugerujKlasyfikacja(dniBoluGlowy, dniMigrenowe) {
+    const dgl = num(dniBoluGlowy);
+    const dm = num(dniMigrenowe);
+    if (dgl === null && dm === null) return { label: '', opis: '' };
+    if (dgl !== null && dm !== null && dgl >= 15 && dm >= 8) {
+      return { label: 'Migrena przewlekła', opis: 'Ból głowy ≥15 dni/mies. z migreną ≥8 dni/mies. (przez >3 mies.).' };
+    }
+    if (dm !== null && dm >= 8) {
+      return { label: 'Migrena wysokoczęsta', opis: '≥8 dni migrenowych/mies. — rozważ leczenie profilaktyczne.' };
+    }
+    return { label: 'Migrena epizodyczna', opis: 'Ból głowy <15 dni/mies. z migreną <8 dni/mies.' };
+  }
+
+  /* Dyskretny komunikat o poradni leczenia bólu (5.9). */
+  function komunikatPoradnia(aktualne, srednie, ulga) {
+    const a = num(aktualne);
+    const s = num(srednie);
+    const v = (a !== null && s !== null) ? Math.max(a, s) : (a !== null ? a : s);
+    if (v !== null && v > 5 && (ulga === 'mala' || ulga === 'brak')) {
+      return 'Utrzymujące się natężenie bólu powyżej 5/10 przy małej skuteczności leczenia — rozporządzenie wskazuje poradnię leczenia bólu m.in. przy niewielkiej skuteczności dotychczasowego leczenia i utrzymywaniu się natężenia bólu powyżej 5 w skali numerycznej. Rozważ skierowanie do poradni leczenia bólu.';
+    }
+    return null;
+  }
+
+  G.Kontrola = {
+    sugerujStatusKontroli: sugerujStatusKontroli,
+    sugerujMOH: sugerujMOH,
+    sugerujKlasyfikacja: sugerujKlasyfikacja,
+    komunikatPoradnia: komunikatPoradnia
+  };
+})();
