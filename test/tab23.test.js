@@ -2,6 +2,7 @@
 const assert = require('assert');
 require('../js/calculations.js');
 require('../js/data/leki.js');
+require('../js/data/leki-rejestr.js');
 require('../js/data/pytania.js');
 require('../js/data/choroby.js');
 require('../js/ryzyko.js');
@@ -127,6 +128,14 @@ const st6 = {
   odpowiedzi: {}
 };
 assert.strictEqual(Ryzyko.compute(st6).uwaga.length, 1, 'z-lek + oddechowe → uwaga');
+
+const st7 = {
+  choroby: { oddechowe: true },
+  leki: [{ nazwa: 'Kventiax SR', grupy: [] }],
+  odpowiedzi: {}
+};
+assert.strictEqual(Ryzyko.compute(st7).uwaga.length, 1, 'sedatywny (antypsychotyk) + oddechowe → uwaga');
+assert.ok(Ryzyko.compute(st7).uwaga[0].indexOf('sedujące') !== -1, 'komunikat o sedacji');
 console.log('OK');
 
 console.log('--- MARS-5 ---');

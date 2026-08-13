@@ -50,7 +50,7 @@
         ') przy chorobie układu oddechowego — ryzyko sedacji.');
     }
     const sed = eff.filter(function (d) {
-      return d.grupy.some(function (g) { return g === 'benzodiazepina' || g === 'z-lek'; });
+      return d.grupy.some(function (g) { return g === 'benzodiazepina' || g === 'z-lek' || g === 'sedatywny'; });
     }).map(function (d) { return d.nazwa; });
     if (sed.length && ch.oddechowe) {
       items.uwaga.push('Pacjent stosuje leki sedujące (' + sed.join(', ') +

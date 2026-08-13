@@ -240,7 +240,7 @@ document.body = document.createElement('body');
 /* ---------- Ładujemy wszystkie skrypty (kolejność jak w index.html) ---------- */
 [
   'js/ui.js', 'js/state.js', 'js/calculations.js', 'js/flags.js',
-  'js/data/leki.js', 'js/data/pytania.js', 'js/data/choroby.js', 'js/data/opcje.js',
+  'js/data/leki.js', 'js/data/leki-rejestr.js', 'js/data/pytania.js', 'js/data/choroby.js', 'js/data/opcje.js',
   'js/ryzyko.js', 'js/mars5.js', 'js/kontrola-logika.js', 'js/bolglowy-logika.js',
   'js/etykiety.js', 'js/tab1.js', 'js/tab2.js', 'js/tab3.js', 'js/tab4.js', 'js/tab5.js',
   'js/tab6.js', 'js/tab7.js', 'js/tab8.js', 'js/app.js'
@@ -302,6 +302,40 @@ const btnUsun = rows[0].querySelector('[data-lRemove]');
 btnUsun.click();
 assert.strictEqual(G.State.get().leki.length, 0, 'wiersz usunięty ze stanu');
 assert.strictEqual(document.getElementById('tbody-leki').children.length, 1, 'wraca pusty wiersz');
+console.log('OK');
+
+console.log('--- 2.1 Wybór produktu z rejestru (etykieta → nazwa/moc/ATC/grupy) ---');
+klik('btn-dodaj-lek');
+const rowsP = document.getElementById('tbody-leki').children;
+const dlLeki = document.getElementById('datalist-leki');
+const inpNazwaP = rowsP[0].querySelector('[data-lField="nazwa"]');
+inpNazwaP.value = 'Nu';
+inpNazwaP.dispatchEvent({ type: 'input' });
+assert.strictEqual(dlLeki.children.length, 0, 'poniżej 3 liter — brak podpowiedzi');
+inpNazwaP.value = 'Nuro';
+inpNazwaP.dispatchEvent({ type: 'input' });
+assert.ok(dlLeki.children.length > 0, 'od 3 liter — podpowiedzi z rejestru');
+assert.ok(dlLeki.children.length <= 50, 'limit 50 podpowiedzi');
+inpNazwaP.value = 'Nurofen (200 mg, Tabletki powlekane)';
+inpNazwaP.dispatchEvent({ type: 'input' });
+const stP = G.State.get().leki[0];
+assert.strictEqual(stP.nazwa, 'Nurofen', 'czysta nazwa handlowa');
+assert.strictEqual(stP.moc, '200 mg', 'moc z rejestru');
+assert.strictEqual(stP.postac, 'Tabletki powlekane', 'postać z rejestru');
+assert.strictEqual(stP.atc, 'M01AE01', 'kod ATC z rejestru');
+assert.deepStrictEqual(stP.grupy, ['NLPZ'], 'grupy na podstawie ATC');
+assert.ok(rowsP[0].querySelector('.chip-atc'), 'chip ATC widoczny');
+const inpAtcP = rowsP[0].querySelector('[data-lField="atc"]');
+inpAtcP.value = 'N02AX02';
+inpAtcP.dispatchEvent({ type: 'input' });
+assert.deepStrictEqual(G.State.get().leki[0].grupy, ['opioid'], 'zmiana kodu ATC przelicza grupy');
+const inpSchematP = rowsP[0].querySelector('[data-lField="schemat"]');
+inpSchematP.value = 'własny schemat: 1 rano, 1 wieczorem';
+inpSchematP.dispatchEvent({ type: 'input' });
+assert.strictEqual(G.State.get().leki[0].schemat, 'własny schemat: 1 rano, 1 wieczorem', 'wolny tekst w dawkowaniu');
+const btnUsunP = rowsP[0].querySelector('[data-lRemove]');
+btnUsunP.click();
+assert.strictEqual(G.State.get().leki.length, 0, 'porządek po teście');
 console.log('OK');
 
 console.log('--- 2.2 Podsumowanie ryzyka ---');

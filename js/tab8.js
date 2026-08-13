@@ -139,6 +139,7 @@
     const lekiRows = (s.leki || []).map(function (l) {
       return ['<b>' + (l.nazwa || '(bez nazwy)') + '</b>' + (l.moc ? ' ' + l.moc : '') + (l.postac ? ' ' + l.postac : ''),
         label('tryb', l.tryb) + (l.schemat ? ' (' + l.schemat + ')' : '') + (l.wskazanie ? ' — ' + l.wskazanie : '') +
+        (l.atc ? ' [ATC: ' + l.atc + ']' : '') +
         (l.grupy && l.grupy.length ? ' [grupy: ' + l.grupy.map(function (g2) { return (G.GRUPA_LABEL && G.GRUPA_LABEL[g2]) || g2; }).join(', ') + ']' : '')];
     });
     const farmExtra = h('div', {}, [

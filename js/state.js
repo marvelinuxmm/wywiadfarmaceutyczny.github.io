@@ -36,7 +36,7 @@
       psychOpis: '',
       epikryza: '',
       /* Zakładka 2 — farmakoterapia */
-      leki: [], // [{ nazwa, moc, postac, tryb, schemat, wskazanie, komentarze, grupy[] }]
+      leki: [], // [{ nazwa, moc, postac, atc, tryb, schemat, wskazanie, komentarze, grupy[] }]
       odpowiedzi: {}, // { 'sc.antykoagulanty': 'tak'|'nie'|'nw', ... }
       epikryzaFarmakoterapii: '',
       /* Zakładka 3 — MARS-5 */
@@ -207,6 +207,7 @@
           nazwa: str(r.nazwa),
           moc: str(r.moc),
           postac: str(r.postac),
+          atc: str(r.atc),
           tryb: (r.tryb === 'dorazne' || r.tryb === 'przewlekle') ? r.tryb : '',
           schemat: str(r.schemat),
           wskazanie: str(r.wskazanie),

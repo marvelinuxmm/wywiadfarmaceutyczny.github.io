@@ -13,9 +13,24 @@
 
   /* ---------- 2.1 Lista leków ---------- */
 
+  /* Podpowiedzi z rejestru produktów leczniczych — przebudowywane przy wpisywaniu
+     (dopiero od 3 liter; maks. 50 pozycji wg prefiksu nazwy lub substancji).
+     Do 2 liter lista pozostaje pusta, więc nie pokazuje się przy pierwszym kliknięciu. */
+  function uzupelnijPodpowiedzi(wartosc) {
+    const dl = root.querySelector('#datalist-leki');
+    if (!dl) return;
+    dl.innerHTML = '';
+    const fraza = G.Leki.normalize(wartosc);
+    if (fraza.length < 3) return;
+    G.Leki.szukaj(fraza, 50).forEach(function (e) {
+      dl.appendChild(h('option', { value: G.Leki.etykietaProduktu(e) }));
+    });
+  }
+
   function buildLeki() {
-    const datalist = h('datalist', { id: 'datalist-leki' },
-      G.BAZA_LEKOW.map(function (l) { return h('option', { value: l.nazwa }); })
+    const datalist = h('datalist', { id: 'datalist-leki' }); // pusta — podpowiedzi od 3 liter
+    const datalistSchemat = h('datalist', { id: 'datalist-schematy' },
+      (G.SCHEMATY_DAWKOWANIA || []).map(function (s) { return h('option', { value: s }); })
     );
     const table = h('table', { class: 'tabela' }, [
       h('thead', {}, [h('tr', {}, [
@@ -29,10 +44,11 @@
     return h('section', { class: 'card' }, [
       h('h2', {}, [h('span', { class: 'num', text: '2.1' }), 'Lista wszystkich leków pacjenta (Rx/OTC/suplementy)']),
       datalist,
+      datalistSchemat,
       table,
       h('div', { class: 'row-inline', style: { marginTop: '10px', gap: '10px', flexWrap: 'wrap' } }, [
         h('button', { class: 'btn', type: 'button', id: 'btn-dodaj-lek', text: '+ Dodaj lek' }),
-        h('span', { class: 'hint', text: 'Nazwa z podpowiedziami z bazy — grupy substancji (NLPZ, opioid…) wykrywane automatycznie lub wybierane ręcznie.' })
+        h('span', { class: 'hint', text: 'Lista wyboru z rejestru produktów leczniczych — podpowiedzi pojawiają się po wpisaniu co najmniej 3 liter (nazwa, moc, postać); wybrany wpis uzupełnia moc, postać i grupy na podstawie kodu ATC. Można też wpisać własną nazwę. Dawkowanie: lista podpowiedzi z możliwością wpisania własnego schematu.' })
       ])
     ]);
   }
@@ -48,16 +64,17 @@
     const grpBox = h('span', { 'data-lAddBox': i }, [addSelect(i, r)]);
     return h('tr', {}, [
       td([
-        h('input', { type: 'text', placeholder: 'Nazwa handlowa', list: 'datalist-leki', 'data-lRow': i, 'data-lField': 'nazwa' }),
+        h('input', { type: 'text', placeholder: 'Nazwa handlowa (z listy lub własna)', list: 'datalist-leki', 'data-lRow': i, 'data-lField': 'nazwa' }),
         h('div', { class: 'row-inline' }, [
           h('input', { type: 'text', placeholder: 'moc, np. 200 mg', 'data-lRow': i, 'data-lField': 'moc' }),
-          h('input', { type: 'text', placeholder: 'postać, np. tabl.', 'data-lRow': i, 'data-lField': 'postac' })
+          h('input', { type: 'text', placeholder: 'postać, np. tabl.', 'data-lRow': i, 'data-lField': 'postac' }),
+          h('input', { type: 'text', placeholder: 'ATC', class: 'inp-atc', 'data-lRow': i, 'data-lField': 'atc' })
         ])
       ]),
       td([
         h('select', { 'data-lRow': i, 'data-lField': 'tryb' },
           TRYB.map(function (o) { return h('option', { value: o[0], text: o[1] }); })),
-        h('input', { type: 'text', placeholder: 'np. 1-0-0', 'data-lRow': i, 'data-lField': 'schemat' })
+        h('input', { type: 'text', placeholder: 'np. 1-0-0 (lista podpowiedzi)', list: 'datalist-schematy', 'data-lRow': i, 'data-lField': 'schemat' })
       ]),
       td([h('input', { type: 'text', placeholder: 'Wskazanie', 'data-lRow': i, 'data-lField': 'wskazanie' })]),
       td([
@@ -106,6 +123,13 @@
       });
       const chipsEl = tr.querySelector('[data-chips]');
       chipsEl.innerHTML = '';
+      if (row.atc) {
+        chipsEl.appendChild(h('span', {
+          class: 'chip chip-atc',
+          text: 'ATC: ' + row.atc,
+          title: 'Kod ATC z rejestru — grupy leku ustalane na jego podstawie'
+        }));
+      }
       (row.grupy || []).forEach(function (g) { chipsEl.appendChild(chip(g, i)); });
       const box = tr.querySelector('[data-lAddBox]');
       box.innerHTML = '';
@@ -170,8 +194,28 @@
     const f = t.getAttribute('data-lField');
     if (!f) return;
     if (f === 'nazwa') {
-      G.State.set('leki.' + i + '.nazwa', t.value);
-      const g = G.Leki.znajdzGrupy(t.value);
+      /* Wybór konkretnego produktu z listy (etykieta "Nazwa (moc, postać)")
+         uzupełnia nazwę, moc, postać, kod ATC i grupy na podstawie ATC. */
+      const wpis = G.Leki.dopasujProdukt(t.value);
+      if (wpis) {
+        const s = G.State.get();
+        const row = s.leki[i];
+        row.nazwa = wpis[0];
+        row.moc = wpis[1];
+        row.postac = wpis[2];
+        row.atc = wpis[3];
+        const g = G.Leki.grupyZAtc(wpis[3]);
+        if (g.length) row.grupy = g;
+        G.State.notify();
+      } else {
+        G.State.set('leki.' + i + '.nazwa', t.value);
+        const g = G.Leki.znajdzGrupy(t.value);
+        if (g.length) G.State.set('leki.' + i + '.grupy', g);
+      }
+      uzupelnijPodpowiedzi(t.value);
+    } else if (f === 'atc') {
+      G.State.set('leki.' + i + '.atc', t.value);
+      const g = G.Leki.grupyZAtc(t.value);
       if (g.length) G.State.set('leki.' + i + '.grupy', g);
     } else {
       G.State.set('leki.' + i + '.' + f, t.value);
@@ -208,7 +252,7 @@
       const s = G.State.get();
       let maxId = 0;
       s.leki.forEach(function (r) { if (typeof r.id === 'number' && r.id > maxId) maxId = r.id; });
-      s.leki.push({ id: maxId + 1, nazwa: '', moc: '', postac: '', tryb: '', schemat: '', wskazanie: '', komentarze: '', grupy: [] });
+      s.leki.push({ id: maxId + 1, nazwa: '', moc: '', postac: '', atc: '', tryb: '', schemat: '', wskazanie: '', komentarze: '', grupy: [] });
       G.State.notify();
       return;
     }

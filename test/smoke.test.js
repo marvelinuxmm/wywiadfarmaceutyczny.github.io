@@ -33,6 +33,7 @@ global.document = {
   'js/calculations.js',
   'js/flags.js',
   'js/data/leki.js',
+  'js/data/leki-rejestr.js',
   'js/data/pytania.js',
   'js/data/choroby.js',
   'js/data/opcje.js',
@@ -107,6 +108,16 @@ console.log('OK');
 console.log('--- Usunięte martwe eksporty ---');
 assert.strictEqual(G.Kontrola.sugerujMOH, undefined, 'Kontrola.sugerujMOH usunięty (duplikat BolGlowy.sugerujMOH)');
 assert.ok(G.BolGlowy.sugerujMOH, 'BolGlowy.sugerujMOH nadal dostępny');
+console.log('OK');
+
+console.log('--- Rejestr leków (z CSV) ---');
+assert.ok(Array.isArray(G.REJESTR_LEKOW) && G.REJESTR_LEKOW.length > 1000, 'REJESTR_LEKOW załadowany');
+assert.ok(G.REJESTR_LEKOW.every(function (e) { return Array.isArray(e) && e.length === 5 && typeof e[0] === 'string' && e[0]; }),
+  'format wpisów rejestru [nazwa, moc, postać, ATC, substancja]');
+assert.strictEqual(typeof G.Leki.grupyZAtc, 'function', 'Leki.grupyZAtc');
+assert.strictEqual(typeof G.Leki.szukaj, 'function', 'Leki.szukaj');
+assert.strictEqual(typeof G.Leki.dopasujProdukt, 'function', 'Leki.dopasujProdukt');
+assert.ok(Array.isArray(G.SCHEMATY_DAWKOWANIA) && G.SCHEMATY_DAWKOWANIA.length > 0, 'SCHEMATY_DAWKOWANIA');
 console.log('OK');
 
 console.log('Wszystkie testy dymne przeszły.');

@@ -1,0 +1,3 @@
+# Duży surowy rejestr produktów leczniczych (CSV) — nie trafia do repozytorium.
+# Używany lokalnie przez tools/generuj-rejestr.js do wygenerowania js/data/leki-rejestr.js.
+Rejestr_Produktow_Leczniczych_calosciowy_stan_na_dzien_20260813.csv
