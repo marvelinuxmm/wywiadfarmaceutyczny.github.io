@@ -22,5 +22,13 @@
     return { sum: sum, mean: mean, interp: interp };
   }
 
-  G.Mars5 = { score: score, klucze: KLUCZE, skala: SKALA };
+  /* True, gdy którakolwiek udzielona odpowiedź różni się od „nigdy”. */
+  function odchylenieOdNigdy(m) {
+    return KLUCZE.some(function (k) {
+      const v = (m ? m[k] : '') || '';
+      return v !== '' && v !== 'nigdy';
+    });
+  }
+
+  G.Mars5 = { score: score, klucze: KLUCZE, skala: SKALA, odchylenieOdNigdy: odchylenieOdNigdy };
 })();

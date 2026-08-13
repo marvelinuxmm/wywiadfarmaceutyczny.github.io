@@ -52,6 +52,10 @@
       h('p', { class: 'hint', text: 'Kwestionariusz MARS-5 (Medication Adherence Rating Scale). Skala: 5 pkt – bardzo dobre przestrzeganie, 4 – dobre, 3 – dostateczne, <3 – non-adherent.' }),
       table,
       h('div', { class: 'results', id: 'mars5-wynik' }),
+      h('div', { class: 'field', id: 'mars5-problemy', style: { display: 'none' } }, [
+        h('label', { class: 'ctl' }, ['Z czym pacjent ma problemy przy stosowaniu leków?']),
+        h('textarea', { rows: '4', placeholder: 'Np. zapominanie o dawkach, zmienianie dawek, obawy przed lekami, działania niepożądane.', 'data-state': 'marsProblemy' })
+      ]),
       h('div', { class: 'field', id: 'mars5-pomoc', style: { display: 'none' } }, [
         h('label', { class: 'ctl' }, ['Jeśli pacjent ma trudności z adherence, określ jak możesz mu pomóc. Co jest ważne dla pacjenta?']),
         h('textarea', { rows: '4', placeholder: 'Np. edukacja, ułatwienia dawkowania, kontakt z lekarzem, przyczyny pomijania dawek.', 'data-state': 'pomocAdherence' })
@@ -91,6 +95,11 @@
     const wynik = G.Mars5.score(s.mars5);
     const box = root.querySelector('#mars5-wynik');
     box.innerHTML = '';
+
+    /* Pole „z czym są problemy” — gdy którakolwiek odpowiedź różni się od „nigdy” */
+    root.querySelector('#mars5-problemy').style.display =
+      G.Mars5.odchylenieOdNigdy(s.mars5) ? '' : 'none';
+
     if (!wynik) {
       box.appendChild(h('div', { class: 'hint', text: 'Udziel odpowiedzi na wszystkie 5 pytań, aby wyliczyć wynik.' }));
       root.querySelector('#mars5-pomoc').style.display = 'none';

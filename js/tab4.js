@@ -30,13 +30,6 @@
     ['tak', 'Tak, wyraźnie'], ['czesciowo', 'Częściowo'], ['nie', 'Nie'],
     ['trudno', 'Trudno powiedzieć'], ['brak-leczenia', 'Pacjent nie stosuje leczenia przeciwbólowego']
   ];
-  const INTERPRETACJA = [
-    ['lagodny', 'Ból łagodny / mały wpływ na funkcjonowanie'],
-    ['umiarkowany', 'Ból umiarkowany lub istotny wpływ na funkcjonowanie'],
-    ['silny', 'Ból silny lub znaczny wpływ na funkcjonowanie'],
-    ['poglebic', 'Obraz wymaga pogłębienia w module szczegółowym'],
-    ['konsultacja', 'Rozważyć konsultację lekarską / poradnię leczenia bólu']
-  ];
 
   let root = null;
 
@@ -152,21 +145,9 @@
     ]);
   }
 
-  function buildOcena() {
-    return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '4.8' }), 'Krótka ocena farmaceutyczna']),
-      h('div', { class: 'field' }, [
-        h('label', { class: 'ctl' }, ['Wstępna interpretacja']),
-        h('div', { class: 'radio-group radio-col' }, INTERPRETACJA.map(function (i) {
-          return radio('ob.interpretacja', i[0], i[1], 'ocenaBolu.interpretacja');
-        }))
-      ])
-    ]);
-  }
-
   function buildEpikryza() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '4.9' }), 'Epikryza oceny bólu']),
+      h('h2', {}, [h('span', { class: 'num', text: '4.8' }), 'Epikryza oceny bólu']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Komentarz farmaceuty']),
         h('textarea', {
@@ -180,7 +161,7 @@
 
   function build() {
     return [buildDane(), buildSkala(), buildNatezenie(), buildWplyw(), buildLokalizacja(),
-      buildCharakter(), buildLeczenie(), buildOcena(), buildEpikryza()];
+      buildCharakter(), buildLeczenie(), buildEpikryza()];
   }
 
   function handleInput(e) {
@@ -188,14 +169,6 @@
     const key = t.getAttribute && t.getAttribute('data-state');
     if (key) {
       G.State.set(key, t.type === 'checkbox' ? t.checked : t.value);
-      /* Zaznaczenie „Głowa” (4.5) → przeniesienie charakteru bólu do 6.2 */
-      if (key === 'ocenaBolu.lokalizacja.glowa' && t.checked) {
-        const s = G.State.get();
-        const map = G.BolGlowy.przeniesCharakter(s.ocenaBolu.charakter);
-        Object.keys(map).forEach(function (k) {
-          if (!s.bolGlowy.charakterB[k]) G.State.set('bolGlowy.charakterB.' + k, true);
-        });
-      }
       return;
     }
     const cel = t.getAttribute && t.getAttribute('data-cel');

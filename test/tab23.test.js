@@ -38,8 +38,8 @@ const fl = (over) => Flags.compute(Object.assign({
   dataUrodzenia: '', plec: '', masa: '', ciaza: '', kreatynina: '', jednostkaKreatyniny: 'mgdl',
   dataKreatyniny: '', albuminuria: 'brak', uacr: '', uacrJednostka: 'mgg',
   psychAktywny: '', psychOpis: '', epikryza: '',
-  leki: [], odpowiedzi: {}, statusFarmakoterapii: '',
-  przyczyny: {}, epikryzaFarmakoterapii: '', mars5: {}, pomocAdherence: '',
+  leki: [], odpowiedzi: {},
+  epikryzaFarmakoterapii: '', mars5: {}, pomocAdherence: '',
   choroby: { sercowo: false, oddechowe: false, przewodpokarmowy: false, watroba: false, pchn: false, psychiczne: false, brak: false, niewiem: false },
   chorobySzczegolowe: {}
 }, over));
@@ -138,6 +138,9 @@ assert.strictEqual(Mars5.score({ m1: 'ciagle', m2: 'ciagle', m3: 'ciagle', m4: '
 assert.strictEqual(Mars5.score({ m1: 'ciagle', m2: 'ciagle', m3: 'ciagle', m4: 'ciagle', m5: 'ciagle' }).interp.sev, 'alert');
 assert.strictEqual(Mars5.score({ m1: 'czasami', m2: 'czasami', m3: 'czasami', m4: 'czasami', m5: 'czasami' }).interp.sev, 'warn');
 assert.strictEqual(Mars5.score({ m1: 'rzadko', m2: 'rzadko', m3: 'rzadko', m4: 'rzadko', m5: 'rzadko' }).interp.sev, 'info');
+assert.strictEqual(Mars5.odchylenieOdNigdy({ m1: 'nigdy', m2: 'nigdy', m3: '', m4: '', m5: '' }), false, 'tylko „nigdy” lub brak odpowiedzi → brak odchylenia');
+assert.strictEqual(Mars5.odchylenieOdNigdy({ m1: 'nigdy', m2: 'rzadko', m3: '', m4: '', m5: '' }), true, 'odpowiedź inna niż „nigdy” → odchylenie');
+assert.strictEqual(Mars5.odchylenieOdNigdy({}), false);
 console.log('OK');
 
 console.log('Wszystkie testy zakładek 2/3 przeszły pomyślnie.');

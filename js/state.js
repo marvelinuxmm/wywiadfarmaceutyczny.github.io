@@ -38,21 +38,11 @@
       /* Zakładka 2 — farmakoterapia */
       leki: [], // [{ nazwa, moc, postac, tryb, schemat, wskazanie, komentarze, grupy[] }]
       odpowiedzi: {}, // { 'sc.antykoagulanty': 'tak'|'nie'|'nw', ... }
-      statusFarmakoterapii: '',
-      przyczyny: {
-        powielenie: false,
-        dorazne: false,
-        dawki: false,
-        rownolegle: false,
-        dzialania: false,
-        polaczenie: false,
-        nieadekwatny: false,
-        inne: false
-      },
       epikryzaFarmakoterapii: '',
       /* Zakładka 3 — MARS-5 */
       mars5: { m1: '', m2: '', m3: '', m4: '', m5: '' },
       pomocAdherence: '',
+      marsProblemy: '',
       /* Zakładka 4 — Ocena bólu */
       ocenaBolu: {
         data: '',
@@ -66,7 +56,6 @@
         przebieg: '',
         leczenieZmniejsza: '',
         lekiNaBol: [],
-        interpretacja: '',
         epikryza: ''
       },
       /* Zakładka 5 — Kontrola bólu */
@@ -107,6 +96,7 @@
         wyzwalacze: {},
         ulga: {},
         mohDni: { paracetamolNlpzAsa: '', zlozone: '', tryptany: '', opioidyKodeina: '' },
+        mohLeki: { paracetamolNlpzAsa: '', zlozone: '', tryptany: '', opioidyKodeina: '' },
         mohOcena: '',
         interpretacja: '',
         edukacja: {},
@@ -119,7 +109,6 @@
         dniMigrenowe: '',
         dniDorzane: '',
         czasTrwania: '',
-        charakter: {},
         objawy: {},
         prodrom: {},
         aura: '',
@@ -187,8 +176,8 @@
     if (src == null || typeof src !== 'object') return d;
     const scalars = ['dataUrodzenia', 'plec', 'masa', 'wzrost', 'ciaza', 'kreatynina', 'jednostkaKreatyniny',
       'dataKreatyniny', 'albuminuria', 'uacr', 'uacrJednostka', 'psychAktywny',
-      'psychOpis', 'epikryza', 'statusFarmakoterapii', 'epikryzaFarmakoterapii',
-      'pomocAdherence', 'epikryzaKoncowa'];
+      'psychOpis', 'epikryza', 'epikryzaFarmakoterapii',
+      'pomocAdherence', 'marsProblemy', 'epikryzaKoncowa'];
     scalars.forEach(function (k) {
       if (typeof src[k] === 'string' || typeof src[k] === 'number') d[k] = src[k];
     });
@@ -210,11 +199,6 @@
     /* Migracja: dawna sekcja 6 (psychOpis) → pole „Inne” grupy psychicznej */
     if (typeof src.psychOpis === 'string' && src.psychOpis && !(d.inneChoroby.psychiczne)) {
       d.inneChoroby.psychiczne = src.psychOpis;
-    }
-    if (src.przyczyny && typeof src.przyczyny === 'object') {
-      Object.keys(d.przyczyny).forEach(function (k) {
-        if (typeof src.przyczyny[k] === 'boolean') d.przyczyny[k] = src.przyczyny[k];
-      });
     }
     if (src.odpowiedzi && typeof src.odpowiedzi === 'object') {
       Object.keys(src.odpowiedzi).forEach(function (k) {
@@ -251,7 +235,7 @@
       data: 'str', skala: 'str', nrsAktualne: 'str', nrsSrednie: 'str',
       wplyw: { nastroj: 'str', sen: 'str', funkcjonowanie: 'str', praca: 'str' },
       lokalizacja: 'bool', lokalizacjaOpis: 'str', charakter: 'bool', przebieg: 'str',
-      leczenieZmniejsza: 'str', lekiNaBol: 'arr', interpretacja: 'str', epikryza: 'str'
+      leczenieZmniejsza: 'str', lekiNaBol: 'arr', epikryza: 'str'
     });
     mergeShape(d.kontrolaBolu, src.kontrolaBolu, {
       data: 'str', skalaTryb: 'str', skalaUzasadnienie: 'str',
@@ -267,11 +251,12 @@
       dniWMiesiacu: 'str', miesiace: 'str', czestoscKlasa: 'str',
       objawy: 'bool', wyzwalacze: 'bool', ulga: 'bool',
       mohDni: { paracetamolNlpzAsa: 'str', zlozone: 'str', tryptany: 'str', opioidyKodeina: 'str' },
+      mohLeki: { paracetamolNlpzAsa: 'str', zlozone: 'str', tryptany: 'str', opioidyKodeina: 'str' },
       mohOcena: 'str', interpretacja: 'str', edukacja: 'bool', epikryza: 'str'
     });
     mergeShape(d.migrena, src.migrena, {
       rozpoznana: 'str', dniBoluGlowy: 'str', dniMigrenowe: 'str', dniDorzane: 'str', czasTrwania: 'str',
-      charakter: 'bool', objawy: 'bool', prodrom: 'bool',
+      objawy: 'bool', prodrom: 'bool',
       aura: 'str', auraCzas: 'str', auraOstroznosc: 'bool', czFlagi: 'bool',
       wplyw: 'bool', dniOgraniczonejAktywnosci: 'str', lekiDorzane: 'arr',
       wczesnieLek: 'str', skutecznosc2h: 'str', nawrot: 'str', wymioty: 'str',

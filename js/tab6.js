@@ -54,12 +54,6 @@
     ['masaz', 'Masaż / rozluźnienie karku'], ['lek', 'Lek przeciwbólowy'], ['ciemne', 'Ciemne i ciche pomieszczenie'],
     ['nic', 'Nic nie pomaga'], ['inne', 'Inne']
   ];
-  const MOH_DNI_FIELDS = [
-    ['paracetamolNlpzAsa', 'Paracetamol / NLPZ / ASA'],
-    ['zlozone', 'Leki złożone, np. z kodeiną lub kofeiną'],
-    ['tryptany', 'Tryptany'],
-    ['opioidyKodeina', 'Opioidy / kodeina']
-  ];
   const MOH_OCENA = [
     ['brak', 'Brak cech nadużywania'],
     ['mozliwe', 'Możliwe nadużywanie leków doraźnych'],
@@ -215,10 +209,20 @@
   }
 
   function buildMoh() {
+    const kategorie = [
+      ['paracetamolNlpzAsa', 'Paracetamol / NLPZ / ASA'],
+      ['zlozone', 'Leki złożone, np. z kodeiną lub kofeiną'],
+      ['tryptany', 'Tryptany'],
+      ['opioidyKodeina', 'Opioidy / kodeina']
+    ];
     return h('section', { class: 'card' }, [
       h('h2', {}, [h('span', { class: 'num', text: '6.6' }), 'Leki stosowane doraźnie i ryzyko MOH']),
-      h('div', { class: 'grid' }, MOH_DNI_FIELDS.map(function (f, i) {
-        return dniField('bolGlowy.mohDni.' + f[0], f[1], 'bg-moh-' + i);
+      h('div', { class: 'grid' }, kategorie.map(function (k) {
+        return h('div', { class: 'field' }, [
+          h('label', { class: 'ctl' }, [k[1]]),
+          h('input', { type: 'number', min: '0', max: '31', step: '1', placeholder: 'dni/miesiąc', 'data-state': 'bolGlowy.mohDni.' + k[0] }),
+          h('input', { type: 'text', placeholder: 'Leki z listy (można edytować)…', 'data-state': 'bolGlowy.mohLeki.' + k[0], style: { marginTop: '6px' } })
+        ]);
       })),
       h('div', { class: 'field', style: { marginTop: '12px' } }, [
         h('label', { class: 'ctl' }, ['Podejrzenie nadużywania leków']),

@@ -5,27 +5,6 @@
   const G = typeof window !== 'undefined' ? window : globalThis;
 
   const TRYB = [['', '—'], ['dorazne', 'Doraźnie'], ['przewlekle', 'Przewlekle']];
-  const STATUS_WARUNKOWY = ['bezpieczenstwo', 'skutecznosc', 'stosowanie', 'polipragmazja', 'przeglad'];
-
-  const STATUS_OPCJE = [
-    ['brak', 'Nie, brak istotnych problemów na tym etapie'],
-    ['bezpieczenstwo', 'Tak, możliwy problem bezpieczeństwa'],
-    ['skutecznosc', 'Tak, możliwy problem skuteczności'],
-    ['stosowanie', 'Tak, możliwy problem stosowania leków'],
-    ['polipragmazja', 'Tak, możliwa polipragmazja / złożona farmakoterapia'],
-    ['przeglad', 'Wymaga pogłębionego przeglądu lekowego']
-  ];
-
-  const PRZYCZYNY = [
-    ['powielenie', 'Możliwe powielenie substancji czynnej'],
-    ['dorazne', 'Częste stosowanie leków doraźnych'],
-    ['dawki', 'Samodzielne zwiększanie dawek'],
-    ['rownolegle', 'Stosowanie kilku leków przeciwbólowych równolegle'],
-    ['dzialania', 'Działania niepożądane'],
-    ['polaczenie', 'Ryzykowne połączenie leków'],
-    ['nieadekwatny', 'Lek potencjalnie nieadekwatny do profilu pacjenta'],
-    ['inne', 'Inne']
-  ];
 
   let root = null;
 
@@ -172,33 +151,11 @@
     add('ryzyko-info', 'Informacja', rz.info);
   }
 
-  /* ---------- 2.3 Status farmakoterapii ---------- */
-
-  function buildStatus() {
-    const przy = h('div', { class: 'checkbox-grid', id: 'przyczyny-box', style: { display: 'none', marginTop: '12px' } },
-      PRZYCZYNY.map(function (p) {
-        return h('label', { class: 'checkbox' }, [
-          h('input', { type: 'checkbox', 'data-state': 'przyczyny.' + p[0] }),
-          h('span', { text: p[1] })
-        ]);
-      })
-    );
-    return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '2.4' }), 'Krótka ocena farmaceutyczna farmakoterapii']),
-      h('div', { class: 'field' }, [
-        h('label', { class: 'ctl' }, ['Czy farmaceuta identyfikuje problem wymagający dalszej oceny?']),
-        h('div', { class: 'radio-group radio-col' },
-          STATUS_OPCJE.map(function (o) { return radio('statusFarmakoterapii', o[0], o[1]); })),
-        przy
-      ])
-    ]);
-  }
-
-  /* ---------- 2.4 Epikryza ---------- */
+  /* ---------- 2.3 Epikryza ---------- */
 
   function buildEpikryza() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '2.4' }), 'Epikryza farmakoterapii']),
+      h('h2', {}, [h('span', { class: 'num', text: '2.3' }), 'Epikryza farmakoterapii']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Komentarz farmaceuty']),
         h('textarea', { rows: '5', placeholder: 'Krótka ocena bezpieczeństwa i skuteczności farmakoterapii, ustalenia z pacjentem, zalecenia.', 'data-state': 'epikryzaFarmakoterapii' })
@@ -287,7 +244,7 @@
 
   function init(container) {
     root = container;
-    const cards = [buildLeki(), buildRyzyko(), buildStatus(), buildEpikryza()];
+    const cards = [buildLeki(), buildRyzyko(), buildEpikryza()];
     cards.forEach(function (c) { root.appendChild(c); });
     root.removeEventListener('input', handleInput);
     root.removeEventListener('change', handleChange);
@@ -324,10 +281,6 @@
 
     /* Podsumowanie ryzyka */
     renderRyzyko();
-
-    /* Przyczyny przy statusie */
-    q('#przyczyny-box').style.display =
-      (STATUS_WARUNKOWY.indexOf(s.statusFarmakoterapii) !== -1) ? '' : 'none';
   }
 
   G.Tab2 = { init: init, apply: apply };

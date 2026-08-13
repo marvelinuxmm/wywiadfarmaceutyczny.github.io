@@ -1,6 +1,7 @@
 /* Testy logiki zakładki „Ból głowy”: częstość, MOH, interpretacja, kryteria TTH. Uruchom: node test/bolglowy.test.js */
 const assert = require('assert');
 require('../js/bolglowy-logika.js');
+require('../js/data/leki.js');
 const B = globalThis.BolGlowy;
 
 console.log('--- Klasyfikacja częstości ---');
@@ -66,6 +67,19 @@ assert.deepStrictEqual(B.przeniesCharakter({ uciskajacy: true }), { uciskowy: tr
 assert.deepStrictEqual(B.przeniesCharakter({ rozpierajacy: true, piekacy: true }), { rozpierajacy: true, piekacy: true });
 assert.deepStrictEqual(B.przeniesCharakter({ ostry: true, klujacy: true, razenie: true }), { przeszywajacy: true });
 assert.deepStrictEqual(B.przeniesCharakter({ dretwienie: true, inny: true }), {});
+console.log('OK');
+
+console.log('--- Sugestia leków MOH (2 → 6.6) ---');
+const pusty = { paracetamolNlpzAsa: [], zlozone: [], tryptany: [], opioidyKodeina: [] };
+assert.deepStrictEqual(B.sugerujMohLeki([]), pusty);
+assert.deepStrictEqual(B.sugerujMohLeki(null), pusty);
+assert.deepStrictEqual(B.sugerujMohLeki([{ nazwa: '', grupy: [] }]), pusty, 'lek bez nazwy pomijany');
+const lp = B.sugerujMohLeki([{ nazwa: 'Apap', moc: '500 mg', grupy: [] }, { nazwa: 'Nurofen', grupy: ['NLPZ'] }]);
+assert.deepStrictEqual(lp.paracetamolNlpzAsa, ['Apap 500 mg', 'Nurofen'], 'paracetamol (auto) i NLPZ (grupa)');
+const lo = B.sugerujMohLeki([{ nazwa: 'Poltram', grupy: ['opioid'] }, { nazwa: 'Aspirin', grupy: ['ASA'] }]);
+assert.deepStrictEqual(lo.opioidyKodeina, ['Poltram'], 'opioid → opioidy/kodeina');
+assert.deepStrictEqual(lo.paracetamolNlpzAsa, ['Aspirin'], 'ASA → paracetamol/NLPZ/ASA');
+assert.deepStrictEqual(B.sugerujMohLeki([{ nazwa: 'LekInny', grupy: ['IPP'] }]).paracetamolNlpzAsa, [], 'IPP ignorowany');
 console.log('OK');
 
 console.log('Wszystkie testy bólu głowy przeszły.');

@@ -154,12 +154,33 @@
     return out;
   }
 
+  /* Mapowanie leków z listy (zakładka 2) na kategorie MOH (6.6).
+     paracetamol/NLPZ/ASA → paracetamolNlpzAsa; opioid (w tym kodeina) → opioidyKodeina.
+     Leki złożone i tryptany nie mają grup w bazie — zawsze puste (do ręcznego wpisania). */
+  function sugerujMohLeki(leki) {
+    const out = { paracetamolNlpzAsa: [], zlozone: [], tryptany: [], opioidyKodeina: [] };
+    (Array.isArray(leki) ? leki : []).forEach(function (l) {
+      if (!l || !String(l.nazwa || '').trim()) return;
+      const grupy = {};
+      (l.grupy || []).forEach(function (g) { if (g) grupy[g] = true; });
+      if (G.Leki && G.Leki.znajdzGrupy) {
+        G.Leki.znajdzGrupy(l.nazwa).forEach(function (g) { grupy[g] = true; });
+      }
+      const nazwa = String(l.nazwa).trim() + (l.moc ? ' ' + String(l.moc).trim() : '');
+      const ma = function (g) { return grupy[g] === true; };
+      if (ma('paracetamol') || ma('NLPZ') || ma('ASA')) out.paracetamolNlpzAsa.push(nazwa);
+      else if (ma('opioid')) out.opioidyKodeina.push(nazwa);
+    });
+    return out;
+  }
+
   G.BolGlowy = {
     sugerujCzestosc: sugerujCzestosc,
     sugerujMOH: sugerujMOH,
     sugerujInterpretacje: sugerujInterpretacje,
     kryteriaTTH: kryteriaTTH,
     anyTrueExceptBrak: anyTrueExceptBrak,
-    przeniesCharakter: przeniesCharakter
+    przeniesCharakter: przeniesCharakter,
+    sugerujMohLeki: sugerujMohLeki
   };
 })();

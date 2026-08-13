@@ -5,11 +5,6 @@
 
   const ROZPOZNANA = [['lekarz', 'Tak, przez lekarza'], ['pacjent', 'Tak, według pacjenta'], ['nie', 'Nie'], ['nw', 'Nie wiem']];
   const CZAS_TRWANIA = [['<4', '<4 godziny'], ['4-72', '4–72 godziny'], ['>72', '>72 godziny'], ['trudno', 'Trudno określić']];
-  const CHARAKTER_M = [
-    ['jednostronny', 'Jednostronny'], ['obustronny', 'Obustronny'], ['pulsujacy', 'Pulsujący'],
-    ['uciskajacy', 'Uciskający'], ['narastajacy', 'Narastający'], ['napadowy', 'Napadowy'],
-    ['aktywnosc', 'Nasilany zwykłą aktywnością fizyczną'], ['inny', 'Inny']
-  ];
   const OBJAWY_M = [
     ['nudnosci', 'Nudności'], ['wymioty', 'Wymioty'], ['swiatlowstret', 'Światłowstręt'],
     ['fonofobia', 'Fonofobia'], ['zapachy', 'Nadwrażliwość na zapachy'], ['zawroty', 'Zawroty głowy'],
@@ -118,7 +113,7 @@
 
   function buildSek1() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.1' }), 'Charakterystyka bólu głowy']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.1' }), 'Charakterystyka bólu głowy']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Czy pacjent ma rozpoznaną migrenę?']),
         h('div', { class: 'radio-group' }, ROZPOZNANA.map(function (r) {
@@ -142,14 +137,8 @@
 
   function buildSek2() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.2' }), 'Cechy migrenowe']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.2' }), 'Objawy migrenowe i prodrom']),
       h('div', { class: 'field' }, [
-        h('label', { class: 'ctl' }, ['Charakter bólu głowy']),
-        h('div', { class: 'checkbox-grid' }, CHARAKTER_M.map(function (c) {
-          return checkboxState('migrena.charakter', c[0], c[1]);
-        }))
-      ]),
-      h('div', { class: 'field', style: { marginTop: '12px' } }, [
         h('label', { class: 'ctl' }, ['Objawy towarzyszące']),
         h('div', { class: 'checkbox-grid' }, OBJAWY_M.map(function (o) {
           return checkboxState('migrena.objawy', o[0], o[1]);
@@ -167,7 +156,7 @@
 
   function buildSek3() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.3' }), 'Aura i objawy nietypowe']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.3' }), 'Aura i objawy nietypowe']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Czy przed bólem lub w czasie bólu występuje aura?']),
         h('div', { class: 'radio-group' }, AURA.map(function (a) {
@@ -189,7 +178,7 @@
 
   function buildSek4() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.4' }), 'Czerwone flagi bólu głowy']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.4' }), 'Czerwone flagi bólu głowy']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Czy występuje którykolwiek objaw alarmowy?']),
         h('div', { class: 'checkbox-grid' }, CZ_FLAGI.map(function (f) {
@@ -202,7 +191,7 @@
 
   function buildSek5() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.5' }), 'Wpływ migreny na funkcjonowanie']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.5' }), 'Wpływ migreny na funkcjonowanie']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Czy migrena istotnie wpływa na:']),
         h('div', { class: 'checkbox-grid' }, WPLYW_M.map(function (w) {
@@ -219,7 +208,7 @@
 
   function buildSek6() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.6' }), 'Leczenie doraźne napadu migreny']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.6' }), 'Leczenie doraźne napadu migreny']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Leki stosowane doraźnie w bólu głowy (z zakładki „Farmakoterapia”)']),
         h('div', { id: 'mg-leki-dorzane' })
@@ -254,7 +243,7 @@
 
   function buildSek7() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.7' }), 'Ryzyko bólu głowy z nadużywania leków (MOH)']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.7' }), 'Ryzyko bólu głowy z nadużywania leków (MOH)']),
       h('div', { class: 'grid' }, [
         dniField('migrena.mohDni.paracetamolNlpz', 'Paracetamol / NLPZ', 'mg-moh-an'),
         dniField('migrena.mohDni.tryptany', 'Tryptany', 'mg-moh-tz'),
@@ -275,7 +264,7 @@
 
   function buildSek8() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.8' }), 'Profilaktyka migreny']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.8' }), 'Profilaktyka migreny']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Kryteria przesiewowe do rozważenia profilaktyki']),
         h('div', { class: 'checkbox-grid' }, PROF_KR.map(function (p) {
@@ -323,7 +312,7 @@
 
   function buildSek9() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.9' }), 'Elementy edukacji pacjenta']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.9' }), 'Elementy edukacji pacjenta']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Omówiono z pacjentem:']),
         h('div', { class: 'checkbox-grid' }, EDUKACJA.map(function (e) {
@@ -335,7 +324,7 @@
 
   function buildSek10() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.10' }), 'Podsumowanie farmaceutyczne']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.10' }), 'Podsumowanie farmaceutyczne']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Klasyfikacja robocza']),
         h('input', { type: 'text', id: 'mg-klasyfikacja', placeholder: 'Auto-sugestia pojawi się po podaniu dni bólu głowy i dni migrenowych…', 'data-state': 'migrena.klasyfikacja' }),

@@ -203,7 +203,38 @@
       e.target.value = '';
     });
 
+    /* Transfery między zakładkami (uzupełnianie tylko pustych pól) */
+    function transfery() {
+      const s = G.State.get();
+      let zmieniono = false;
+
+      /* 4.6 → 6.2: charakter bólu przy zaznaczonej lokalizacji „Głowa” */
+      if (s.ocenaBolu && s.ocenaBolu.lokalizacja && s.ocenaBolu.lokalizacja.glowa) {
+        const map = G.BolGlowy.przeniesCharakter(s.ocenaBolu.charakter);
+        Object.keys(map).forEach(function (k) {
+          if (!s.bolGlowy.charakterB[k]) {
+            s.bolGlowy.charakterB[k] = true;
+            zmieniono = true;
+          }
+        });
+      }
+
+      /* 2 → 6.6: leki wg kategorii MOH (edytowalne, uzupełniane raz) */
+      if (s.leki && s.leki.length) {
+        const sugestie = G.BolGlowy.sugerujMohLeki(s.leki);
+        ['paracetamolNlpzAsa', 'zlozone', 'tryptany', 'opioidyKodeina'].forEach(function (kat) {
+          if (s.bolGlowy.mohLeki[kat] === '' && sugestie[kat].length) {
+            s.bolGlowy.mohLeki[kat] = sugestie[kat].join(', ');
+            zmieniono = true;
+          }
+        });
+      }
+
+      if (zmieniono) G.State.notify();
+    }
+
     G.State.onChange(function () {
+      transfery();
       applyAll();
       renderFlags();
     });

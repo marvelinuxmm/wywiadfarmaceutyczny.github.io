@@ -154,9 +154,6 @@
         h('div', { class: 'flag-title', text: 'Informacja' }),
         h('div', { class: 'flag-text', text: ryzyko.info.join('; ') })
       ]) : null,
-      h('p', { class: 'hint', style: { marginTop: '8px' }, text: 'Status: ' + label('statusFarm', s.statusFarmakoterapii) +
-        (Object.keys(s.przyczyny || {}).some(function (k) { return s.przyczyny[k]; })
-          ? ' — przyczyny: ' + skroty('przyczyny', s.przyczyny) : '') }),
       epikryzaBlock(s.epikryzaFarmakoterapii, '')
     ]);
     out.push(sekcja('3. Farmakoterapia', lekiRows, farmExtra));
@@ -166,6 +163,7 @@
     out.push(sekcja('4. Przestrzeganie zaleceń (MARS-5)', [
       ['Wynik MARS-5', mars ? mars.sum + ' / 25 (średnia ' + mars.mean.toFixed(1).replace('.', ',') + ' / 5)' : '—'],
       ['Interpretacja', mars ? mars.interp.label : '—'],
+      ['Z czym są problemy', str(s.marsProblemy)],
       ['Jak pomóc pacjentowi', str(s.pomocAdherence)]
     ]));
 
@@ -181,8 +179,7 @@
       ['Charakter', skroty('obCharakter', ob.charakter)],
       ['Przebieg', label('obPrzebieg', ob.przebieg)],
       ['Leki stosowane z powodu bólu', lekNazwy(s.leki, ob.lekiNaBol)],
-      ['Czy leczenie zmniejsza ból', label('zmniejsza', ob.leczenieZmniejsza)],
-      ['Interpretacja', label('interpretacjaOcena', ob.interpretacja)]
+      ['Czy leczenie zmniejsza ból', label('zmniejsza', ob.leczenieZmniejsza)]
     ];
     out.push(sekcja('5. Ocena bólu', obRows, epikryzaBlock(ob.epikryza, '')));
 
@@ -220,6 +217,11 @@
       ['Co przynosi ulgę', skroty('bgUlga', bg.ulga)],
       ['Dni stosowania leków: analgetyki / złożone / tryptany / opioidy',
         ((bg.mohDni || {}).paracetamolNlpzAsa || '—') + ' / ' + ((bg.mohDni || {}).zlozone || '—') + ' / ' + ((bg.mohDni || {}).tryptany || '—') + ' / ' + ((bg.mohDni || {}).opioidyKodeina || '—')],
+      ['Leki wg kategorii MOH (z listy)',
+        ['paracetamolNlpzAsa', 'zlozone', 'tryptany', 'opioidyKodeina']
+          .filter(function (k) { return (bg.mohLeki || {})[k]; })
+          .map(function (k) { return (bg.mohLeki || {})[k]; })
+          .join(' | ') || '—'],
       ['Podejrzenie nadużywania leków', label('bgMohOcena', bg.mohOcena)],
       ['Interpretacja', label('bgInterpretacja', bg.interpretacja)],
       ['Edukacja', skroty('bgEdukacja', bg.edukacja)]
@@ -234,7 +236,7 @@
         ['Dni/mies.: ból głowy / migrenowe / leczenie doraźne',
           (mg.dniBoluGlowy || '—') + ' / ' + (mg.dniMigrenowe || '—') + ' / ' + (mg.dniDorzane || '—')],
         ['Czas trwania napadu', label('mgCzas', mg.czasTrwania)],
-        ['Cechy migrenowe', skroty('mgCharakter', mg.charakter) + (skroty('mgObjawy', mg.objawy) ? ' — objawy: ' + skroty('mgObjawy', mg.objawy) : '')],
+        ['Objawy towarzyszące', skroty('mgObjawy', mg.objawy)],
         ['Aura', label('mgAura', mg.aura) + (mg.aura !== 'nie' && mg.aura !== 'nw' && mg.aura ? ' (' + label('mgAuraCzas', mg.auraCzas) + ')' : '')],
         ['Aura — objawy wymagające ostrożności', skroty('mgAuraOst', mg.auraOstroznosc)],
         ['Czerwone flagi', skroty('mgCzFlagi', mg.czFlagi)],
@@ -275,11 +277,10 @@
     const wiekP = Calc.ageFromBirthDate(s.dataUrodzenia);
     wiersze.push(['Pacjent', (s.dataUrodzenia ? (wiekP !== null ? wiekP + ' lat, ' : s.dataUrodzenia + ', ') : '') + label('plec', s.plec) + (s.masa ? ', ' + s.masa + ' kg' : '') + (s.wzrost ? ', ' + s.wzrost + ' cm' : '')]);
     wiersze.push(['MARS-5', mars ? mars.sum + ' / 25 — ' + mars.interp.label : '—']);
+    if (s.marsProblemy) wiersze.push(['MARS-5 — z czym są problemy', s.marsProblemy]);
     if (ryzyko.reakcja.length) wiersze.push(['Ryzyko farmakoterapii — wymaga reakcji', ryzyko.reakcja.join('; ')]);
     if (ryzyko.uwaga.length) wiersze.push(['Ryzyko farmakoterapii — uwagi', ryzyko.uwaga.join('; ')]);
-    if (s.statusFarmakoterapii) wiersze.push(['Status farmakoterapii', label('statusFarm', s.statusFarmakoterapii) + (Object.keys(s.przyczyny || {}).some(function (k) { return s.przyczyny[k]; }) ? ' — ' + skroty('przyczyny', s.przyczyny) : '')]);
     const ob = s.ocenaBolu || {};
-    if (ob.interpretacja) wiersze.push(['Ocena bólu — interpretacja', label('interpretacjaOcena', ob.interpretacja)]);
     const kb = s.kontrolaBolu || {};
     if (kb.statusKontroli) wiersze.push(['Kontrola bólu — status', label('statusKontroli', kb.statusKontroli)]);
     if (kb.dalszePostepowanie) wiersze.push(['Kontrola bólu — dalsze postępowanie', kb.dalszePostepowanie]);

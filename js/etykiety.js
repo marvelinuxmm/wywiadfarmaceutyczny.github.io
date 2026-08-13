@@ -9,24 +9,6 @@
     tryb: { dorazne: 'Doraźnie', przewlekle: 'Przewlekle' },
     jednostkaKreatyniny: { mgdl: 'mg/dL', umol: 'µmol/L' },
     albuminuria: { brak: 'Brak danych', a1: 'Prawidłowa / A1', a2: 'Umiarkowanie zwiększona / A2', a3: 'Znacznie zwiększona / A3', liczba: 'Wartość liczbowa' },
-    statusFarm: {
-      brak: 'Nie, brak istotnych problemów na tym etapie',
-      bezpieczenstwo: 'Tak, możliwy problem bezpieczeństwa',
-      skutecznosc: 'Tak, możliwy problem skuteczności',
-      stosowanie: 'Tak, możliwy problem stosowania leków',
-      polipragmazja: 'Tak, możliwa polipragmazja / złożona farmakoterapia',
-      przeglad: 'Wymaga pogłębionego przeglądu lekowego'
-    },
-    przyczyny: [
-      ['powielenie', 'Możliwe powielenie substancji czynnej'],
-      ['dorazne', 'Częste stosowanie leków doraźnych'],
-      ['dawki', 'Samodzielne zwiększanie dawek'],
-      ['rownolegle', 'Stosowanie kilku leków przeciwbólowych równolegle'],
-      ['dzialania', 'Działania niepożądane'],
-      ['polaczenie', 'Ryzykowne połączenie leków'],
-      ['nieadekwatny', 'Lek potencjalnie nieadekwatny do profilu pacjenta'],
-      ['inne', 'Inne']
-    ],
     /* Ocena bólu */
     skalaOcena: { nrs: 'NRS 0-10', vas: 'VAS', vrs: 'VRS', fps: 'FPS', inna: 'Inna' },
     wplyw: { nie: 'Nie', umiarkowanie: 'Umiarkowanie', znacznie: 'Znacznie' },
@@ -46,13 +28,6 @@
     zmniejsza: {
       tak: 'Tak, wyraźnie', czesciowo: 'Częściowo', nie: 'Nie', trudno: 'Trudno powiedzieć',
       'brak-leczenia': 'Pacjent nie stosuje leczenia przeciwbólowego'
-    },
-    interpretacjaOcena: {
-      lagodny: 'Ból łagodny / mały wpływ na funkcjonowanie',
-      umiarkowany: 'Ból umiarkowany lub istotny wpływ na funkcjonowanie',
-      silny: 'Ból silny lub znaczny wpływ na funkcjonowanie',
-      poglebic: 'Obraz wymaga pogłębienia w module szczegółowym',
-      konsultacja: 'Rozważyć konsultację lekarską / poradnię leczenia bólu'
     },
     /* Kontrola bólu */
     skalaTryb: { 'ta-sama': 'Ta sama skala co poprzednio', inna: 'Inna skala' },
@@ -144,11 +119,6 @@
     /* Migrena */
     mgRozpoznana: { lekarz: 'Tak, przez lekarza', pacjent: 'Tak, według pacjenta', nie: 'Nie', nw: 'Nie wiem' },
     mgCzas: { '<4': '<4 godziny', '4-72': '4–72 godziny', '>72': '>72 godziny', trudno: 'Trudno określić' },
-    mgCharakter: [
-      ['jednostronny', 'Jednostronny'], ['obustronny', 'Obustronny'], ['pulsujacy', 'Pulsujący'],
-      ['uciskajacy', 'Uciskający'], ['narastajacy', 'Narastający'], ['napadowy', 'Napadowy'],
-      ['aktywnosc', 'Nasilany zwykłą aktywnością fizyczną'], ['inny', 'Inny']
-    ],
     mgObjawy: [
       ['nudnosci', 'Nudności'], ['wymioty', 'Wymioty'], ['swiatlowstret', 'Światłowstręt'],
       ['fonofobia', 'Fonofobia'], ['zapachy', 'Nadwrażliwość na zapachy'], ['zawroty', 'Zawroty głowy'],
