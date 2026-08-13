@@ -56,6 +56,7 @@
         przebieg: '',
         leczenieZmniejsza: '',
         lekiNaBol: [],
+        priorytety: '',
         epikryza: ''
       },
       /* Zakładka 5 — Kontrola bólu */

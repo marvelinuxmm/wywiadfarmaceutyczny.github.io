@@ -107,9 +107,23 @@
     ]);
   }
 
+  function buildPriorytety() {
+    return h('section', { class: 'card' }, [
+      h('h2', {}, [h('span', { class: 'num', text: '4.8' }), 'Priorytety pacjenta']),
+      h('div', { class: 'field' }, [
+        h('label', { class: 'ctl' }, ['Priorytety pacjenta']),
+        h('textarea', {
+          rows: '5',
+          placeholder: 'Zapisz priorytety pacjenta dotyczące leczenia bólu…',
+          'data-state': 'ocenaBolu.priorytety'
+        })
+      ])
+    ]);
+  }
+
   function buildEpikryza() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '4.8' }), 'Epikryza oceny bólu']),
+      h('h2', {}, [h('span', { class: 'num', text: '4.9' }), 'Epikryza oceny bólu']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Komentarz farmaceuty']),
         h('textarea', {
@@ -123,7 +137,7 @@
 
   function build() {
     return [buildDane(), buildSkala(), buildNatezenie(), buildWplyw(), buildLokalizacja(),
-      buildCharakter(), buildLeczenie(), buildEpikryza()];
+      buildCharakter(), buildLeczenie(), buildPriorytety(), buildEpikryza()];
   }
 
   function handleInput(e) {

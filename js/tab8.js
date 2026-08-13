@@ -74,6 +74,13 @@
     ]);
   }
 
+  function priorytetyBlock(tekst) {
+    return h('div', { class: 'r-epikryza' }, [
+      h('strong', { text: 'Priorytety pacjenta: ' }),
+      str(tekst)
+    ]);
+  }
+
   /* ---- Widok pełny ---- */
   function renderPelny(s) {
     const Calc = G.Calc;
@@ -183,7 +190,10 @@
       ['Leki stosowane z powodu bólu', lekNazwy(s.leki, ob.lekiNaBol)],
       ['Czy leczenie zmniejsza ból', label('zmniejsza', ob.leczenieZmniejsza)]
     ];
-    out.push(sekcja('6. Ocena bólu', obRows, epikryzaBlock(ob.epikryza, '')));
+    out.push(sekcja('6. Ocena bólu', obRows, h('div', {}, [
+      priorytetyBlock(ob.priorytety),
+      epikryzaBlock(ob.epikryza, '')
+    ])));
 
     /* 7. Kontrola bólu */
     const kb = s.kontrolaBolu || {};
