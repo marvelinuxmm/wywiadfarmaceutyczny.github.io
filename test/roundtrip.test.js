@@ -13,7 +13,7 @@ s.choroby.metaboliczne = true;
 s.inneChoroby = { sercowo: 'kardiomiopatia', psychiczne: 'anoreksja' };
 s.ocenaBolu = { data: '2026-08-12', skala: 'nrs', nrsAktualne: '6', nrsSrednie: '5', lekiNaBol: [1, 2], lokalizacja: { glowa: true }, epikryza: 'x' };
 s.kontrolaBolu = { data: '2026-08-19', ulga: 'mala', dnLista: { krwawienie: true }, statusKontroli: 'niewystarczajaca' };
-s.migrena = { dniBoluGlowy: '12', dniMigrenowe: '9', czFlagi: { piorunujacy: true }, mohDni: { tryptany: '10' }, lekiDorzane: [2], klasyfikacja: 'Migrena wysokoczęsta' };
+s.migrena = { rozpoznana: 'lekarz', czFlagi: { piorunujacy: true }, lekiDorzane: [2], profAuto: { '72h': true }, klasyfikacja: 'Migrena przewlekła' };
 s.bolGlowy.mohLeki = { paracetamolNlpzAsa: 'Nurofen', zlozone: '', tryptany: '', opioidyKodeina: '' };
 s.epikryzaFarmakoterapii = 'test';
 s.mars5 = { m1: 'nigdy', m2: 'rzadko', m3: 'czasami', m4: 'nigdy', m5: 'rzadko' };
@@ -48,9 +48,9 @@ assert.deepStrictEqual(merged.bolGlowy.mohLeki.zlozone, '');
 assert.strictEqual(merged.kontrolaBolu.dnLista.krwawienie, true);
 assert.strictEqual(merged.kontrolaBolu.statusKontroli, 'niewystarczajaca');
 assert.strictEqual(merged.migrena.czFlagi.piorunujacy, true);
-assert.strictEqual(merged.migrena.mohDni.tryptany, '10');
+assert.strictEqual(merged.migrena.profAuto['72h'], true);
 assert.deepStrictEqual(merged.migrena.lekiDorzane, [2]);
-assert.strictEqual(merged.migrena.klasyfikacja, 'Migrena wysokoczęsta');
+assert.strictEqual(merged.migrena.klasyfikacja, 'Migrena przewlekła');
 assert.strictEqual(merged.ocenaBolu.wplyw.nastroj, '', 'nieznane klucze zagnieżdżone ignorowane');
 
 // zepsute poddrzewa — nie wywala

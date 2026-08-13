@@ -31,11 +31,34 @@ assert.strictEqual(K.sugerujMOH(moh({ dniBoluGlowy: '20' })).status, 'wysokie');
 assert.strictEqual(K.sugerujMOH(moh({ zlozone: '6', tryptany: '4' })).status, 'niskie');
 console.log('OK');
 
-console.log('--- Klasyfikacja migreny ---');
-assert.deepStrictEqual(K.sugerujKlasyfikacja('', ''), { label: '', opis: '' });
-assert.strictEqual(K.sugerujKlasyfikacja('5', '3').label, 'Migrena epizodyczna');
-assert.strictEqual(K.sugerujKlasyfikacja('10', '9').label, 'Migrena wysokoczęsta');
-assert.strictEqual(K.sugerujKlasyfikacja('18', '10').label, 'Migrena przewlekła');
+console.log('--- Klasyfikacja migreny (z 6.3) ---');
+assert.deepStrictEqual(K.sugerujKlasyfikacja(''), { label: '', opis: '' });
+assert.strictEqual(K.sugerujKlasyfikacja('5').label, 'Migrena epizodyczna');
+assert.strictEqual(K.sugerujKlasyfikacja('14').label, 'Migrena epizodyczna');
+assert.strictEqual(K.sugerujKlasyfikacja('15').label, 'Migrena przewlekła');
+assert.strictEqual(K.sugerujKlasyfikacja('20').label, 'Migrena przewlekła');
+console.log('OK');
+
+console.log('--- Kryteria profilaktyki (7.8) ---');
+const pr = (over) => Object.assign({
+  czasTrwania: '', dniWMiesiacu: '', mohDni: {}, wplyw: {}, skutecznosc2h: '', aura: ''
+}, over);
+assert.deepStrictEqual(K.sugerujProfilaktyka(pr({})), {
+  '72h': false, wplyw: false, nieskuteczne: false, 'czeste-dorzane': false, aura: false, przewlekla: false
+});
+assert.strictEqual(K.sugerujProfilaktyka(pr({ czasTrwania: '>72h' }))['72h'], true);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ czasTrwania: '4-72h' }))['72h'], false);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ wplyw: { praca: true } })).wplyw, true);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ wplyw: { brak: true } })).wplyw, false);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ skutecznosc2h: 'brak' })).nieskuteczne, true);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ skutecznosc2h: 'poprawa' })).nieskuteczne, false);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ mohDni: { tryptany: '8' } }))['czeste-dorzane'], true);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ mohDni: { tryptany: '7', paracetamolNlpzAsa: '7' } }))['czeste-dorzane'], false);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ mohDni: { zlozone: '9' } }))['czeste-dorzane'], true);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ aura: 'wzrokowa' })).aura, true);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ aura: 'nie' })).aura, false);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ dniWMiesiacu: '15' })).przewlekla, true);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ dniWMiesiacu: '10' })).przewlekla, false);
 console.log('OK');
 
 console.log('--- Komunikat o poradni ---');

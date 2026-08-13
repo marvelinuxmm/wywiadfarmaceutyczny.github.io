@@ -82,18 +82,33 @@
     return { status: status, powody: powody };
   }
 
-  /* Klasyfikacja robocza migreny (SIGN). */
-  function sugerujKlasyfikacja(dniBoluGlowy, dniMigrenowe) {
+  /* Klasyfikacja robocza migreny (uproszczona, na podstawie dni bólu głowy z 6.3). */
+  function sugerujKlasyfikacja(dniBoluGlowy) {
     const dgl = num(dniBoluGlowy);
-    const dm = num(dniMigrenowe);
-    if (dgl === null && dm === null) return { label: '', opis: '' };
-    if (dgl !== null && dm !== null && dgl >= 15 && dm >= 8) {
-      return { label: 'Migrena przewlekła', opis: 'Ból głowy ≥15 dni/mies. z migreną ≥8 dni/mies. (przez >3 mies.).' };
+    if (dgl === null) return { label: '', opis: '' };
+    if (dgl >= 15) {
+      return { label: 'Migrena przewlekła', opis: 'Ból głowy ≥15 dni/mies. (przez >3 mies.).' };
     }
-    if (dm !== null && dm >= 8) {
-      return { label: 'Migrena wysokoczęsta', opis: '≥8 dni migrenowych/mies. — rozważ leczenie profilaktyczne.' };
-    }
-    return { label: 'Migrena epizodyczna', opis: 'Ból głowy <15 dni/mies. z migreną <8 dni/mies.' };
+    return { label: 'Migrena epizodyczna', opis: 'Ból głowy <15 dni/mies.' };
+  }
+
+  /* Wyprowadzone kryteria profilaktyki (7.8) z wcześniejszych odpowiedzi.
+     d = { czasTrwania, dniWMiesiacu, mohDni, wplyw, skutecznosc2h, aura }.
+     Zwraca obiekt { '72h': bool, wplyw, nieskuteczne, 'czeste-dorzane', aura, przewlekla }. */
+  function sugerujProfilaktyka(d) {
+    const dni = num(d.dniWMiesiacu);
+    const czeste = ['paracetamolNlpzAsa', 'zlozone', 'tryptany', 'opioidyKodeina'].some(function (k) {
+      const v = num((d.mohDni || {})[k]);
+      return v !== null && v >= 8;
+    });
+    return {
+      '72h': d.czasTrwania === '>72h',
+      wplyw: Object.keys(d.wplyw || {}).some(function (k) { return k !== 'brak' && d.wplyw[k]; }),
+      nieskuteczne: d.skutecznosc2h === 'brak',
+      'czeste-dorzane': czeste,
+      aura: d.aura !== '' && d.aura !== 'nie' && d.aura !== 'nw',
+      przewlekla: dni !== null && dni >= 15
+    };
   }
 
   /* Dyskretny komunikat o poradni leczenia bólu (5.9). */
@@ -111,6 +126,7 @@
     sugerujStatusKontroli: sugerujStatusKontroli,
     sugerujMOH: sugerujMOH,
     sugerujKlasyfikacja: sugerujKlasyfikacja,
+    sugerujProfilaktyka: sugerujProfilaktyka,
     komunikatPoradnia: komunikatPoradnia
   };
 })();

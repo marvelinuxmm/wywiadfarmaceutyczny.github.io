@@ -27,10 +27,10 @@
     ['uciskowy', 'Uciskowy / opasujący'], ['tepy', 'Tępy'], ['rozpierajacy', 'Rozpierający'],
     ['pulsujacy', 'Pulsujący'], ['przeszywajacy', 'Przeszywający / świdrujący'], ['piekacy', 'Piekący'], ['inny', 'Inny']
   ];
-  const NASILENIE = [['lagodny', 'Łagodny'], ['umiarkowany', 'Umiarkowany'], ['silny', 'Silny']];
   const AKTYWNOSC = [['nie', 'Nie'], ['tak', 'Tak'], ['nw', 'Nie wiem']];
   const CZAS_TRWANIA = [
-    ['<30', '<30 minut'], ['30-7d', '30 minut do 7 dni'], ['>7d', '>7 dni'], ['trudno', 'Trudno określić']
+    ['<30', '<30 minut'], ['30m-4h', '30 minut – 4 godziny'], ['4-72h', '4–72 godziny'],
+    ['>72h', '>72 godziny'], ['trudno', 'Trudno określić']
   ];
   const CZESTOSC = [
     ['rzadki', 'Rzadki epizodyczny napięciowy ból głowy (<1 dzień/mies.)'],
@@ -136,12 +136,6 @@
           h('label', { class: 'ctl' }, ['Nasilenie (NRS)']),
           h('input', { type: 'number', id: 'bg-nrs', min: '0', max: '10', step: '1', 'data-state': 'bolGlowy.nrs' }),
           h('div', { class: 'hint', text: '0–10' })
-        ]),
-        h('div', { class: 'field' }, [
-          h('label', { class: 'ctl' }, ['Nasilenie (opisowo)']),
-          h('div', { class: 'radio-group' }, NASILENIE.map(function (n) {
-            return radio('bg.nasilenie', n[0], n[1], 'bolGlowy.nasilenie');
-          }))
         ]),
         h('div', { class: 'field' }, [
           h('label', { class: 'ctl' }, ['Czy zwykła aktywność fizyczna nasila ból?']),

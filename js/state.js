@@ -86,7 +86,6 @@
         lokalizacja: {},
         charakterB: {},
         nrs: '',
-        nasilenie: '',
         aktywnoscNasila: '',
         czasTrwania: '',
         dniWMiesiacu: '',
@@ -105,11 +104,6 @@
       /* Zakładka 7 — Moduł migrenowy */
       migrena: {
         rozpoznana: '',
-        dniBoluGlowy: '',
-        dniMigrenowe: '',
-        dniDorzane: '',
-        czasTrwania: '',
-        objawy: {},
         prodrom: {},
         aura: '',
         auraCzas: '',
@@ -122,9 +116,8 @@
         skutecznosc2h: '',
         nawrot: '',
         wymioty: '',
-        mohDni: { paracetamolNlpz: '', tryptany: '', zlozone: '', opioidy: '', inne: '' },
-        mohStatus: '',
         profilaktykaKryteria: {},
+        profAuto: {},
         profilaktykaStosowana: '',
         profilaktykaSzczegoly: { lek: '', dawka: '', odkiedy: '', regularnie: '' },
         profilaktykaEfekt: '',
@@ -247,7 +240,7 @@
     });
     mergeShape(d.bolGlowy, src.bolGlowy, {
       alarmowe: 'bool', lokalizacja: 'bool', charakterB: 'bool',
-      nrs: 'str', nasilenie: 'str', aktywnoscNasila: 'str', czasTrwania: 'str',
+      nrs: 'str', aktywnoscNasila: 'str', czasTrwania: 'str',
       dniWMiesiacu: 'str', miesiace: 'str', czestoscKlasa: 'str',
       objawy: 'bool', wyzwalacze: 'bool', ulga: 'bool',
       mohDni: { paracetamolNlpzAsa: 'str', zlozone: 'str', tryptany: 'str', opioidyKodeina: 'str' },
@@ -255,14 +248,12 @@
       mohOcena: 'str', interpretacja: 'str', edukacja: 'bool', epikryza: 'str'
     });
     mergeShape(d.migrena, src.migrena, {
-      rozpoznana: 'str', dniBoluGlowy: 'str', dniMigrenowe: 'str', dniDorzane: 'str', czasTrwania: 'str',
-      objawy: 'bool', prodrom: 'bool',
+      rozpoznana: 'str',
+      prodrom: 'bool',
       aura: 'str', auraCzas: 'str', auraOstroznosc: 'bool', czFlagi: 'bool',
       wplyw: 'bool', dniOgraniczonejAktywnosci: 'str', lekiDorzane: 'arr',
       wczesnieLek: 'str', skutecznosc2h: 'str', nawrot: 'str', wymioty: 'str',
-      mohDni: { paracetamolNlpz: 'str', tryptany: 'str', zlozone: 'str', opioidy: 'str', inne: 'str' },
-      mohStatus: 'str',
-      profilaktykaKryteria: 'bool', profilaktykaStosowana: 'str',
+      profilaktykaKryteria: 'bool', profAuto: 'bool', profilaktykaStosowana: 'str',
       profilaktykaSzczegoly: { lek: 'str', dawka: 'str', odkiedy: 'str', regularnie: 'str' },
       profilaktykaEfekt: 'str', edukacja: 'bool',
       klasyfikacja: 'str', dalszyKrok: 'str', epikryza: 'str'

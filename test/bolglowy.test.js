@@ -23,24 +23,33 @@ assert.strictEqual(B.sugerujMOH(moh({ paracetamolNlpzAsa: '8', dniBoluGlowy: '20
 assert.strictEqual(B.sugerujMOH(moh({ tryptany: '4' })).opcja, 'brak');
 console.log('OK');
 
+console.log('--- Nasilenie z NRS ---');
+assert.strictEqual(B.nrsDoNasilenia(''), null);
+assert.strictEqual(B.nrsDoNasilenia('3'), 'lagodny');
+assert.strictEqual(B.nrsDoNasilenia('4'), 'umiarkowany');
+assert.strictEqual(B.nrsDoNasilenia('6'), 'umiarkowany');
+assert.strictEqual(B.nrsDoNasilenia('7'), 'silny');
+assert.strictEqual(B.nrsDoNasilenia('10'), 'silny');
+console.log('OK');
+
 console.log('--- Wstępna interpretacja ---');
 const d = (over) => Object.assign({
-  alarmowe: {}, lokalizacja: {}, charakterB: {}, nrs: '', nasilenie: '', aktywnoscNasila: '',
+  alarmowe: {}, lokalizacja: {}, charakterB: {}, nrs: '', aktywnoscNasila: '',
   czasTrwania: '', dniWMiesiacu: '', miesiace: '', objawy: {}, wyzwalacze: {}, ulga: {}, mohDni: {}
 }, over);
 // czerwone flagi → wtórny
 assert.strictEqual(B.sugerujInterpretacje(d({ alarmowe: { nagly: true } })).opcja, 'wtorny');
-// typowy TTH
-const tth = d({ lokalizacja: { obustronny: true }, charakterB: { uciskowy: true }, nasilenie: 'umiarkowany', aktywnoscNasila: 'nie', objawy: {} });
+// typowy TTH (NRS 5 = umiarkowane)
+const tth = d({ lokalizacja: { obustronny: true }, charakterB: { uciskowy: true }, nrs: '5', aktywnoscNasila: 'nie', objawy: {} });
 assert.strictEqual(B.sugerujInterpretacje(tth).opcja, 'tth');
-// migrena
-const mig = d({ lokalizacja: { jednostronny: true }, charakterB: { pulsujacy: true }, nasilenie: 'silny', aktywnoscNasila: 'tak', objawy: { nudnosci: true, swiatlowstret: true } });
+// migrena (NRS 8 = silne)
+const mig = d({ lokalizacja: { jednostronny: true }, charakterB: { pulsujacy: true }, nrs: '8', aktywnoscNasila: 'tak', objawy: { nudnosci: true, swiatlowstret: true } });
 assert.strictEqual(B.sugerujInterpretacje(mig).opcja, 'migrena');
-// remis TTH vs migrena → migrena
-const remis = d({ lokalizacja: { obustronny: true, jednostronny: false }, charakterB: { uciskowy: true }, nasilenie: 'umiarkowany', aktywnoscNasila: 'nie', objawy: { nudnosci: true } });
+// remis TTH vs migrena → migrena (NRS 5)
+const remis = d({ lokalizacja: { obustronny: true, jednostronny: false }, charakterB: { uciskowy: true }, nrs: '5', aktywnoscNasila: 'nie', objawy: { nudnosci: true } });
 assert.strictEqual(B.sugerujInterpretacje(remis).opcja, 'migrena');
-// klaster
-const klaster = d({ lokalizacja: { 'okolica-oka': true }, nasilenie: 'silny', objawy: { lzawienie: true } });
+// klaster (NRS 9 = silny)
+const klaster = d({ lokalizacja: { 'okolica-oka': true }, nrs: '9', objawy: { lzawienie: true } });
 assert.strictEqual(B.sugerujInterpretacje(klaster).opcja, 'klaster');
 // zatokowy
 const zatoki = d({ lokalizacja: { zatoki: true }, objawy: { katar: true } });
@@ -58,6 +67,7 @@ assert.strictEqual(k.length, 7);
 assert.strictEqual(k.filter(function (x) { return x.met; }).length, 7);
 const k2 = B.kryteriaTTH(mig);
 assert.strictEqual(k2[0].met, false, 'jednostronny nie spełnia kryterium obustronności');
+assert.strictEqual(k2[2].met, false, 'NRS 8 nie spełnia kryterium łagodnego/umiarkowanego nasilenia');
 console.log('OK');
 
 console.log('--- Przeniesienie charakteru 4.6 → 6.2 ---');

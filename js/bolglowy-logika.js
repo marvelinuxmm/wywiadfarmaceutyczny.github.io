@@ -13,6 +13,15 @@
     return Object.keys(obj || {}).some(function (k) { return k !== 'brak' && obj[k]; });
   }
 
+  /* Nasilenie z NRS (0–3 łagodne, 4–6 umiarkowane, ≥7 silne); null, gdy brak wartości. */
+  function nrsDoNasilenia(nrs) {
+    const n = num(nrs);
+    if (n === null) return null;
+    if (n <= 3) return 'lagodny';
+    if (n <= 6) return 'umiarkowany';
+    return 'silny';
+  }
+
   /* 3.3 Klasyfikacja robocza częstości. */
   function sugerujCzestosc(dni, miesiace) {
     const d = num(dni);
@@ -64,7 +73,7 @@
     const cechy = [];
     if (d.lokalizacja.jednostronny) cechy.push('ból jednostronny');
     if (d.charakterB.pulsujacy) cechy.push('pulsujący');
-    if (d.nasilenie === 'umiarkowany' || d.nasilenie === 'silny') cechy.push('nasilenie umiarkowane/silne');
+    if (nrsDoNasilenia(d.nrs) === 'umiarkowany' || nrsDoNasilenia(d.nrs) === 'silny') cechy.push('nasilenie umiarkowane/silne (NRS ≥4)');
     if (d.aktywnoscNasila === 'tak') cechy.push('nasilany aktywnością');
     if (d.objawy.nudnosci || d.objawy.wymioty || d.objawy.swiatlowstret || d.objawy.dzwieki || d.objawy.aura) {
       cechy.push('objawy towarzyszące (nudności/wymioty/światłowstręt/fonofobia/aura)');
@@ -77,7 +86,7 @@
     if (anyTrueExceptBrak(d.alarmowe)) {
       return { opcja: 'wtorny', powody: ['obecne objawy alarmowe — ból wymaga konsultacji lekarskiej'], tthScore: 0, migrenaScore: 0 };
     }
-    if ((d.lokalizacja['okolica-oka'] || d.lokalizacja.jednostronny) && d.nasilenie === 'silny' &&
+    if ((d.lokalizacja['okolica-oka'] || d.lokalizacja.jednostronny) && nrsDoNasilenia(d.nrs) === 'silny' &&
         (d.objawy.lzawienie || d.objawy.katar)) {
       return { opcja: 'klaster', powody: ['silny jednostronny ból okolicy oka z objawami autonomicznymi (łzawienie/katar)'], tthScore: 0, migrenaScore: 0 };
     }
@@ -93,13 +102,14 @@
     let tthScore = 0;
     if (d.lokalizacja.obustronny) tthScore++;
     if (d.charakterB.uciskowy || d.charakterB.rozpierajacy || d.charakterB.tepy) tthScore++;
-    if (d.nasilenie === 'lagodny' || d.nasilenie === 'umiarkowany') tthScore++;
+    const nasi = nrsDoNasilenia(d.nrs);
+    if (nasi === 'lagodny' || nasi === 'umiarkowany') tthScore++;
     if (d.aktywnoscNasila === 'nie') tthScore++;
 
     let migrenaScore = 0;
     if (d.lokalizacja.jednostronny) migrenaScore++;
     if (d.charakterB.pulsujacy) migrenaScore++;
-    if (d.nasilenie === 'umiarkowany' || d.nasilenie === 'silny') migrenaScore++;
+    if (nasi === 'umiarkowany' || nasi === 'silny') migrenaScore++;
     if (d.aktywnoscNasila === 'tak') migrenaScore++;
     if (d.objawy.nudnosci || d.objawy.wymioty || d.objawy.swiatlowstret || d.objawy.dzwieki || d.objawy.aura) migrenaScore++;
 
@@ -126,7 +136,7 @@
     return [
       { id: 'lok', label: 'Obustronna lokalizacja', met: !!d.lokalizacja.obustronny },
       { id: 'char', label: 'Uciskowy / opasujący, niepulsujący charakter', met: !!(d.charakterB.uciskowy || d.charakterB.rozpierajacy || d.charakterB.tepy) },
-      { id: 'nasi', label: 'Łagodne lub umiarkowane nasilenie', met: (d.nasilenie === 'lagodny' || d.nasilenie === 'umiarkowany') },
+      { id: 'nasi', label: 'Łagodne lub umiarkowane nasilenie (NRS ≤6)', met: (nrsDoNasilenia(d.nrs) === 'lagodny' || nrsDoNasilenia(d.nrs) === 'umiarkowany') },
       { id: 'akt', label: 'Aktywność fizyczna nie nasila bólu', met: d.aktywnoscNasila === 'nie' },
       { id: 'nud', label: 'Brak nudności i wymiotów', met: !d.objawy.nudnosci && !d.objawy.wymioty },
       { id: 'sw', label: 'Brak jednoczesnej światłowstrętu i fonofobii', met: !(d.objawy.swiatlowstret && d.objawy.dzwieki) },
@@ -180,6 +190,7 @@
     sugerujInterpretacje: sugerujInterpretacje,
     kryteriaTTH: kryteriaTTH,
     anyTrueExceptBrak: anyTrueExceptBrak,
+    nrsDoNasilenia: nrsDoNasilenia,
     przeniesCharakter: przeniesCharakter,
     sugerujMohLeki: sugerujMohLeki
   };

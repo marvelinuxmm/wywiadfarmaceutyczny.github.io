@@ -71,9 +71,8 @@
       ['uciskowy', 'Uciskowy / opasujący'], ['tepy', 'Tępy'], ['rozpierajacy', 'Rozpierający'],
       ['pulsujacy', 'Pulsujący'], ['przeszywajacy', 'Przeszywający / świdrujący'], ['piekacy', 'Piekący'], ['inny', 'Inny']
     ],
-    bgNasilenie: { lagodny: 'Łagodny', umiarkowany: 'Umiarkowany', silny: 'Silny' },
     bgAktywnosc: { nie: 'Nie', tak: 'Tak', nw: 'Nie wiem' },
-    bgCzasTrwania: { '<30': '<30 minut', '30-7d': '30 minut do 7 dni', '>7d': '>7 dni', trudno: 'Trudno określić' },
+    bgCzasTrwania: { '<30': '<30 minut', '30m-4h': '30 minut – 4 godziny', '4-72h': '4–72 godziny', '>72h': '>72 godziny', trudno: 'Trudno określić' },
     bgCzestosc: {
       rzadki: 'Rzadki epizodyczny napięciowy ból głowy (<1 dzień/mies.)',
       czesty: 'Częsty epizodyczny napięciowy ból głowy (1–14 dni/mies. przez >3 mies.)',
@@ -118,12 +117,6 @@
     ],
     /* Migrena */
     mgRozpoznana: { lekarz: 'Tak, przez lekarza', pacjent: 'Tak, według pacjenta', nie: 'Nie', nw: 'Nie wiem' },
-    mgCzas: { '<4': '<4 godziny', '4-72': '4–72 godziny', '>72': '>72 godziny', trudno: 'Trudno określić' },
-    mgObjawy: [
-      ['nudnosci', 'Nudności'], ['wymioty', 'Wymioty'], ['swiatlowstret', 'Światłowstręt'],
-      ['fonofobia', 'Fonofobia'], ['zapachy', 'Nadwrażliwość na zapachy'], ['zawroty', 'Zawroty głowy'],
-      ['pozycja', 'Potrzeba położenia się / ograniczenia aktywności'], ['brak', 'Brak objawów towarzyszących']
-    ],
     mgProdrom: [
       ['ziewanie', 'Ziewanie'], ['nastroj', 'Zmiana nastroju'], ['sennosc', 'Senność'],
       ['glod', 'Głód / zachcianki'], ['kark', 'Sztywność karku'], ['koncentracja', 'Trudności z koncentracją'],
@@ -157,9 +150,8 @@
     mgSkutecznosc: { wolnosc: 'Wolność od bólu po 2 h', poprawa: 'Częściowa poprawa', brak: 'Brak odpowiedzi', nw: 'Nie wiem' },
     mgNawrot: { nie: 'Nie', sporadycznie: 'Tak, sporadycznie', czesto: 'Tak, często', nw: 'Nie wiem' },
     mgWymioty: { nie: 'Nie', tak: 'Tak', nw: 'Nie wiem' },
-    mgMohStatus: { niskie: 'Niskie ryzyko', mozliwe: 'Możliwe ryzyko', wysokie: 'Wysokie ryzyko', 'wymaga-oceny': 'Wymaga oceny lekarskiej' },
     mgProfKryteria: [
-      ['4-dni', '≥4 dni z bólem głowy w miesiącu'],
+      ['72h', 'Napad trwa >72 godziny'],
       ['wplyw', 'Istotny wpływ migreny na życie / pracę / funkcjonowanie'],
       ['nieskuteczne', 'Leczenie doraźne nieskuteczne mimo prawidłowego stosowania'],
       ['czeste-dorzane', 'Częste stosowanie leków doraźnych'],

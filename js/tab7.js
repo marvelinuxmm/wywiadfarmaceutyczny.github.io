@@ -4,12 +4,6 @@
   const G = typeof window !== 'undefined' ? window : globalThis;
 
   const ROZPOZNANA = [['lekarz', 'Tak, przez lekarza'], ['pacjent', 'Tak, według pacjenta'], ['nie', 'Nie'], ['nw', 'Nie wiem']];
-  const CZAS_TRWANIA = [['<4', '<4 godziny'], ['4-72', '4–72 godziny'], ['>72', '>72 godziny'], ['trudno', 'Trudno określić']];
-  const OBJAWY_M = [
-    ['nudnosci', 'Nudności'], ['wymioty', 'Wymioty'], ['swiatlowstret', 'Światłowstręt'],
-    ['fonofobia', 'Fonofobia'], ['zapachy', 'Nadwrażliwość na zapachy'], ['zawroty', 'Zawroty głowy'],
-    ['pozycja', 'Potrzeba położenia się / ograniczenia aktywności'], ['brak', 'Brak objawów towarzyszących']
-  ];
   const PRODROM = [
     ['ziewanie', 'Ziewanie'], ['nastroj', 'Zmiana nastroju'], ['sennosc', 'Senność'],
     ['glod', 'Głód / zachcianki'], ['kark', 'Sztywność karku'], ['koncentracja', 'Trudności z koncentracją'],
@@ -49,12 +43,8 @@
   ];
   const NAWROT = [['nie', 'Nie'], ['sporadycznie', 'Tak, sporadycznie'], ['czesto', 'Tak, często'], ['nw', 'Nie wiem']];
   const WYMIOTY = [['nie', 'Nie'], ['tak', 'Tak'], ['nw', 'Nie wiem']];
-  const MOH_STATUS = [
-    ['niskie', 'Niskie ryzyko'], ['mozliwe', 'Możliwe ryzyko'],
-    ['wysokie', 'Wysokie ryzyko'], ['wymaga-oceny', 'Wymaga oceny lekarskiej']
-  ];
   const PROF_KR = [
-    ['4-dni', '≥4 dni z bólem głowy w miesiącu'],
+    ['72h', 'Napad trwa >72 godziny'],
     ['wplyw', 'Istotny wpływ migreny na życie / pracę / funkcjonowanie'],
     ['nieskuteczne', 'Leczenie doraźne jest nieskuteczne mimo prawidłowego stosowania'],
     ['czeste-dorzane', 'Częste stosowanie leków doraźnych'],
@@ -103,14 +93,6 @@
     ]);
   }
 
-  function dniField(dataState, label, id, placeholder) {
-    return h('div', { class: 'field' }, [
-      h('label', { class: 'ctl' }, [label]),
-      h('input', { type: 'number', id: id, min: '0', max: '31', step: '1', placeholder: placeholder || '', 'data-state': dataState }),
-      h('div', { class: 'hint', text: 'dni/miesiąc' })
-    ]);
-  }
-
   function buildSek1() {
     return h('section', { class: 'card' }, [
       h('h2', {}, [h('span', { class: 'num', text: '7.1' }), 'Charakterystyka bólu głowy']),
@@ -119,32 +101,14 @@
         h('div', { class: 'radio-group' }, ROZPOZNANA.map(function (r) {
           return radio('mg.rozp', r[0], r[1], 'migrena.rozpoznana');
         }))
-      ]),
-      h('div', { class: 'grid' }, [
-        dniField('migrena.dniBoluGlowy', 'Liczba dni z bólem głowy w miesiącu', 'mg-dni-bg'),
-        dniField('migrena.dniMigrenowe', 'Liczba dni z bólem migrenowym w miesiącu', 'mg-dni-m'),
-        dniField('migrena.dniDorzane', 'Liczba dni z leczeniem doraźnym bólu głowy w miesiącu', 'mg-dni-d')
-      ]),
-      h('div', { class: 'field', style: { marginTop: '12px' } }, [
-        h('label', { class: 'ctl' }, ['Typowy czas trwania napadu']),
-        h('div', { class: 'radio-group' }, CZAS_TRWANIA.map(function (c) {
-          return radio('mg.czas', c[0], c[1], 'migrena.czasTrwania');
-        })),
-        h('div', { class: 'hint', text: 'Napad >72 godziny może odpowiadać stanowi migrenowemu (status migrainosus) — unikać opioidów.' })
       ])
     ]);
   }
 
   function buildSek2() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.2' }), 'Objawy migrenowe i prodrom']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.2' }), 'Objawy poprzedzające napad (prodrom)']),
       h('div', { class: 'field' }, [
-        h('label', { class: 'ctl' }, ['Objawy towarzyszące']),
-        h('div', { class: 'checkbox-grid' }, OBJAWY_M.map(function (o) {
-          return checkboxState('migrena.objawy', o[0], o[1]);
-        }))
-      ]),
-      h('div', { class: 'field', style: { marginTop: '12px' } }, [
         h('label', { class: 'ctl' }, ['Objawy poprzedzające napad (prodrom)']),
         h('div', { class: 'checkbox-grid' }, PRODROM.map(function (p) {
           return checkboxState('migrena.prodrom', p[0], p[1]);
@@ -243,28 +207,7 @@
 
   function buildSek7() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.7' }), 'Ryzyko bólu głowy z nadużywania leków (MOH)']),
-      h('div', { class: 'grid' }, [
-        dniField('migrena.mohDni.paracetamolNlpz', 'Paracetamol / NLPZ', 'mg-moh-an'),
-        dniField('migrena.mohDni.tryptany', 'Tryptany', 'mg-moh-tz'),
-        dniField('migrena.mohDni.zlozone', 'Leki złożone', 'mg-moh-zl'),
-        dniField('migrena.mohDni.opioidy', 'Opioidy', 'mg-moh-op'),
-        dniField('migrena.mohDni.inne', 'Inne', 'mg-moh-in')
-      ]),
-      h('div', { class: 'field', style: { marginTop: '12px' } }, [
-        h('label', { class: 'ctl' }, ['Status ryzyka MOH']),
-        h('div', { class: 'radio-group' }, MOH_STATUS.map(function (m) {
-          return radio('mg.moh', m[0], m[1], 'migrena.mohStatus');
-        }))
-      ]),
-      h('div', { class: 'komunikat komunikat-sugestia', id: 'mg-moh-sugestia' }),
-      h('div', { class: 'hint', style: { marginTop: '8px' }, text: 'Progi: możliwe ryzyko — tryptany/leki złożone/opioidy ≥8 dni/mies. lub analgetyki/NLPZ ≥10 dni/mies.; wysokie ryzyko — ≥10 (analgetyki ≥15) dni/mies. lub ból głowy ≥15 dni/mies. przez >3 mies.' })
-    ]);
-  }
-
-  function buildSek8() {
-    return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.8' }), 'Profilaktyka migreny']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.7' }), 'Profilaktyka migreny']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Kryteria przesiewowe do rozważenia profilaktyki']),
         h('div', { class: 'checkbox-grid' }, PROF_KR.map(function (p) {
@@ -310,9 +253,9 @@
     ]);
   }
 
-  function buildSek9() {
+  function buildSek8() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.9' }), 'Elementy edukacji pacjenta']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.8' }), 'Elementy edukacji pacjenta']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Omówiono z pacjentem:']),
         h('div', { class: 'checkbox-grid' }, EDUKACJA.map(function (e) {
@@ -322,12 +265,12 @@
     ]);
   }
 
-  function buildSek10() {
+  function buildSek9() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.10' }), 'Podsumowanie farmaceutyczne']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.9' }), 'Podsumowanie farmaceutyczne']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Klasyfikacja robocza']),
-        h('input', { type: 'text', id: 'mg-klasyfikacja', placeholder: 'Auto-sugestia pojawi się po podaniu dni bólu głowy i dni migrenowych…', 'data-state': 'migrena.klasyfikacja' }),
+        h('input', { type: 'text', id: 'mg-klasyfikacja', placeholder: 'Auto-sugestia na podstawie liczby dni z bólem głowy (6.3)…', 'data-state': 'migrena.klasyfikacja' }),
         h('div', { class: 'hint', id: 'mg-klasyfikacja-opis' })
       ]),
       h('div', { class: 'field', style: { marginTop: '12px' } }, [
@@ -340,7 +283,7 @@
         h('label', { class: 'ctl' }, ['Epikryza modułu migrenowego']),
         h('textarea', {
           rows: '5',
-          placeholder: 'Podsumuj: częstość dni bólu głowy i dni migrenowych, cechy migrenowe, obecność/charakter aury, leczenie doraźne, skuteczność po 2 godzinach, nawroty, liczba dni stosowania leków doraźnych, ryzyko MOH, wskazania do profilaktyki oraz ewentualne objawy alarmowe.',
+          placeholder: 'Podsumuj: liczbę dni z bólem głowy (6.3), obecność/charakter aury, leczenie doraźne, skuteczność po 2 godzinach, nawroty, wskazania do profilaktyki oraz ewentualne objawy alarmowe.',
           'data-state': 'migrena.epikryza'
         })
       ])
@@ -349,7 +292,7 @@
 
   function build() {
     return [buildSek1(), buildSek2(), buildSek3(), buildSek4(), buildSek5(),
-      buildSek6(), buildSek7(), buildSek8(), buildSek9(), buildSek10()];
+      buildSek6(), buildSek7(), buildSek8(), buildSek9()];
   }
 
   function handleInput(e) {
@@ -451,21 +394,12 @@
       wym.style.display = 'none';
     }
 
-    /* MOH — auto-sugestia */
-    const moh = K.sugerujMOH(Object.assign({ dniBoluGlowy: s.migrena.dniBoluGlowy }, s.migrena.mohDni || {}));
-    q('#mg-moh-sugestia').textContent = 'Propozycja aplikacji: ' +
-      (MOH_STATUS.find(function (x) { return x[0] === moh.status; }) || ['', '—'])[1] +
-      '. (' + moh.powody.join('; ') + ')';
-    root.querySelectorAll('[name="mg.moh"]').forEach(function (inp) {
-      inp.parentElement.classList.toggle('sugerowane', inp.value === moh.status);
-    });
-
     /* Profilaktyka szczegóły */
     q('#mg-prof-szczegoly').style.display = (s.migrena.profilaktykaStosowana === 'tak') ? '' : 'none';
 
-    /* Klasyfikacja robocza — auto-sugestia (nadpisywana, dopóki użytkownik nie wpisze własnej) */
-    const AUTO_LABELE = ['Migrena epizodyczna', 'Migrena wysokoczęsta', 'Migrena przewlekła'];
-    const kl = K.sugerujKlasyfikacja(s.migrena.dniBoluGlowy, s.migrena.dniMigrenowe);
+    /* Klasyfikacja robocza — auto-sugestia z 6.3 (nadpisywana, dopóki użytkownik nie wpisze własnej) */
+    const AUTO_LABELE = ['Migrena epizodyczna', 'Migrena przewlekła'];
+    const kl = K.sugerujKlasyfikacja(s.bolGlowy.dniWMiesiacu);
     q('#mg-klasyfikacja-opis').textContent = kl.opis;
     if (kl.label && s.migrena.klasyfikacja !== kl.label &&
         (s.migrena.klasyfikacja === '' || AUTO_LABELE.indexOf(s.migrena.klasyfikacja) !== -1)) {

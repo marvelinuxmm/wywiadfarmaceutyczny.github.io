@@ -217,6 +217,11 @@
             zmieniono = true;
           }
         });
+        /* 4.3 → 6.2: NRS aktualne */
+        if (s.bolGlowy.nrs === '' && s.ocenaBolu.nrsAktualne !== '') {
+          s.bolGlowy.nrs = s.ocenaBolu.nrsAktualne;
+          zmieniono = true;
+        }
       }
 
       /* 2 → 6.6: leki wg kategorii MOH (edytowalne, uzupełniane raz) */
@@ -229,6 +234,23 @@
           }
         });
       }
+
+      /* 7.7: autozaznaczenie kryteriów profilaktyki na podstawie wcześniejszych odpowiedzi (raz) */
+      const kryteria = G.Kontrola.sugerujProfilaktyka({
+        czasTrwania: s.bolGlowy.czasTrwania,
+        dniWMiesiacu: s.bolGlowy.dniWMiesiacu,
+        mohDni: s.bolGlowy.mohDni,
+        wplyw: s.migrena.wplyw,
+        skutecznosc2h: s.migrena.skutecznosc2h,
+        aura: s.migrena.aura
+      });
+      Object.keys(kryteria).forEach(function (k) {
+        if (kryteria[k] && !s.migrena.profAuto[k] && !s.migrena.profilaktykaKryteria[k]) {
+          s.migrena.profilaktykaKryteria[k] = true;
+          s.migrena.profAuto[k] = true;
+          zmieniono = true;
+        }
+      });
 
       if (zmieniono) G.State.notify();
     }

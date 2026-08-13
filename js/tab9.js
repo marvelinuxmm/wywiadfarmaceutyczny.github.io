@@ -208,7 +208,7 @@
       ['Objawy alarmowe', G.BolGlowy && G.BolGlowy.anyTrueExceptBrak(bg.alarmowe) ? skroty('bgAlarmowe', bg.alarmowe) : 'brak'],
       ['Lokalizacja', skroty('bgLokalizacje', bg.lokalizacja)],
       ['Charakter', skroty('bgCharakter', bg.charakterB)],
-      ['Nasilenie', (bg.nrs !== '' ? bg.nrs + '/10, ' : '') + label('bgNasilenie', bg.nasilenie)],
+      ['Nasilenie (NRS)', bg.nrs !== '' ? bg.nrs + '/10' : '—'],
       ['Aktywność fizyczna nasila ból', label('bgAktywnosc', bg.aktywnoscNasila)],
       ['Czas trwania epizodu', label('bgCzasTrwania', bg.czasTrwania)],
       ['Częstość', (bg.dniWMiesiacu !== '' ? bg.dniWMiesiacu + ' dni/mies. (od ' + (bg.miesiace !== '' ? bg.miesiace + ' mies.)' : '—)') : '—') + ' ' + label('bgCzestosc', bg.czestoscKlasa)],
@@ -233,10 +233,6 @@
     if (hasAny(mg)) {
       const mgRows = [
         ['Rozpoznanie', label('mgRozpoznana', mg.rozpoznana)],
-        ['Dni/mies.: ból głowy / migrenowe / leczenie doraźne',
-          (mg.dniBoluGlowy || '—') + ' / ' + (mg.dniMigrenowe || '—') + ' / ' + (mg.dniDorzane || '—')],
-        ['Czas trwania napadu', label('mgCzas', mg.czasTrwania)],
-        ['Objawy towarzyszące', skroty('mgObjawy', mg.objawy)],
         ['Aura', label('mgAura', mg.aura) + (mg.aura !== 'nie' && mg.aura !== 'nw' && mg.aura ? ' (' + label('mgAuraCzas', mg.auraCzas) + ')' : '')],
         ['Aura — objawy wymagające ostrożności', skroty('mgAuraOst', mg.auraOstroznosc)],
         ['Czerwone flagi', skroty('mgCzFlagi', mg.czFlagi)],
@@ -245,9 +241,6 @@
         ['Skuteczność po 2 h', label('mgSkutecznosc', mg.skutecznosc2h)],
         ['Nawrót w 24–48 h', label('mgNawrot', mg.nawrot)],
         ['Wczesne wymioty', label('mgWymioty', mg.wymioty)],
-        ['Dni stosowania leków: analgetyki / tryptany / złożone / opioidy / inne',
-          ((mg.mohDni || {}).paracetamolNlpz || '—') + ' / ' + ((mg.mohDni || {}).tryptany || '—') + ' / ' + ((mg.mohDni || {}).zlozone || '—') + ' / ' + ((mg.mohDni || {}).opioidy || '—') + ' / ' + ((mg.mohDni || {}).inne || '—')],
-        ['Status ryzyka MOH', label('mgMohStatus', mg.mohStatus)],
         ['Profilaktyka — kryteria', skroty('mgProfKryteria', mg.profilaktykaKryteria)],
         ['Profilaktyka stosowana', label('mgProfStos', mg.profilaktykaStosowana) + (mg.profilaktykaStosowana === 'tak'
           ? ' — lek: ' + ((mg.profilaktykaSzczegoly || {}).lek || '—') + ', dawka: ' + ((mg.profilaktykaSzczegoly || {}).dawka || '—') + ', od: ' + ((mg.profilaktykaSzczegoly || {}).odkiedy || '—') + ', regularnie: ' + ((mg.profilaktykaSzczegoly || {}).regularnie === 'tak' ? 'tak' : (mg.profilaktykaSzczegoly || {}).regularnie === 'nie' ? 'nie' : '—') : '')],
@@ -290,7 +283,6 @@
     const mg = s.migrena || {};
     if (hasAny(mg)) {
       if (mg.klasyfikacja) wiersze.push(['Migrena — klasyfikacja', mg.klasyfikacja]);
-      if (mg.mohStatus) wiersze.push(['Migrena — ryzyko MOH', label('mgMohStatus', mg.mohStatus)]);
       if (mg.dalszyKrok) wiersze.push(['Migrena — dalszy krok', label('mgKrok', mg.dalszyKrok)]);
     }
     out.push(sekcja('Podsumowanie', wiersze, flagaLista(flagi)));
