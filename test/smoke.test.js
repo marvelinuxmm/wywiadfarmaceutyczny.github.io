@@ -71,7 +71,7 @@ console.log('OK');
 
 console.log('--- G.OPCJE — format i kompletność ---');
 const DOMENY = [
-  'plec', 'ciaza', 'takNieNw', 'jednostkaKreatyniny', 'albuminuria', 'uacrJednostka',
+  'plec', 'ciaza', 'takNieNw', 'tryb', 'jednostkaKreatyniny', 'albuminuria', 'uacrJednostka',
   'marsPytania', 'marsSkala',
   'skalaOcena', 'wplywPytania', 'wplyw', 'obLokalizacje', 'obCharakter', 'obPrzebieg', 'zmniejsza',
   'skalaTryb', 'ulga', 'satysfakcja', 'miedzy', 'dnLista', 'dnOdp', 'dnKorygowane', 'zmiana', 'statusKontroli',

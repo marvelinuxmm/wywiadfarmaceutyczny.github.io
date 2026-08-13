@@ -85,7 +85,7 @@
     tb.innerHTML = '';
     const s = G.State.get();
     if (!s.leki.length) {
-      tb.appendChild(h('tr', {}, [
+      tb.appendChild(h('tr', { class: 'pusty-wiersz' }, [
         h('td', { colspan: '4', class: 'hint', text: 'Brak dodanych leków — kliknij „Dodaj lek”.' })
       ]));
       return;
@@ -257,10 +257,15 @@
     /* Synchronizacja wartości pól ze stanu (radio/checkbox/textarea) */
     UI.sync(root);
 
-    /* Tabela leków — przebudowa tylko przy zmianie liczby wierszy;
-       po przebudowie wiersze są puste, więc uzupełnij je ze stanu */
+    /* Tabela leków — przebudowa tylko, gdy struktura nie zgadza się ze stanem
+       (pusty stan = wiersz „Brak dodanych leków”; po przebudowie wiersze są
+       puste, więc uzupełnij je ze stanu) */
     const tb = q('#tbody-leki');
-    if (tb.children.length !== s.leki.length) {
+    const maPusty = !!tb.querySelector('.pusty-wiersz');
+    const strukturaOk = s.leki.length === 0
+      ? (tb.children.length === 1 && maPusty)
+      : (tb.children.length === s.leki.length && !maPusty);
+    if (!strukturaOk) {
       renderRows();
       syncRows();
     } else {

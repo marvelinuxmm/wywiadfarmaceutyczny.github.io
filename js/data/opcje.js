@@ -13,6 +13,7 @@
     plec: [['k', 'Kobieta'], ['m', 'Mężczyzna']],
     ciaza: [['tak', 'Tak'], ['nie', 'Nie'], ['nda', 'Nie dotyczy'], ['nw', 'Nie wiem']],
     takNieNw: [['tak', 'Tak'], ['nie', 'Nie'], ['nw', 'Nie wiem']],
+    tryb: [['dorazne', 'Doraźnie'], ['przewlekle', 'Przewlekle']],
     jednostkaKreatyniny: [['mgdl', 'mg/dL'], ['umol', 'µmol/L']],
     albuminuria: [
       ['brak', 'Brak danych'], ['a1', 'Prawidłowa / A1'], ['a2', 'Umiarkowanie zwiększona / A2'],
