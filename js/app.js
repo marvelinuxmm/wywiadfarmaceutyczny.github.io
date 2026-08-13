@@ -6,7 +6,7 @@
   const TABS = [
     { id: 'profil', label: '1. Profil pacjenta i choroby współistniejące', enabled: true },
     { id: 'farmakoterapia', label: '2. Farmakoterapia', enabled: true },
-    { id: 'mars5', label: '3. MARS-5 i stosowanie leczenia', enabled: true },
+    { id: 'mars5', label: '3. MARS-5 (przestrzeganie zaleceń)', enabled: true },
     { id: 'ocena', label: '4. Ocena bólu', enabled: true },
     { id: 'kontrola', label: '5. Kontrola bólu', enabled: true },
     { id: 'bolglowy', label: '6. Ból głowy', enabled: 'dynamic' },
@@ -19,22 +19,46 @@
   function initTabs() {
     const bar = document.getElementById('tabs');
     TABS.forEach(function (t) {
+      const kropka = t.label.indexOf('.');
+      const num = kropka > -1 ? t.label.slice(0, kropka) : '';
+      const txt = kropka > -1 ? t.label.slice(kropka + 1).trim() : t.label;
       const btn = h('button', {
         class: 'tab-btn',
         type: 'button',
-        text: t.label,
         disabled: t.enabled ? undefined : '',
         title: t.enabled ? '' : 'Moduł w przygotowaniu',
         onclick: function () { switchTab(t.id); }
-      });
+      }, [
+        h('span', { class: 'tab-num', text: num }),
+        h('span', { class: 'tab-txt', text: txt })
+      ]);
       btn.setAttribute('data-tab-id', t.id);
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-controls', 'tab-content');
+      btn.setAttribute('aria-label', t.label);
       bar.appendChild(btn);
+    });
+    /* Nawigacja klawiaturą (strzałki / Home / End) między zakładkami */
+    bar.addEventListener('keydown', function (e) {
+      if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].indexOf(e.key) === -1) return;
+      const btns = Array.prototype.slice.call(bar.querySelectorAll('.tab-btn:not(:disabled)'));
+      const idx = btns.indexOf(document.activeElement);
+      if (idx === -1) return;
+      e.preventDefault();
+      let next;
+      if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = btns.length - 1;
+      else next = (idx + (e.key === 'ArrowRight' ? 1 : -1) + btns.length) % btns.length;
+      btns[next].focus();
+      switchTab(btns[next].getAttribute('data-tab-id'));
     });
   }
 
   function updateTabBar() {
     document.querySelectorAll('.tab-btn').forEach(function (b) {
-      b.classList.toggle('active', b.getAttribute('data-tab-id') === active);
+      const jest = b.getAttribute('data-tab-id') === active;
+      b.classList.toggle('active', jest);
+      b.setAttribute('aria-selected', jest ? 'true' : 'false');
     });
   }
 
@@ -52,6 +76,35 @@
   function migrenaAktywna() {
     const s = G.State.get();
     return !!(s.bolGlowy && s.bolGlowy.interpretacja === 'migrena');
+  }
+
+  /* Czy zakładka ma wypełnione kluczowe dane (wskaźnik ukończenia w pasku zakładek).
+     Kryteria oparte na substancjalnych odpowiedziach — samo otwarcie zakładki
+     (np. auto-uzupełnienie daty w 4.1) nie zaznacza zakładki jako ukończonej. */
+  function tabUkonczony(id, s) {
+    const wyp = function (v) { return v !== '' && v !== null && v !== undefined; };
+    const anyTrue = function (obj) { return Object.keys(obj || {}).some(function (k) { return obj[k]; }); };
+    if (id === 'profil') return !!(s.dataUrodzenia && s.plec);
+    if (id === 'farmakoterapia') return !!(s.leki && s.leki.length);
+    if (id === 'mars5') return ['m1', 'm2', 'm3', 'm4', 'm5'].every(function (k) { return s.mars5[k] !== ''; });
+    if (id === 'ocena') {
+      const ob = s.ocenaBolu || {};
+      return wyp(ob.nrsAktualne) || wyp(ob.nrsSrednie) || anyTrue(ob.lokalizacja) || anyTrue(ob.charakter) ||
+        Object.keys(ob.wplyw || {}).some(function (k) { return wyp(ob.wplyw[k]); }) ||
+        wyp(ob.przebieg) || wyp(ob.leczenieZmniejsza);
+    }
+    if (id === 'kontrola') {
+      const kb = s.kontrolaBolu || {};
+      return wyp(kb.nrsAktualne) || wyp(kb.nrsSrednie) || wyp(kb.nrsSpoczynek) || wyp(kb.nrsRuch) ||
+        wyp(kb.ulga) || wyp(kb.satysfakcja) || wyp(kb.miedzyDawkami) || wyp(kb.dzialaniaNiepozadane) ||
+        wyp(kb.statusKontroli) || wyp(kb.dalszePostepowanie);
+    }
+    if (id === 'bolglowy') {
+      return bolGlowyAktywna() && !!(s.bolGlowy.nrs !== '' || Object.keys(s.bolGlowy.lokalizacja || {}).length);
+    }
+    if (id === 'migrena') return migrenaAktywna() && s.migrena.rozpoznana !== '';
+    if (id === 'podsumowanie') return s.epikryzaKoncowa !== '';
+    return false;
   }
 
   function renderContent() {
@@ -72,7 +125,7 @@
     } else if (active === 'migrena') {
       G.Tab7.init(c);
     } else if (active === 'podsumowanie') {
-      G.Tab9.init(c);
+      G.Tab8.init(c);
     } else {
       c.appendChild(h('div', { class: 'card' }, [
         h('p', { class: 'hint', text: 'Moduł w przygotowaniu.' })
@@ -90,7 +143,7 @@
     if (G.Tab5) G.Tab5.apply();
     if (G.Tab6) G.Tab6.apply();
     if (G.Tab7) G.Tab7.apply();
-    if (G.Tab9) G.Tab9.apply();
+    if (G.Tab8) G.Tab8.apply();
     /* Warunkowa dostępność zakładek 6 i 7 */
     const bgBtn = document.querySelector('.tab-btn[data-tab-id="bolglowy"]');
     if (bgBtn) {
@@ -106,6 +159,12 @@
       migBtn.title = aktyw ? '' : 'Wybierz interpretację „Migreną” w sekcji 6.7 (zakładka „Ból głowy”), aby odblokować.';
       if (!aktyw && active === 'migrena') switchTab('bolglowy');
     }
+
+    /* Wskaźniki ukończenia zakładek */
+    const s2 = G.State.get();
+    document.querySelectorAll('.tab-btn').forEach(function (b) {
+      b.classList.toggle('done', tabUkonczony(b.getAttribute('data-tab-id'), s2));
+    });
   }
 
   function renderFlags() {
@@ -115,7 +174,10 @@
     flags.sort(function (a, b) { return order[a.sev] - order[b.sev]; });
 
     panel.innerHTML = '';
-    panel.appendChild(h('h2', { class: 'flags-title', text: 'Alerty i flagi' }));
+    panel.appendChild(h('h2', { class: 'flags-title' }, [
+      'Alerty i flagi',
+      h('span', { class: 'flags-count', text: String(flags.length) })
+    ]));
     if (!flags.length) {
       panel.appendChild(h('div', { class: 'flags-empty', text: 'Brak aktywnych alertów.' }));
       return;
@@ -187,12 +249,35 @@
     initTabs();
     updateTabBar();
 
+    /* Modal potwierdzenia „Nowy pacjent” (zamiast natywnego confirm) */
+    const modal = h('div', { class: 'modal-overlay', style: { display: 'none' } }, [
+      h('div', { class: 'modal', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'modal-title' }, [
+        h('h3', { id: 'modal-title', class: 'modal-title', text: 'Rozpocząć nowy wywiad?' }),
+        h('p', { class: 'modal-text', text: 'Wszystkie dane obecnego wywiadu zostaną usunięte. Tej operacji nie można cofnąć.' }),
+        h('div', { class: 'modal-actions' }, [
+          h('button', { class: 'btn', type: 'button', 'data-modal-close': '', text: 'Anuluj' }),
+          h('button', { class: 'btn btn-danger-solid', type: 'button', id: 'btn-nowy-ok', text: 'Wyczyść i zacznij nowy' })
+        ])
+      ])
+    ]);
+    document.body.appendChild(modal);
+
+    function pokazModal(show) { modal.style.display = show ? '' : 'none'; }
+
     document.getElementById('btn-nowy').addEventListener('click', function () {
-      if (confirm('Wyczyścić dane wywiadu? Tej operacji nie można cofnąć.')) {
-        G.State.reset();
-        renderContent();
-        status('Rozpoczęto nowy wywiad.');
-      }
+      pokazModal(true);
+    });
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal || (e.target.closest && e.target.closest('[data-modal-close]'))) pokazModal(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') pokazModal(false);
+    });
+    document.getElementById('btn-nowy-ok').addEventListener('click', function () {
+      pokazModal(false);
+      G.State.reset();
+      renderContent();
+      status('Rozpoczęto nowy wywiad.');
     });
     document.getElementById('btn-import').addEventListener('click', function () {
       document.getElementById('import-file').click();

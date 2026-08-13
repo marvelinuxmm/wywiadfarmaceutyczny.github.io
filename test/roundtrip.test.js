@@ -56,6 +56,13 @@ assert.deepStrictEqual(merged.migrena.lekiDorzane, [2]);
 assert.strictEqual(merged.migrena.klasyfikacja, 'Migrena przewlekła');
 assert.strictEqual(merged.ocenaBolu.wplyw.nastroj, '', 'nieznane klucze zagnieżdżone ignorowane');
 
+// Migracja aury: dawny string ('wzrokowa') → mapa typów; nowa mapa przechodzi bez zmian
+const migAura = State.merge({ migrena: { aura: 'wzrokowa' } });
+assert.deepStrictEqual(migAura.migrena.aura, { wzrokowa: true });
+const migAuraMapa = State.merge({ migrena: { aura: { czuciowa: true, mowy: true } } });
+assert.deepStrictEqual(migAuraMapa.migrena.aura, { czuciowa: true, mowy: true });
+assert.deepStrictEqual(State.merge({ migrena: { aura: 'nie' } }).migrena.aura, {}, '„nie”/„nw” z dawnego exportu nie tworzą typów');
+
 // zepsute poddrzewa — nie wywala
 const zly2 = State.merge({ ocenaBolu: 'x', kontrolaBolu: null, migrena: { prodrom: 'nie' } });
 assert.strictEqual(zly2.ocenaBolu.data, '');

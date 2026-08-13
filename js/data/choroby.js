@@ -1,5 +1,5 @@
-/* Szczegółowe choroby współistniejące (zakładka 1, sekcja 3).
-   kategoria (grupy) — klucz checkboxa kategorii w sekcji 2;
+/* Szczegółowe choroby współistniejące (zakładka 1, sekcja 1.3).
+   kategoria (grupy) — klucz checkboxa kategorii w sekcji 1.2;
    kategoria (pozycje) — nadpisanie kategorii grupy (np. 'pchn'/'watroba' dla grupy 'nerki_watroba').
    Kategorie: sercowo, metaboliczne, nerki_watroba, przewodpokarmowy, oddechowe,
               neurologia, psychiczne, kostno, inne */

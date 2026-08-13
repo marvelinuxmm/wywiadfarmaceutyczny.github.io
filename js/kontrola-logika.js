@@ -1,5 +1,6 @@
-/* Logika oceny i kontroli bólu: sugerowany status kontroli, ryzyko MOH,
-   klasyfikacja migreny, komunikat o poradni leczenia bólu. Logika czysta, testowalna w Node. */
+/* Logika oceny i kontroli bólu: sugerowany status kontroli, kryteria profilaktyki,
+   klasyfikacja migreny, komunikat o poradni leczenia bólu. Logika czysta, testowalna w Node.
+   Ryzyko MOH jest liczone przez BolGlowy.sugerujMOH (zakładka 6) — tu nie jest powielane. */
 (function () {
   const G = typeof window !== 'undefined' ? window : globalThis;
 
@@ -50,38 +51,6 @@
     return { opcja: opcja, powody: powody };
   }
 
-  /* Ryzyko MOH (7.2). m = { paracetamolNlpz, tryptany, zlozone, opioidy, dniBoluGlowy }. */
-  function sugerujMOH(m) {
-    const an = num(m.paracetamolNlpz);
-    const tz = num(m.tryptany);
-    const zl = num(m.zlozone);
-    const op = num(m.opioidy);
-    const dgl = num(m.dniBoluGlowy);
-    const powody = [];
-    let status = 'niskie';
-
-    if ((tz !== null && tz >= 10) || (zl !== null && zl >= 10) || (op !== null && op >= 10) ||
-        (an !== null && an >= 15) || (dgl !== null && dgl >= 15)) {
-      status = 'wysokie';
-      if (tz !== null && tz >= 10) powody.push('tryptany ≥10 dni/mies.');
-      if (zl !== null && zl >= 10) powody.push('leki złożone ≥10 dni/mies.');
-      if (op !== null && op >= 10) powody.push('opioidy ≥10 dni/mies.');
-      if (an !== null && an >= 15) powody.push('proste analgetyki/NLPZ ≥15 dni/mies.');
-      if (dgl !== null && dgl >= 15) powody.push('ból głowy ≥15 dni/mies. (jeśli utrzymuje się >3 mies. — ryzyko MOH znaczne)');
-    } else if ((tz !== null && tz >= 8) || (zl !== null && zl >= 8) || (op !== null && op >= 8) ||
-               (an !== null && an >= 10)) {
-      status = 'mozliwe';
-      if (tz !== null && tz >= 8) powody.push('tryptany ≥8 dni/mies.');
-      if (zl !== null && zl >= 8) powody.push('leki złożone ≥8 dni/mies.');
-      if (op !== null && op >= 8) powody.push('opioidy ≥8 dni/mies.');
-      if (an !== null && an >= 10) powody.push('proste analgetyki/NLPZ ≥10 dni/mies.');
-    } else {
-      powody.push('liczby dni stosowania leków doraźnych poniżej progów ryzyka');
-    }
-
-    return { status: status, powody: powody };
-  }
-
   /* Klasyfikacja robocza migreny (uproszczona, na podstawie dni bólu głowy z 6.3). */
   function sugerujKlasyfikacja(dniBoluGlowy) {
     const dgl = num(dniBoluGlowy);
@@ -110,7 +79,8 @@
       }),
       nieskuteczne: d.skutecznosc2h === 'brak',
       'czeste-dorzane': czeste,
-      aura: d.aura !== '' && d.aura !== 'nie' && d.aura !== 'nw',
+      /* aura = mapa typów aury (7.3); „nw” (nie wiem) nie liczy się jako aura */
+      aura: Object.keys(d.aura || {}).some(function (k) { return k !== 'nw' && d.aura[k]; }),
       przewlekla: dni !== null && dni >= 15
     };
   }
@@ -128,7 +98,6 @@
 
   G.Kontrola = {
     sugerujStatusKontroli: sugerujStatusKontroli,
-    sugerujMOH: sugerujMOH,
     sugerujKlasyfikacja: sugerujKlasyfikacja,
     sugerujProfilaktyka: sugerujProfilaktyka,
     komunikatPoradnia: komunikatPoradnia

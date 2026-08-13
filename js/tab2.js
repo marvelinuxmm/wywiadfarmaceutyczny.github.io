@@ -4,16 +4,9 @@
   const h = UI.h;
   const G = typeof window !== 'undefined' ? window : globalThis;
 
-  const TRYB = [['', '—'], ['dorazne', 'Doraźnie'], ['przewlekle', 'Przewlekle']];
+  const TRYB = [['', '—']].concat(G.OPCJE.tryb);
 
   let root = null;
-
-  function radio(name, value, label, dataState) {
-    return h('label', { class: 'radio' }, [
-      h('input', { type: 'radio', name: name, value: value, 'data-state': dataState || name }),
-      h('span', { text: label })
-    ]);
-  }
 
   const td = function (c) { return h('td', {}, c); };
   const th = function (t) { return h('th', { text: t }); };
@@ -262,12 +255,7 @@
     const s = G.State.get();
 
     /* Synchronizacja wartości pól ze stanu (radio/checkbox/textarea) */
-    root.querySelectorAll('[data-state]').forEach(function (inp) {
-      const v = G.State.getPath(inp.getAttribute('data-state'));
-      if (inp.type === 'checkbox') inp.checked = !!v;
-      else if (inp.type === 'radio') inp.checked = (inp.value === v);
-      else inp.value = (v == null) ? '' : v;
-    });
+    UI.sync(root);
 
     /* Tabela leków — przebudowa tylko przy zmianie liczby wierszy;
        po przebudowie wiersze są puste, więc uzupełnij je ze stanu */

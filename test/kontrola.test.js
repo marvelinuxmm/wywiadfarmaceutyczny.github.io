@@ -1,4 +1,4 @@
-/* Testy logiki kontroli bólu: status kontroli, MOH, klasyfikacja, poradnia. Uruchom: node test/kontrola.test.js */
+/* Testy logiki kontroli bólu: status kontroli, klasyfikacja, profilaktyka, poradnia. Uruchom: node test/kontrola.test.js */
 const assert = require('assert');
 require('../js/kontrola-logika.js');
 const K = globalThis.Kontrola;
@@ -19,18 +19,6 @@ assert.strictEqual(K.sugerujStatusKontroli(st({ dnLista: { sennosc: true } })).o
 assert.ok(K.sugerujStatusKontroli(st({ nrsSrednie: '7' })).powody.length >= 1);
 console.log('OK');
 
-console.log('--- Ryzyko MOH ---');
-const moh = (over) => Object.assign({ paracetamolNlpz: '', tryptany: '', zlozone: '', opioidy: '', dniBoluGlowy: '' }, over);
-assert.strictEqual(K.sugerujMOH(moh({})).status, 'niskie');
-assert.strictEqual(K.sugerujMOH(moh({ tryptany: '8' })).status, 'mozliwe');
-assert.strictEqual(K.sugerujMOH(moh({ paracetamolNlpz: '10' })).status, 'mozliwe');
-assert.strictEqual(K.sugerujMOH(moh({ tryptany: '10' })).status, 'wysokie');
-assert.strictEqual(K.sugerujMOH(moh({ paracetamolNlpz: '15' })).status, 'wysokie');
-assert.strictEqual(K.sugerujMOH(moh({ opioidy: '12' })).status, 'wysokie');
-assert.strictEqual(K.sugerujMOH(moh({ dniBoluGlowy: '20' })).status, 'wysokie');
-assert.strictEqual(K.sugerujMOH(moh({ zlozone: '6', tryptany: '4' })).status, 'niskie');
-console.log('OK');
-
 console.log('--- Klasyfikacja migreny (z 6.3) ---');
 assert.deepStrictEqual(K.sugerujKlasyfikacja(''), { label: '', opis: '' });
 assert.strictEqual(K.sugerujKlasyfikacja('5').label, 'Migrena epizodyczna');
@@ -39,7 +27,7 @@ assert.strictEqual(K.sugerujKlasyfikacja('15').label, 'Migrena przewlekła');
 assert.strictEqual(K.sugerujKlasyfikacja('20').label, 'Migrena przewlekła');
 console.log('OK');
 
-console.log('--- Kryteria profilaktyki (7.8) ---');
+console.log('--- Kryteria profilaktyki (7.5) ---');
 const pr = (over) => Object.assign({
   czasTrwania: '', dniWMiesiacu: '', mohDni: {}, wplyw: {}, skutecznosc2h: '', aura: ''
 }, over);
@@ -57,8 +45,10 @@ assert.strictEqual(K.sugerujProfilaktyka(pr({ skutecznosc2h: 'poprawa' })).niesk
 assert.strictEqual(K.sugerujProfilaktyka(pr({ mohDni: { tryptany: '8' } }))['czeste-dorzane'], true);
 assert.strictEqual(K.sugerujProfilaktyka(pr({ mohDni: { tryptany: '7', paracetamolNlpzAsa: '7' } }))['czeste-dorzane'], false);
 assert.strictEqual(K.sugerujProfilaktyka(pr({ mohDni: { zlozone: '9' } }))['czeste-dorzane'], true);
-assert.strictEqual(K.sugerujProfilaktyka(pr({ aura: 'wzrokowa' })).aura, true);
-assert.strictEqual(K.sugerujProfilaktyka(pr({ aura: 'nie' })).aura, false);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ aura: { wzrokowa: true } })).aura, true);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ aura: { czuciowa: true, mowy: true } })).aura, true);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ aura: {} })).aura, false);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ aura: { nw: true } })).aura, false, '„nie wiem” nie liczy się jako aura');
 assert.strictEqual(K.sugerujProfilaktyka(pr({ dniWMiesiacu: '15' })).przewlekla, true);
 assert.strictEqual(K.sugerujProfilaktyka(pr({ dniWMiesiacu: '10' })).przewlekla, false);
 console.log('OK');

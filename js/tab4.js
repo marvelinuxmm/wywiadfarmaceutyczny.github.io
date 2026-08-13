@@ -3,61 +3,23 @@
   const h = UI.h;
   const G = typeof window !== 'undefined' ? window : globalThis;
 
-  const SKALE = [['nrs', 'NRS 0-10'], ['vas', 'VAS'], ['vrs', 'VRS'], ['fps', 'FPS'], ['inna', 'Inna']];
-  const WPLYW_FIELDS = [
-    ['nastroj', 'Czy ból wpływa na nastrój?'],
-    ['sen', 'Czy ból wpływa na sen?'],
-    ['funkcjonowanie', 'Czy ból wpływa na codzienne funkcjonowanie?'],
-    ['praca', 'Czy ból wpływa na pracę zawodową?']
-  ];
-  const WPLYW_OPCJE = [['nie', 'Nie'], ['umiarkowanie', 'Umiarkowanie'], ['znacznie', 'Znacznie']];
-  const LOKALIZACJE = [
-    ['glowa', 'Głowa'], ['twarz', 'Twarz / okolica szczękowo-twarzowa'], ['szyja', 'Szyja'],
-    ['bark', 'Bark / kończyna górna'], ['kr_szyjny', 'Kręgosłup szyjny'], ['kr_piersiowy', 'Kręgosłup piersiowy'],
-    ['kr_ledzwiowy', 'Kręgosłup lędźwiowo-krzyżowy'], ['klatka', 'Klatka piersiowa'], ['brzuch', 'Brzuch'],
-    ['miednica', 'Miednica'], ['biodro', 'Biodro / kończyna dolna'], ['stopy', 'Stopy'],
-    ['wielomiejscowy', 'Ból wielomiejscowy'], ['inne', 'Inne']
-  ];
-  const CHARAKTER = [
-    ['tepy', 'Tępy'], ['ostry', 'Ostry'], ['piekacy', 'Piekący / palący'], ['klujacy', 'Kłujący'],
-    ['razenie', 'Jak rażenie prądem'], ['pulsujacy', 'Pulsujący'], ['uciskajacy', 'Uciskający'],
-    ['rozpierajacy', 'Rozpierający'], ['dretwienie', 'Drętwienie / mrowienie'], ['inny', 'Inny']
-  ];
-  const PRZEBIEG = [
-    ['staly', 'Stały'], ['nawracajacy', 'Nawracający'], ['napadowy', 'Napadowy'], ['zmienny', 'Zmienny w ciągu dnia']
-  ];
-  const ZMNIEJSZA = [
-    ['tak', 'Tak, wyraźnie'], ['czesciowo', 'Częściowo'], ['nie', 'Nie'],
-    ['trudno', 'Trudno powiedzieć'], ['brak-leczenia', 'Pacjent nie stosuje leczenia przeciwbólowego']
-  ];
+  const SKALE = G.OPCJE.skalaOcena;
+  const WPLYW_FIELDS = G.OPCJE.wplywPytania;
+  const WPLYW_OPCJE = G.OPCJE.wplyw;
+  const LOKALIZACJE = G.OPCJE.obLokalizacje;
+  const CHARAKTER = G.OPCJE.obCharakter;
+  const PRZEBIEG = G.OPCJE.obPrzebieg;
+  const ZMNIEJSZA = G.OPCJE.zmniejsza;
 
   let root = null;
 
-  function radio(name, value, label, dataState) {
-    return h('label', { class: 'radio' }, [
-      h('input', { type: 'radio', name: name, value: value, 'data-state': dataState || name }),
-      h('span', { text: label })
-    ]);
-  }
-
-  function checkboxState(path, id, label) {
-    return h('label', { class: 'checkbox' }, [
-      h('input', { type: 'checkbox', 'data-state': path + '.' + id }),
-      h('span', { text: label })
-    ]);
-  }
-
-  function nrsField(dataState, label, id) {
-    return h('div', { class: 'field' }, [
-      h('label', { class: 'ctl' }, [label]),
-      h('input', { type: 'number', id: id, min: '0', max: '10', step: '1', 'data-state': dataState }),
-      h('div', { class: 'hint', text: '0–10 (0 = brak bólu, 10 = najsilniejszy ból)' })
-    ]);
-  }
+  const radio = UI.radio;
+  const checkboxState = UI.checkbox;
+  const nrsField = UI.nrsField;
 
   function buildDane() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '4.1' }), 'Dane oceny']),
+      h('h2', {}, [h('span', { class: 'num', text: '4.1' }), 'Data oceny']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Data oceny bólu']),
         h('input', { type: 'date', id: 'ob-data', 'data-state': 'ocenaBolu.data' })
@@ -81,8 +43,8 @@
     return h('section', { class: 'card' }, [
       h('h2', {}, [h('span', { class: 'num', text: '4.3' }), 'Natężenie bólu']),
       h('div', { class: 'grid' }, [
-        nrsField('ocenaBolu.nrsAktualne', 'Aktualne natężenie bólu', 'ob-nrs-akt'),
-        nrsField('ocenaBolu.nrsSrednie', 'Średnie natężenie bólu w ostatnim tygodniu', 'ob-nrs-sr')
+        nrsField('ocenaBolu.nrsAktualne', 'Aktualne natężenie bólu', 'ob-nrs-akt', '0–10 (0 = brak bólu, 10 = najsilniejszy ból)'),
+        nrsField('ocenaBolu.nrsSrednie', 'Średnie natężenie bólu w ostatnim tygodniu', 'ob-nrs-sr', '0–10 (0 = brak bólu, 10 = najsilniejszy ból)')
       ])
     ]);
   }
@@ -209,12 +171,7 @@
     }
 
     /* Synchronizacja wartości pól */
-    root.querySelectorAll('[data-state]').forEach(function (inp) {
-      const v = G.State.getPath(inp.getAttribute('data-state'));
-      if (inp.type === 'checkbox') inp.checked = !!v;
-      else if (inp.type === 'radio') inp.checked = (inp.value === v);
-      else inp.value = (v == null) ? '' : v;
-    });
+    UI.sync(root);
 
     /* Wybór leków na ból */
     const cel = 'ocenaBolu.lekiNaBol';

@@ -3,60 +3,27 @@
   const h = UI.h;
   const G = typeof window !== 'undefined' ? window : globalThis;
 
-  const SKALE_LABEL = { nrs: 'NRS 0-10', vas: 'VAS', vrs: 'VRS', fps: 'FPS', inna: 'Inna' };
-  const SKALA_TRYB = [['ta-sama', 'Ta sama skala co poprzednio'], ['inna', 'Inna skala']];
-  const ULGA = [
-    ['calkowita', 'Całkowita ulga w bólu'], ['umiarkowana', 'Umiarkowana ulga w bólu'],
-    ['mala', 'Mała ulga w bólu'], ['brak', 'Brak ulgi w bólu']
-  ];
-  const SATYSFAKCJA = [
-    ['duza', 'Duża satysfakcja'], ['umiarkowana', 'Umiarkowana satysfakcja'],
-    ['mala', 'Mała satysfakcja'], ['brak', 'Brak satysfakcji']
-  ];
-  const MIEDZY = [['tak', 'Tak'], ['nie', 'Nie'], ['nda', 'Nie dotyczy'], ['trudno', 'Trudno ocenić']];
-  const DN = [
-    ['sennosc', 'Senność / spowolnienie'], ['zawroty', 'Zawroty głowy'], ['nudnosci', 'Nudności / wymioty'],
-    ['zaparcia', 'Zaparcia'], ['zoladek', 'Dolegliwości żołądkowe'], ['krwawienie', 'Krwawienie / smoliste stolce'],
-    ['obrzeki', 'Obrzęki'], ['dusznosc', 'Duszność'], ['splatanie', 'Splątanie'], ['upadki', 'Upadki'],
-    ['wysypka', 'Wysypka / świąd'], ['inne', 'Inne']
-  ];
-  const DN_ODP = [['nie', 'Nie'], ['tak', 'Tak'], ['nw', 'Nie wiem']];
-  const DN_KORYGOWANE = [['tak', 'Tak'], ['nie', 'Nie'], ['nda', 'Nie dotyczy'], ['wymaga', 'Wymaga oceny']];
-  const ZMIANA = [['nie', 'Nie'], ['tak', 'Tak'], ['nw', 'Nie wiem']];
-  const STATUS = [
-    ['dobra', 'Dobra kontrola bólu'],
-    ['czesciowa', 'Częściowa kontrola bólu'],
-    ['niewystarczajaca', 'Niewystarczająca kontrola bólu'],
-    ['trudna', 'Kontrola trudna do oceny']
-  ];
+  const SKALE_LABEL = {};
+  G.OPCJE.skalaOcena.forEach(function (p) { SKALE_LABEL[p[0]] = p[1]; });
+  const SKALA_TRYB = G.OPCJE.skalaTryb;
+  const ULGA = G.OPCJE.ulga;
+  const SATYSFAKCJA = G.OPCJE.satysfakcja;
+  const MIEDZY = G.OPCJE.miedzy;
+  const DN = G.OPCJE.dnLista;
+  const DN_ODP = G.OPCJE.dnOdp;
+  const DN_KORYGOWANE = G.OPCJE.dnKorygowane;
+  const ZMIANA = G.OPCJE.zmiana;
+  const STATUS = G.OPCJE.statusKontroli;
 
   let root = null;
 
-  function radio(name, value, label, dataState) {
-    return h('label', { class: 'radio' }, [
-      h('input', { type: 'radio', name: name, value: value, 'data-state': dataState || name }),
-      h('span', { text: label })
-    ]);
-  }
-
-  function checkboxState(path, id, label) {
-    return h('label', { class: 'checkbox' }, [
-      h('input', { type: 'checkbox', 'data-state': path + '.' + id }),
-      h('span', { text: label })
-    ]);
-  }
-
-  function nrsField(dataState, label, id) {
-    return h('div', { class: 'field' }, [
-      h('label', { class: 'ctl' }, [label]),
-      h('input', { type: 'number', id: id, min: '0', max: '10', step: '1', 'data-state': dataState }),
-      h('div', { class: 'hint', text: '0–10' })
-    ]);
-  }
+  const radio = UI.radio;
+  const checkboxState = UI.checkbox;
+  const nrsField = UI.nrsField;
 
   function buildDane() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '5.1' }), 'Dane kontroli']),
+      h('h2', {}, [h('span', { class: 'num', text: '5.1' }), 'Data kontroli']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Data kontroli bólu']),
         h('input', { type: 'date', id: 'kb-data', 'data-state': 'kontrolaBolu.data' })
@@ -230,22 +197,14 @@
       buildMiedzyDawkami(), buildDN(), buildStosowanie(), buildStatus(), buildDecyzja(), buildEpikryza()];
   }
 
-  function handleInput(e) {
-    const t = e.target;
-    const key = t.getAttribute && t.getAttribute('data-state');
-    if (key) {
-      G.State.set(key, t.type === 'checkbox' ? t.checked : t.value);
-    }
-  }
-
   function init(container) {
     root = container;
     const cards = build();
     cards.forEach(function (c) { root.appendChild(c); });
-    root.removeEventListener('input', handleInput);
-    root.removeEventListener('change', handleInput);
-    root.addEventListener('input', handleInput);
-    root.addEventListener('change', handleInput);
+    root.removeEventListener('input', UI.handleStateInput);
+    root.removeEventListener('change', UI.handleStateInput);
+    root.addEventListener('input', UI.handleStateInput);
+    root.addEventListener('change', UI.handleStateInput);
   }
 
   function apply() {
@@ -257,12 +216,7 @@
     const K = G.Kontrola;
 
     /* Synchronizacja wartości pól */
-    root.querySelectorAll('[data-state]').forEach(function (inp) {
-      const v = G.State.getPath(inp.getAttribute('data-state'));
-      if (inp.type === 'checkbox') inp.checked = !!v;
-      else if (inp.type === 'radio') inp.checked = (inp.value === v);
-      else inp.value = (v == null) ? '' : v;
-    });
+    UI.sync(root);
 
     /* Poprzednia ocena (z zakładki 4) */
     const ob = s.ocenaBolu || {};
@@ -290,7 +244,7 @@
     const m = G.Mars5.score(s.mars5);
     q('#kb-mars5').textContent = m
       ? 'Wynik ostatniej oceny: ' + m.sum + ' / 25 (średnia ' + m.mean.toFixed(1).replace('.', ',') + ' / 5). ' + m.interp.label
-      : 'Brak wyniku — uzupełnij zakładkę „MARS-5 i stosowanie leczenia”.';
+      : 'Brak wyniku — uzupełnij kwestionariusz MARS-5 (zakładka 3).';
 
     /* Auto-sugestia statusu kontroli */
     const k = s.kontrolaBolu;

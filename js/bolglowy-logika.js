@@ -22,7 +22,7 @@
     return 'silny';
   }
 
-  /* 6.2 Podejrzenie nadużywania leków (MOH). m = { paracetamolNlpzAsa, zlozone, tryptany, opioidyKodeina, dniBoluGlowy }. */
+  /* 6.6 Podejrzenie nadużywania leków (MOH). m = { paracetamolNlpzAsa, zlozone, tryptany, opioidyKodeina, dniBoluGlowy }. */
   function sugerujMOH(m) {
     const an = num(m.paracetamolNlpzAsa);
     const zl = num(m.zlozone);
@@ -63,7 +63,7 @@
     return cechy.length ? cechy.join(', ') : 'cechy migrenowe';
   }
 
-  /* 7.1 Wstępna interpretacja. d = pełny fragment stanu bolGlowy. */
+  /* 6.7 Wstępna interpretacja. d = pełny fragment stanu bolGlowy. */
   function sugerujInterpretacje(d) {
     if (anyTrueExceptBrak(d.alarmowe)) {
       return { opcja: 'wtorny', powody: ['obecne objawy alarmowe — ból wymaga konsultacji lekarskiej'], tthScore: 0, migrenaScore: 0 };
@@ -113,7 +113,7 @@
     return { opcja: 'trudno', powody: ['nie można jednoznacznie ocenić obrazu — rozważ pogłębienie wywiadu'], tthScore: tthScore, migrenaScore: migrenaScore };
   }
 
-  /* 7.2 Kryteria wspierające napięciowy ból głowy. */
+  /* 6.7 Kryteria wspierające napięciowy ból głowy. */
   function kryteriaTTH(d) {
     return [
       { id: 'lok', label: 'Obustronna lokalizacja', met: !!d.lokalizacja.obustronny },

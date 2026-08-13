@@ -102,7 +102,7 @@
     ];
     out.push(sekcja('1. Dane pacjenta', daneRows));
 
-    /* 2. Choroby współistniejące + panel nerkowy */
+    /* 2. Choroby współistniejące */
     const chRows = [];
     const kat = [];
     Object.keys(s.choroby || {}).forEach(function (k) {
@@ -121,19 +121,20 @@
     const psychAktywny = s.psychAktywny === 'tak' ? 'Tak' : s.psychAktywny === 'nie' ? 'Nie' : s.psychAktywny === 'nw' ? 'Nie wiem' : '—';
     chRows.push(['Zdrowie psychiczne — aktywność', s.choroby.psychiczne ? psychAktywny : '—']);
 
+    /* 3. Funkcja nerek */
     const egfr = (scr !== null && s.plec && ageOk) ? Calc.ckdEpi(scr, age, s.plec) : null;
     const wybMasa = masa !== null && s.plec ? Calc.crclWeight(s.plec, masa, wzrost !== null && wzrost >= 130 && wzrost <= 230 ? wzrost : null) : null;
     const crcl = (scr !== null && s.plec && ageOk && wybMasa) ? Calc.cockcroftGault(scr, age, wybMasa.weight, s.plec) : null;
     const nerkowe = [
       ['Kreatynina', scr !== null ? scr.toFixed(2).replace('.', ',') + ' mg/dL' + ' (' + s.dataKreatyniny + ')' : '—'],
-      ['Albuminuria', label('albuminuria', s.albuminuria) + (s.albuminuria === 'liczba' && s.uacr ? ' (UACR ' + s.uacr + ' ' + (s.uacrJednostka === 'mgg' ? 'mg/g' : 'mg/mmol') + ')' : '')],
+      ['Albuminuria', label('albuminuria', s.albuminuria) + (s.albuminuria === 'liczba' && s.uacr ? ' (UACR ' + s.uacr + ' ' + label('uacrJednostka', s.uacrJednostka) + ')' : '')],
       ['eGFR (CKD-EPI 2021)', egfr !== null ? Math.round(egfr) + ' ml/min/1,73 m² — ' + Calc.egfrBand(egfr).label : '—'],
       ['CrCL (Cockcroft-Gault)', crcl !== null ? Math.round(crcl) + ' ml/min (masa ' + wybMasa.mode + ' ' + wybMasa.weight.toFixed(1).replace('.', ',') + ' kg) — ' + Calc.crclBand(crcl).label : '—']
     ];
     out.push(sekcja('2. Choroby współistniejące', chRows));
-    out.push(sekcja('2a. Funkcja nerek', nerkowe));
+    out.push(sekcja('3. Funkcja nerek', nerkowe));
 
-    /* 3. Farmakoterapia */
+    /* 4. Farmakoterapia */
     const ryzyko = G.Ryzyko.compute(s);
     const lekiRows = (s.leki || []).map(function (l) {
       return ['<b>' + (l.nazwa || '(bez nazwy)') + '</b>' + (l.moc ? ' ' + l.moc : '') + (l.postac ? ' ' + l.postac : ''),
@@ -156,18 +157,18 @@
       ]) : null,
       epikryzaBlock(s.epikryzaFarmakoterapii, '')
     ]);
-    out.push(sekcja('3. Farmakoterapia', lekiRows, farmExtra));
+    out.push(sekcja('4. Farmakoterapia', lekiRows, farmExtra));
 
-    /* 4. MARS-5 */
+    /* 5. Przestrzeganie zaleceń (MARS-5) */
     const mars = G.Mars5.score(s.mars5);
-    out.push(sekcja('4. Przestrzeganie zaleceń (MARS-5)', [
+    out.push(sekcja('5. Przestrzeganie zaleceń (MARS-5)', [
       ['Wynik MARS-5', mars ? mars.sum + ' / 25 (średnia ' + mars.mean.toFixed(1).replace('.', ',') + ' / 5)' : '—'],
       ['Interpretacja', mars ? mars.interp.label : '—'],
       ['Z czym są problemy', str(s.marsProblemy)],
       ['Jak pomóc pacjentowi', str(s.pomocAdherence)]
     ]));
 
-    /* 5. Ocena bólu */
+    /* 6. Ocena bólu */
     const ob = s.ocenaBolu || {};
     const obRows = [
       ['Data oceny', str(ob.data)],
@@ -181,9 +182,9 @@
       ['Leki stosowane z powodu bólu', lekNazwy(s.leki, ob.lekiNaBol)],
       ['Czy leczenie zmniejsza ból', label('zmniejsza', ob.leczenieZmniejsza)]
     ];
-    out.push(sekcja('5. Ocena bólu', obRows, epikryzaBlock(ob.epikryza, '')));
+    out.push(sekcja('6. Ocena bólu', obRows, epikryzaBlock(ob.epikryza, '')));
 
-    /* 6. Kontrola bólu */
+    /* 7. Kontrola bólu */
     const kb = s.kontrolaBolu || {};
     const kbRows = [
       ['Data kontroli', str(kb.data)],
@@ -195,14 +196,14 @@
       ['Ulga po leczeniu', label('ulga', kb.ulga)],
       ['Satysfakcja', label('satysfakcja', kb.satysfakcja)],
       ['Kontrola między dawkami', label('miedzy', kb.miedzyDawkami) + (kb.miedzyDawkami === 'nie' && kb.miedzyDawkamiOpis ? ' — ' + kb.miedzyDawkamiOpis : '')],
-      ['Działania niepożądane', kb.dzialaniaNiepozadane === 'tak' ? skroty('dnLista', kb.dnLista) + ' (korygowane: ' + label('dnKorygowane', kb.dnKorygowane) + ')' : label('zmiana', kb.dzialaniaNiepozadane)],
+      ['Działania niepożądane', kb.dzialaniaNiepozadane === 'tak' ? skroty('dnLista', kb.dnLista) + ' (korygowane: ' + label('dnKorygowane', kb.dnKorygowane) + ')' : label('dnOdp', kb.dzialaniaNiepozadane)],
       ['Zmiana stosowania leków', label('zmiana', kb.stosowanieZmiana) + (kb.stosowanieZmiana === 'tak' && kb.stosowanieZmianaOpis ? ' — ' + kb.stosowanieZmianaOpis : '')],
       ['Status kontroli bólu', label('statusKontroli', kb.statusKontroli)],
       ['Dalsze postępowanie', str(kb.dalszePostepowanie)]
     ];
-    out.push(sekcja('6. Kontrola bólu', kbRows, epikryzaBlock(kb.epikryza, '')));
+    out.push(sekcja('7. Kontrola bólu', kbRows, epikryzaBlock(kb.epikryza, '')));
 
-    /* 7. Ból głowy */
+    /* 8. Ból głowy */
     const bg = s.bolGlowy || {};
     const bgRows = [
       ['Objawy alarmowe', G.BolGlowy && G.BolGlowy.anyTrueExceptBrak(bg.alarmowe) ? skroty('bgAlarmowe', bg.alarmowe) : 'brak'],
@@ -227,14 +228,16 @@
       ['Interpretacja', label('bgInterpretacja', bg.interpretacja)],
       ['Edukacja', skroty('bgEdukacja', bg.edukacja)]
     ];
-    out.push(sekcja('7. Ból głowy', bgRows, epikryzaBlock(bg.epikryza, '')));
+    out.push(sekcja('8. Ból głowy', bgRows, epikryzaBlock(bg.epikryza, '')));
 
-    /* 8. Migrena (tylko gdy wypełniona) */
+    /* 9. Migrena (tylko gdy wypełniona) */
     const mg = s.migrena || {};
     if (hasAny(mg)) {
       const mgRows = [
         ['Rozpoznanie', label('mgRozpoznana', mg.rozpoznana)],
-        ['Aura', label('mgAura', mg.aura) + (mg.aura !== 'nie' && mg.aura !== 'nw' && mg.aura ? ' (' + label('mgAuraCzas', mg.auraCzas) + ')' : '')],
+        ['Aura', (skroty('mgAura', mg.aura) || '—') +
+          (Object.keys(mg.aura || {}).some(function (k) { return k !== 'nw' && mg.aura[k]; })
+            ? ' (' + label('mgAuraCzas', mg.auraCzas) + ')' : '')],
         ['Aura — objawy wymagające ostrożności', skroty('mgAuraOst', mg.auraOstroznosc)],
         ['Leki doraźne', lekNazwy(s.leki, mg.lekiDorzane)],
         ['Wczesne przyjęcie leku', label('mgWczesnie', mg.wczesnieLek)],
@@ -248,17 +251,18 @@
         ['Klasyfikacja robocza', str(mg.klasyfikacja)],
         ['Rekomendowany dalszy krok', label('mgKrok', mg.dalszyKrok)]
       ];
-      out.push(sekcja('8. Moduł migrenowy', mgRows, epikryzaBlock(mg.epikryza, '')));
+      out.push(sekcja('9. Moduł migrenowy', mgRows, epikryzaBlock(mg.epikryza, '')));
     }
 
-    /* 9. Globalne flagi */
-    out.push(sekcja('9. Alerty i flagi', [], flagaLista(G.Flags.compute(s))));
+    /* 10. Globalne flagi */
+    out.push(sekcja('10. Alerty i flagi', [], flagaLista(G.Flags.compute(s))));
 
     return out;
   }
 
   /* ---- Widok skrócony ---- */
   function renderSkrocony(s) {
+    const Calc = G.Calc;
     const out = [];
     const flagi = G.Flags.compute(s).filter(function (f) { return f.sev !== 'info'; });
 
@@ -349,22 +353,16 @@
     }
   }
 
-  function handleInput(e) {
-    const t = e.target;
-    const key = t.getAttribute && t.getAttribute('data-state');
-    if (key) G.State.set(key, t.type === 'checkbox' ? t.checked : t.value);
-  }
-
   function init(container) {
     root = container;
     const cards = build();
     cards.forEach(function (c) { root.appendChild(c); });
     root.removeEventListener('click', handleClick);
-    root.removeEventListener('input', handleInput);
-    root.removeEventListener('change', handleInput);
+    root.removeEventListener('input', UI.handleStateInput);
+    root.removeEventListener('change', UI.handleStateInput);
     root.addEventListener('click', handleClick);
-    root.addEventListener('input', handleInput);
-    root.addEventListener('change', handleInput);
+    root.addEventListener('input', UI.handleStateInput);
+    root.addEventListener('change', UI.handleStateInput);
   }
 
   function apply() {
@@ -373,10 +371,7 @@
 
     const s = G.State.get();
 
-    root.querySelectorAll('[data-state]').forEach(function (inp) {
-      const v = G.State.getPath(inp.getAttribute('data-state'));
-      inp.value = (v == null) ? '' : v;
-    });
+    UI.sync(root);
 
     const kontener = root.querySelector('#raport-widok');
     kontener.innerHTML = '';
@@ -387,5 +382,5 @@
     root.querySelector('#btn-raport-skrocony').classList.toggle('btn-primary', widok === 'skrocony');
   }
 
-  G.Tab9 = { init: init, apply: apply };
+  G.Tab8 = { init: init, apply: apply };
 })();

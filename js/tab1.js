@@ -3,28 +3,15 @@
   const h = UI.h;
   const G = typeof window !== 'undefined' ? window : globalThis;
 
-  /* Kategorie (sekcja 2) — nazwy identyczne z grupami sekcji 3 */
-  const CHOROBY = [
-    ['sercowo', 'Układ sercowo-naczyniowy'],
-    ['metaboliczne', 'Choroby metaboliczne'],
-    ['nerki_watroba', 'Nerki i wątroba'],
-    ['przewodpokarmowy', 'Przewód pokarmowy'],
-    ['oddechowe', 'Układ oddechowy'],
-    ['neurologia', 'Neurologia'],
-    ['psychiczne', 'Zdrowie psychiczne'],
-    ['kostno', 'Układ kostno-stawowy'],
-    ['inne', 'Inne']
-  ];
+  /* Kategorie (sekcja 2) — nazwy identyczne z grupami sekcji 3 (jedno źródło: CHOROBY_SZCZEGOLOWE) */
+  const CHOROBY = (G.CHOROBY_SZCZEGOLOWE || []).map(function (g) {
+    return [g.kategoria, g.system];
+  });
 
   let root = null;
   let manualOpen = false;
 
-  function radio(name, value, label, dataState) {
-    return h('label', { class: 'radio' }, [
-      h('input', { type: 'radio', name: name, value: value, 'data-state': dataState || name }),
-      h('span', { text: label })
-    ]);
-  }
+  const radio = UI.radio;
 
   /* Wiersz pytania kontrolnego (przeniesione z zakładki 2) */
   function pytanieRow(p) {
@@ -59,7 +46,7 @@
   function build() {
     /* --- 1. Dane podstawowe --- */
     const sekDane = h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '1' }), 'Dane podstawowe']),
+      h('h2', {}, [h('span', { class: 'num', text: '1.1' }), 'Dane podstawowe']),
       h('div', { class: 'grid' }, [
         h('div', { class: 'field' }, [
           h('label', { class: 'ctl' }, ['Data urodzenia', h('span', { class: 'req', text: ' *' })]),
@@ -69,7 +56,9 @@
         ]),
         h('div', { class: 'field' }, [
           h('label', { class: 'ctl' }, ['Płeć biologiczna', h('span', { class: 'req', text: ' *' })]),
-          h('div', { class: 'radio-group' }, [radio('plec', 'k', 'Kobieta'), radio('plec', 'm', 'Mężczyzna')])
+          h('div', { class: 'radio-group' }, G.OPCJE.plec.map(function (p) {
+            return radio('plec', p[0], p[1]);
+          }))
         ]),
         h('div', { class: 'field' }, [
           h('label', { class: 'ctl' }, ['Masa ciała (kg)']),
@@ -104,18 +93,15 @@
       ]),
       h('div', { class: 'field', id: 'sek-ciaza' }, [
         h('label', { class: 'ctl' }, ['Ciąża / karmienie piersią', h('span', { class: 'req', text: ' *' })]),
-        h('div', { class: 'radio-group' }, [
-          radio('ciaza', 'tak', 'Tak'),
-          radio('ciaza', 'nie', 'Nie'),
-          radio('ciaza', 'nda', 'Nie dotyczy'),
-          radio('ciaza', 'nw', 'Nie wiem')
-        ])
+        h('div', { class: 'radio-group' }, G.OPCJE.ciaza.map(function (c) {
+          return radio('ciaza', c[0], c[1]);
+        }))
       ])
     ]);
 
     /* --- 2. Choroby współistniejące (kategorie) --- */
     const sekChoroby = h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '2' }), 'Choroby współistniejące']),
+      h('h2', {}, [h('span', { class: 'num', text: '1.2' }), 'Choroby współistniejące']),
       h('div', { class: 'checkbox-grid' }, CHOROBY.map(function (c) {
         return h('label', { class: 'checkbox' }, [
           h('input', { type: 'checkbox', 'data-state': 'choroby.' + c[0] }),
@@ -126,8 +112,8 @@
 
     /* --- 3. Szczegółowe choroby współistniejące + pytania kontrolne --- */
     const sekSzczegolowe = h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '3' }), 'Szczegółowe choroby współistniejące i pytania uzupełniające']),
-      h('p', { class: 'hint', id: 'szczegolowe-hint', text: 'Zaznacz kategorię w sekcji 2, aby rozwinąć jej listę i pytania uzupełniające. Pozycje już zaznaczone na liście nie są pytane ponownie.' }),
+      h('h2', {}, [h('span', { class: 'num', text: '1.3' }), 'Szczegółowe choroby współistniejące i pytania uzupełniające']),
+      h('p', { class: 'hint', id: 'szczegolowe-hint', text: 'Zaznacz kategorię w sekcji 1.2, aby rozwinąć jej listę i pytania uzupełniające. Pozycje już zaznaczone na liście nie są pytane ponownie.' }),
       (G.CHOROBY_SZCZEGOLOWE || []).map(function (g) {
         const dzieci = g.items.map(function (it) {
           return h('label', { class: 'checkbox' }, [
@@ -149,11 +135,9 @@
           dzieci.push(h('div', { class: 'grupa-psych-aktyw' }, [
             h('div', { class: 'field' }, [
               h('label', { class: 'ctl' }, ['Czy problem jest aktualnie aktywny klinicznie?']),
-              h('div', { class: 'radio-group' }, [
-                radio('psychAktywny', 'tak', 'Tak'),
-                radio('psychAktywny', 'nie', 'Nie'),
-                radio('psychAktywny', 'nw', 'Nie wiem')
-              ])
+              h('div', { class: 'radio-group' }, G.OPCJE.takNieNw.map(function (o) {
+                return radio('psychAktywny', o[0], o[1]);
+              }))
             ])
           ]));
         }
@@ -175,7 +159,7 @@
     /* --- 4. Panel nerkowy --- */
     const sekNerki = h('section', { class: 'card' }, [
       h('h2', {}, [
-        h('span', { class: 'num', text: '4' }),
+        h('span', { class: 'num', text: '1.4' }),
         'Panel nerkowy',
         h('button', { class: 'btn', type: 'button', id: 'btn-nerki' })
       ]),
@@ -184,10 +168,9 @@
           h('div', { class: 'field' }, [
             h('label', { class: 'ctl' }, ['Kreatynina w surowicy', h('span', { class: 'req', id: 'kreatynina-req', text: ' *' })]),
             h('input', { type: 'number', id: 'f-kreatynina', min: '0.1', max: '20', step: '0.01', 'data-state': 'kreatynina' }),
-            h('div', { class: 'radio-group', style: { marginTop: '8px' } }, [
-              radio('jednostkaKreatyniny', 'mgdl', 'mg/dL'),
-              radio('jednostkaKreatyniny', 'umol', 'µmol/L')
-            ]),
+            h('div', { class: 'radio-group', style: { marginTop: '8px' } }, G.OPCJE.jednostkaKreatyniny.map(function (u) {
+              return radio('jednostkaKreatyniny', u[0], u[1]);
+            })),
             h('div', { class: 'hint', id: 'kreatynina-conv' }),
             h('div', { class: 'hint err', id: 'kreatynina-hint' })
           ]),
@@ -199,22 +182,17 @@
         ]),
         h('div', { class: 'field' }, [
           h('label', { class: 'ctl' }, ['Albuminuria']),
-          h('div', { class: 'radio-group' }, [
-            radio('albuminuria', 'brak', 'Brak danych'),
-            radio('albuminuria', 'a1', 'Prawidłowa / A1'),
-            radio('albuminuria', 'a2', 'Umiarkowanie zwiększona / A2'),
-            radio('albuminuria', 'a3', 'Znacznie zwiększona / A3'),
-            radio('albuminuria', 'liczba', 'Wartość liczbowa dostępna')
-          ])
+          h('div', { class: 'radio-group' }, G.OPCJE.albuminuria.map(function (a) {
+            return radio('albuminuria', a[0], a[1]);
+          }))
         ]),
         h('div', { class: 'field', id: 'uacr-row' }, [
           h('label', { class: 'ctl' }, ['UACR']),
           h('div', { class: 'grid' }, [
             h('input', { type: 'number', id: 'f-uacr', min: '0.1', step: '0.1', 'data-state': 'uacr' }),
-            h('select', { 'data-state': 'uacrJednostka' }, [
-              h('option', { value: 'mgg', text: 'mg/g' }),
-              h('option', { value: 'mgmmol', text: 'mg/mmol' })
-            ])
+            h('select', { 'data-state': 'uacrJednostka' }, G.OPCJE.uacrJednostka.map(function (u) {
+              return h('option', { value: u[0], text: u[1] });
+            }))
           ])
         ]),
         h('div', { class: 'results' }, [
@@ -241,7 +219,7 @@
 
     /* --- 5. Epikryza farmaceutyczna --- */
     const sekEpikryza = h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '5' }), 'Epikryza farmaceutyczna']),
+      h('h2', {}, [h('span', { class: 'num', text: '1.5' }), 'Epikryza farmaceutyczna']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Inne istotne choroby, okoliczności kliniczne i komentarz farmaceuty']),
         h('textarea', {
@@ -320,12 +298,7 @@
     s.choroby.nerki_watroba = !!(s.choroby.watroba || s.choroby.pchn);
 
     /* Synchronizacja wartości pól */
-    root.querySelectorAll('[data-state]').forEach(function (inp) {
-      const v = G.State.getPath(inp.getAttribute('data-state'));
-      if (inp.type === 'checkbox') inp.checked = !!v;
-      else if (inp.type === 'radio') inp.checked = (inp.value === v);
-      else inp.value = (v == null) ? '' : v;
-    });
+    UI.sync(root);
 
     const age = Calc.ageFromBirthDate(s.dataUrodzenia);
     const masa = Calc.parseNum(s.masa);

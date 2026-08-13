@@ -105,7 +105,7 @@
       migrena: {
         rozpoznana: '',
         prodrom: {},
-        aura: '',
+        aura: {}, // mapa typów aury (7.3): { wzrokowa: true, … } — wielokrotny wybór
         auraCzas: '',
         auraOstroznosc: {},
         lekiDorzane: [],
@@ -246,7 +246,7 @@
     mergeShape(d.migrena, src.migrena, {
       rozpoznana: 'str',
       prodrom: 'bool',
-      aura: 'str', auraCzas: 'str', auraOstroznosc: 'bool',
+      aura: 'bool', auraCzas: 'str', auraOstroznosc: 'bool',
       lekiDorzane: 'arr',
       wczesnieLek: 'str', skutecznosc2h: 'str', nawrot: 'str', wymioty: 'str',
       profilaktykaKryteria: 'bool', profAuto: 'bool', profilaktykaStosowana: 'str',
@@ -254,6 +254,11 @@
       profilaktykaEfekt: 'str',
       klasyfikacja: 'str', dalszyKrok: 'str', epikryza: 'str'
     });
+    /* Migracja: dawna aura (pojedynczy string, np. 'wzrokowa') → mapa typów aury */
+    if (src.migrena && typeof src.migrena.aura === 'string' &&
+        src.migrena.aura !== '' && src.migrena.aura !== 'nie' && src.migrena.aura !== 'nw') {
+      d.migrena.aura[src.migrena.aura] = true;
+    }
     return d;
   }
 

@@ -3,94 +3,23 @@
   const h = UI.h;
   const G = typeof window !== 'undefined' ? window : globalThis;
 
-  const ALARMOWE = [
-    ['nagly', 'Nagły, pierwszy w życiu bardzo silny ból głowy'],
-    ['narastajacy', 'Ból szybko narastający lub „rozsadzający”'],
-    ['po-50', 'Nowy ból głowy po 50. roku życia'],
-    ['uraz', 'Ból głowy po urazie'],
-    ['goraczka', 'Gorączka, sztywność karku, wysypka'],
-    ['neurologiczne', 'Zaburzenia widzenia, mowy, chodu lub świadomości'],
-    ['ogniskowe', 'Ogniskowe objawy neurologiczne'],
-    ['oko', 'Silny ból oka z zaczerwienieniem / łzawieniem'],
-    ['pozycyjny', 'Ból głowy nasilany kaszlem, kichaniem, wysiłkiem lub zmianą pozycji'],
-    ['wzorzec', 'Ból „inny niż zwykle” lub zmiana dotychczasowego wzorca bólu'],
-    ['cisnienie', 'Ciśnienie tętnicze >180/110 mmHg'],
-    ['ciaza-polog', 'Ciąża lub połóg'],
-    ['brak', 'Brak powyższych']
-  ];
-  const LOKALIZACJE = [
-    ['obustronny', 'Obustronny'], ['jednostronny', 'Jednostronny'], ['czolo-skronie', 'Czoło / skronie'],
-    ['potylica-kark', 'Potylica / kark'], ['zatoki', 'Okolica zatok / twarz'], ['okolica-oka', 'Okolica oka'],
-    ['cala-glowa', 'Cała głowa'], ['inna', 'Inna']
-  ];
-  const CHARAKTER_B = [
-    ['uciskowy', 'Uciskowy / opasujący'], ['tepy', 'Tępy'], ['rozpierajacy', 'Rozpierający'],
-    ['pulsujacy', 'Pulsujący'], ['przeszywajacy', 'Przeszywający / świdrujący'], ['piekacy', 'Piekący'], ['inny', 'Inny']
-  ];
-  const AKTYWNOSC = [['nie', 'Nie'], ['tak', 'Tak'], ['nw', 'Nie wiem']];
-  const CZAS_TRWANIA = [
-    ['<4h', '<4 godziny'], ['4-72h', '4–72 godziny'],
-    ['>72h', '>72 godziny'], ['trudno', 'Trudno określić']
-  ];
-  const OBJAWY = [
-    ['brak', 'Brak objawów towarzyszących'], ['swiatlowstret', 'Światłowstręt'], ['dzwieki', 'Nadwrażliwość na dźwięki'],
-    ['nudnosci', 'Nudności'], ['wymioty', 'Wymioty'], ['aura', 'Aura / zaburzenia widzenia przed bólem'],
-    ['lzawienie', 'Łzawienie / zaczerwienienie oka'], ['katar', 'Katar / zatkanie nosa'], ['goraczka', 'Gorączka'],
-    ['zawroty', 'Zawroty głowy'], ['inne', 'Inne']
-  ];
-  const WYZWALACZE = [
-    ['stres', 'Stres'], ['brak-snu', 'Brak snu'], ['zmeczenie', 'Zmęczenie'], ['glod', 'Głód / pomijanie posiłków'],
-    ['odwodnienie', 'Odwodnienie'], ['komputer', 'Praca przy komputerze / wzrok'], ['napiecie-karku', 'Napięcie karku / zła postawa'],
-    ['alkohol', 'Alkohol'], ['zapachy', 'Zapachy / światło / hałas'], ['miesiaczka', 'Miesiączka / hormony'],
-    ['nw', 'Nie wiem'], ['inne', 'Inne']
-  ];
-  const ULGA = [
-    ['odpoczynek', 'Odpoczynek'], ['sen', 'Sen'], ['nawodnienie', 'Nawodnienie / posiłek'],
-    ['masaz', 'Masaż / rozluźnienie karku'], ['lek', 'Lek przeciwbólowy'], ['ciemne', 'Ciemne i ciche pomieszczenie'],
-    ['nic', 'Nic nie pomaga'], ['inne', 'Inne']
-  ];
-  const MOH_OCENA = [
-    ['brak', 'Brak cech nadużywania'],
-    ['mozliwe', 'Możliwe nadużywanie leków doraźnych'],
-    ['wysokie', 'Wysokie ryzyko MOH'],
-    ['wymaga-oceny', 'Wymaga pogłębionej oceny / kontaktu z lekarzem']
-  ];
-  const INTERPRETACJE = [
-    ['tth', 'Napięciowym bólem głowy'],
-    ['migrena', 'Migreną'],
-    ['moh', 'Możliwym bólem głowy z nadużywania leków'],
-    ['zatokowy', 'Możliwym bólem zatokowym'],
-    ['klaster', 'Możliwym klasterowym bólem głowy'],
-    ['wtorny', 'Bólem wtórnym wymagającym konsultacji'],
-    ['trudno', 'Nie można ocenić']
-  ];
-  const EDUKACJA = [
-    ['alarm', 'Rozpoznawanie objawów alarmowych'],
-    ['bezpieczne', 'Bezpieczne stosowanie leków przeciwbólowych'],
-    ['limit', 'Ograniczenie leków doraźnych, aby zmniejszyć ryzyko MOH'],
-    ['nawodnienie', 'Nawodnienie i regularne posiłki'],
-    ['sen', 'Sen i higiena snu'],
-    ['stres', 'Stres i techniki relaksacyjne'],
-    ['komputer', 'Przerwy w pracy przy komputerze / ergonomia'],
-    ['kark', 'Napięcie karku, postawa i aktywność fizyczna'],
-    ['dzienniczek', 'Prowadzenie dzienniczka bólu głowy']
-  ];
+  const ALARMOWE = G.OPCJE.bgAlarmowe;
+  const LOKALIZACJE = G.OPCJE.bgLokalizacje;
+  const CHARAKTER_B = G.OPCJE.bgCharakter;
+  const AKTYWNOSC = G.OPCJE.bgAktywnosc;
+  const CZAS_TRWANIA = G.OPCJE.bgCzasTrwania;
+  const OBJAWY = G.OPCJE.bgObjawy;
+  const WYZWALACZE = G.OPCJE.bgWyzwalacze;
+  const ULGA = G.OPCJE.bgUlga;
+  const MOH_OCENA = G.OPCJE.bgMohOcena;
+  const INTERPRETACJE = G.OPCJE.bgInterpretacjaOpcje;
+  const EDUKACJA = G.OPCJE.bgEdukacja;
 
   let root = null;
 
-  function radio(name, value, label, dataState) {
-    return h('label', { class: 'radio' }, [
-      h('input', { type: 'radio', name: name, value: value, 'data-state': dataState || name }),
-      h('span', { text: label })
-    ]);
-  }
-
-  function checkboxState(path, id, label) {
-    return h('label', { class: 'checkbox' }, [
-      h('input', { type: 'checkbox', 'data-state': path + '.' + id }),
-      h('span', { text: label })
-    ]);
-  }
+  const radio = UI.radio;
+  const checkboxState = UI.checkbox;
+  const nrsField = UI.nrsField;
 
   function dniField(dataState, label, id, placeholder) {
     return h('div', { class: 'field' }, [
@@ -127,11 +56,7 @@
         }))
       ]),
       h('div', { class: 'grid', style: { marginTop: '12px' } }, [
-        h('div', { class: 'field' }, [
-          h('label', { class: 'ctl' }, ['Nasilenie (NRS)']),
-          h('input', { type: 'number', id: 'bg-nrs', min: '0', max: '10', step: '1', 'data-state': 'bolGlowy.nrs' }),
-          h('div', { class: 'hint', text: '0–10' })
-        ]),
+        nrsField('bolGlowy.nrs', 'Nasilenie (NRS)', 'bg-nrs'),
         h('div', { class: 'field' }, [
           h('label', { class: 'ctl' }, ['Czy zwykła aktywność fizyczna nasila ból?']),
           h('div', { class: 'radio-group' }, AKTYWNOSC.map(function (a) {
@@ -271,22 +196,14 @@
       buildMoh(), buildInterpretacja(), buildEdukacja(), buildEpikryza()];
   }
 
-  function handleInput(e) {
-    const t = e.target;
-    const key = t.getAttribute && t.getAttribute('data-state');
-    if (key) {
-      G.State.set(key, t.type === 'checkbox' ? t.checked : t.value);
-    }
-  }
-
   function init(container) {
     root = container;
     const cards = build();
     cards.forEach(function (c) { root.appendChild(c); });
-    root.removeEventListener('input', handleInput);
-    root.removeEventListener('change', handleInput);
-    root.addEventListener('input', handleInput);
-    root.addEventListener('change', handleInput);
+    root.removeEventListener('input', UI.handleStateInput);
+    root.removeEventListener('change', UI.handleStateInput);
+    root.addEventListener('input', UI.handleStateInput);
+    root.addEventListener('change', UI.handleStateInput);
   }
 
   function apply() {
@@ -298,12 +215,7 @@
     const B = G.BolGlowy;
 
     /* Synchronizacja wartości pól */
-    root.querySelectorAll('[data-state]').forEach(function (inp) {
-      const v = G.State.getPath(inp.getAttribute('data-state'));
-      if (inp.type === 'checkbox') inp.checked = !!v;
-      else if (inp.type === 'radio') inp.checked = (inp.value === v);
-      else inp.value = (v == null) ? '' : v;
-    });
+    UI.sync(root);
 
     /* Czerwone flagi → alert */
     const bg = s.bolGlowy;

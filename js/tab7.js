@@ -1,78 +1,30 @@
-/* Zakładka 6: Moduł migrenowy. */
+/* Zakładka 7: Moduł migrenowy. */
 (function () {
   const h = UI.h;
   const G = typeof window !== 'undefined' ? window : globalThis;
 
-  const ROZPOZNANA = [['lekarz', 'Tak, przez lekarza'], ['pacjent', 'Tak, według pacjenta'], ['nie', 'Nie'], ['nw', 'Nie wiem']];
-  const PRODROM = [
-    ['ziewanie', 'Ziewanie'], ['nastroj', 'Zmiana nastroju'], ['sennosc', 'Senność'],
-    ['glod', 'Głód / zachcianki'], ['kark', 'Sztywność karku'], ['koncentracja', 'Trudności z koncentracją'],
-    ['rozpoznaje', 'Pacjent rozpoznaje prodrom'], ['brak', 'Brak / nie wiem']
-  ];
-  const AURA = [
-    ['nie', 'Nie'], ['wzrokowa', 'Tak, wzrokowa'], ['czuciowa', 'Tak, czuciowa'],
-    ['mowy', 'Tak, zaburzenia mowy'], ['inna', 'Tak, inna'], ['nw', 'Nie wiem']
-  ];
-  const AURA_CZAS = [['<5', '<5 minut'], ['5-60', '5–60 minut'], ['>60', '>60 minut'], ['trudno', 'Trudno określić']];
-  const AURA_OSTROZNOSC = [
-    ['oslabienie', 'Osłabienie kończyny / niedowład'], ['podwojne', 'Podwójne widzenie'],
-    ['rownowaga', 'Zaburzenia równowagi'], ['swiadomosc', 'Zaburzenia świadomości'],
-    ['jedno-oko', 'Objawy tylko w jednym oku'], ['dluga', 'Aura trwa >60 minut'],
-    ['nowa', 'Aura nowa lub istotnie inna niż zwykle'], ['brak', 'Brak powyższych']
-  ];
-  const WCZESNIE = [
-    ['wczesnie', 'Tak, gdy ból jest jeszcze łagodny'], ['pozno', 'Tak, ale dopiero przy umiarkowanym/silnym bólu'],
-    ['za-pozno', 'Zwykle za późno'], ['nw', 'Nie wiem']
-  ];
-  const SKUTECZNOSC = [
-    ['wolnosc', 'Tak — wolność od bólu po 2 h'], ['poprawa', 'Częściowa poprawa'],
-    ['brak', 'Brak odpowiedzi'], ['nw', 'Nie wiem']
-  ];
-  const NAWROT = [['nie', 'Nie'], ['sporadycznie', 'Tak, sporadycznie'], ['czesto', 'Tak, często'], ['nw', 'Nie wiem']];
-  const WYMIOTY = [['nie', 'Nie'], ['tak', 'Tak'], ['nw', 'Nie wiem']];
-  const PROF_KR = [
-    ['72h', 'Napad trwa >72 godziny'],
-    ['wplyw', 'Istotny wpływ migreny na życie / pracę / funkcjonowanie'],
-    ['nieskuteczne', 'Leczenie doraźne jest nieskuteczne mimo prawidłowego stosowania'],
-    ['czeste-dorzane', 'Częste stosowanie leków doraźnych'],
-    ['aura', 'Migrena z aurą o dużym nasileniu lub przedłużona aura'],
-    ['przewlekla', 'Przewlekła migrena'], ['brak', 'Brak wskazań na tym etapie']
-  ];
-  const PROF_STOS = [['nie', 'Nie'], ['tak', 'Tak'], ['nw', 'Nie wiem']];
-  const PROF_EFFEKT = [
-    ['tak', 'Tak, wyraźnie'], ['czesciowo', 'Częściowo'], ['nie', 'Nie'],
-    ['za-wczesnie', 'Za wcześnie na ocenę'], ['nw', 'Nie wiem']
-  ];
-  const DALSZY_KROK = [
-    ['edukacja', 'Edukacja i kontynuacja obserwacji'],
-    ['optymalizacja', 'Optymalizacja stosowania leczenia doraźnego'],
-    ['bezpieczenstwo', 'Ocena bezpieczeństwa leków doraźnych'],
-    ['ograniczenie', 'Ograniczenie nadużywania leków doraźnych'],
-    ['profilaktyka', 'Rozważenie konsultacji lekarskiej w sprawie profilaktyki'],
-    ['pilna', 'Pilna konsultacja z powodu czerwonych flag'],
-    ['ogolny', 'Przejście do modułu ogólnego bólu przewlekłego'],
-    ['inne', 'Inne']
-  ];
+  const ROZPOZNANA = G.OPCJE.mgRozpoznana;
+  const PRODROM = G.OPCJE.mgProdrom;
+  const AURA = G.OPCJE.mgAura;
+  const AURA_CZAS = G.OPCJE.mgAuraCzas;
+  const AURA_OSTROZNOSC = G.OPCJE.mgAuraOst;
+  const WCZESNIE = G.OPCJE.mgWczesnie;
+  const SKUTECZNOSC = G.OPCJE.mgSkutecznosc;
+  const NAWROT = G.OPCJE.mgNawrot;
+  const WYMIOTY = G.OPCJE.mgWymioty;
+  const PROF_KR = G.OPCJE.mgProfKryteria;
+  const PROF_STOS = G.OPCJE.mgProfStos;
+  const PROF_EFFEKT = G.OPCJE.mgProfEfekt;
+  const DALSZY_KROK = G.OPCJE.mgKrok;
 
   let root = null;
 
-  function radio(name, value, label, dataState) {
-    return h('label', { class: 'radio' }, [
-      h('input', { type: 'radio', name: name, value: value, 'data-state': dataState || name }),
-      h('span', { text: label })
-    ]);
-  }
-
-  function checkboxState(path, id, label) {
-    return h('label', { class: 'checkbox' }, [
-      h('input', { type: 'checkbox', 'data-state': path + '.' + id }),
-      h('span', { text: label })
-    ]);
-  }
+  const radio = UI.radio;
+  const checkboxState = UI.checkbox;
 
   function buildSek1() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.1' }), 'Charakterystyka bólu głowy']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.1' }), 'Rozpoznanie migreny']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Czy pacjent ma rozpoznaną migrenę?']),
         h('div', { class: 'radio-group' }, ROZPOZNANA.map(function (r) {
@@ -86,7 +38,6 @@
     return h('section', { class: 'card' }, [
       h('h2', {}, [h('span', { class: 'num', text: '7.2' }), 'Objawy poprzedzające napad (prodrom)']),
       h('div', { class: 'field' }, [
-        h('label', { class: 'ctl' }, ['Objawy poprzedzające napad (prodrom)']),
         h('div', { class: 'checkbox-grid' }, PRODROM.map(function (p) {
           return checkboxState('migrena.prodrom', p[0], p[1]);
         })),
@@ -96,24 +47,28 @@
   }
 
   function buildSek3() {
-    return h('section', { class: 'card' }, [
+    return h('section', { class: 'card', id: 'mg-sek3' }, [
       h('h2', {}, [h('span', { class: 'num', text: '7.3' }), 'Aura i objawy nietypowe']),
-      h('div', { class: 'field' }, [
-        h('label', { class: 'ctl' }, ['Czy przed bólem lub w czasie bólu występuje aura?']),
-        h('div', { class: 'radio-group' }, AURA.map(function (a) {
-          return radio('mg.aura', a[0], a[1], 'migrena.aura');
-        }))
-      ]),
-      h('div', { class: 'field', id: 'mg-aura-szczegoly', style: { display: 'none' } }, [
-        h('label', { class: 'ctl' }, ['Czas trwania aury']),
-        h('div', { class: 'radio-group' }, AURA_CZAS.map(function (c) {
-          return radio('mg.aurac', c[0], c[1], 'migrena.auraCzas');
-        })),
-        h('div', { class: 'checkbox-grid', style: { marginTop: '10px' } }, AURA_OSTROZNOSC.map(function (o) {
-          return checkboxState('migrena.auraOstroznosc', o[0], o[1]);
-        }))
-      ]),
-      h('div', { class: 'komunikat komunikat-alert', id: 'mg-aura-alert', style: { display: 'none' } })
+      h('div', { class: 'komunikat komunikat-info', id: 'mg-sek3-blokada', style: { display: 'none' },
+        text: 'Sekcja odblokowuje się po zaznaczeniu „Aura” w sekcji 6.4 (zakładka „Ból głowy”).' }),
+      h('div', { id: 'mg-sek3-body' }, [
+        h('div', { class: 'field' }, [
+          h('label', { class: 'ctl' }, ['Rodzaje aury (można zaznaczyć kilka)']),
+          h('div', { class: 'checkbox-grid' }, AURA.map(function (a) {
+            return checkboxState('migrena.aura', a[0], a[1]);
+          }))
+        ]),
+        h('div', { class: 'field', id: 'mg-aura-szczegoly', style: { display: 'none' } }, [
+          h('label', { class: 'ctl' }, ['Czas trwania aury']),
+          h('div', { class: 'radio-group' }, AURA_CZAS.map(function (c) {
+            return radio('mg.aurac', c[0], c[1], 'migrena.auraCzas');
+          })),
+          h('div', { class: 'checkbox-grid', style: { marginTop: '10px' } }, AURA_OSTROZNOSC.map(function (o) {
+            return checkboxState('migrena.auraOstroznosc', o[0], o[1]);
+          }))
+        ]),
+        h('div', { class: 'komunikat komunikat-alert', id: 'mg-aura-alert', style: { display: 'none' } })
+      ])
     ]);
   }
 
@@ -184,7 +139,7 @@
           ]),
           h('div', { class: 'field' }, [
             h('label', { class: 'ctl' }, ['Czy stosowany regularnie?']),
-            h('div', { class: 'radio-group' }, [['tak', 'Tak'], ['nie', 'Nie'], ['nw', 'Nie wiem']].map(function (r) {
+            h('div', { class: 'radio-group' }, G.OPCJE.takNieNw.map(function (r) {
               return radio('mg.profreg', r[0], r[1], 'migrena.profilaktykaSzczegoly.regularnie');
             }))
           ])
@@ -281,27 +236,27 @@
   function apply() {
     if (!root) return;
     const q = function (sel) { return root.querySelector(sel); };
-    if (!q('#mg-dni-bg')) return;
+    if (!q('#mg-leki-dorzane')) return;
 
     const s = G.State.get();
     const K = G.Kontrola;
 
     /* Synchronizacja wartości pól */
-    root.querySelectorAll('[data-state]').forEach(function (inp) {
-      const v = G.State.getPath(inp.getAttribute('data-state'));
-      if (inp.type === 'checkbox') inp.checked = !!v;
-      else if (inp.type === 'radio') inp.checked = (inp.value === v);
-      else inp.value = (v == null) ? '' : v;
-    });
+    UI.sync(root);
 
     /* Wybór leków doraźnych */
     root.querySelectorAll('[data-cel="migrena.lekiDorzane"]').forEach(function (inp) {
       inp.checked = s.migrena.lekiDorzane.indexOf(parseInt(inp.getAttribute('data-id'), 10)) !== -1;
     });
 
-    /* Aura — szczegóły + alert */
-    const aura = s.migrena.aura;
-    q('#mg-aura-szczegoly').style.display = (aura && aura !== 'nie' && aura !== 'nw') ? '' : 'none';
+    /* 7.3 — blokada do czasu zaznaczenia „Aura” w 6.4 (bolGlowy.objawy.aura) */
+    const auraAktywna = !!(s.bolGlowy && s.bolGlowy.objawy && s.bolGlowy.objawy.aura);
+    q('#mg-sek3-body').classList.toggle('zablokowana', !auraAktywna);
+    q('#mg-sek3-blokada').style.display = auraAktywna ? 'none' : '';
+
+    /* Aura — szczegóły (czas trwania, ostrożność) przy zaznaczonych typach aury */
+    const auraTypy = Object.keys(s.migrena.aura || {}).filter(function (k) { return s.migrena.aura[k] && k !== 'nw'; });
+    q('#mg-aura-szczegoly').style.display = auraTypy.length ? '' : 'none';
     const auraAlert = q('#mg-aura-alert');
     if (anyTrueExceptBrak(s.migrena.auraOstroznosc)) {
       auraAlert.style.display = '';

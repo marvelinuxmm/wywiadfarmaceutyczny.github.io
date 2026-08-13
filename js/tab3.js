@@ -1,23 +1,10 @@
-/* Zakładka 3: MARS-5 i stosowanie leczenia. */
+/* Zakładka 3: MARS-5 — przestrzeganie zaleceń. */
 (function () {
   const h = UI.h;
   const G = typeof window !== 'undefined' ? window : globalThis;
 
-  const PYTANIA = [
-    ['m1', 'Zapomnieć o zażyciu leków'],
-    ['m2', 'Zmienić dawkę leku'],
-    ['m3', 'Przestać zażywać leki na jakiś czas'],
-    ['m4', 'Pominąć dawkę'],
-    ['m5', 'Zażyć mniej leku niż zalecono']
-  ];
-
-  const SKALA = [
-    ['ciagle', 'Ciągle (1)'],
-    ['czesto', 'Często (2)'],
-    ['czasami', 'Czasami (3)'],
-    ['rzadko', 'Rzadko (4)'],
-    ['nigdy', 'Nigdy (5)']
-  ];
+  const PYTANIA = G.OPCJE.marsPytania;
+  const SKALA = G.OPCJE.marsSkala;
 
   let root = null;
 
@@ -48,7 +35,7 @@
     ]);
 
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '3.2' }), 'MARS-5 — przestrzeganie zaleceń']),
+      h('h2', {}, [h('span', { class: 'num', text: '3.1' }), 'MARS-5 — przestrzeganie zaleceń']),
       h('p', { class: 'hint', text: 'Kwestionariusz MARS-5 (Medication Adherence Rating Scale). Skala: 5 pkt – bardzo dobre przestrzeganie, 4 – dobre, 3 – dostateczne, <3 – non-adherent.' }),
       table,
       h('div', { class: 'results', id: 'mars5-wynik' }),
@@ -63,19 +50,13 @@
     ]);
   }
 
-  function handleInput(e) {
-    const t = e.target;
-    const key = t.getAttribute && t.getAttribute('data-state');
-    if (key) G.State.set(key, t.type === 'checkbox' ? t.checked : t.value);
-  }
-
   function init(container) {
     root = container;
     root.appendChild(build());
-    root.removeEventListener('input', handleInput);
-    root.removeEventListener('change', handleInput);
-    root.addEventListener('input', handleInput);
-    root.addEventListener('change', handleInput);
+    root.removeEventListener('input', UI.handleStateInput);
+    root.removeEventListener('change', UI.handleStateInput);
+    root.addEventListener('input', UI.handleStateInput);
+    root.addEventListener('change', UI.handleStateInput);
   }
 
   function apply() {
@@ -85,12 +66,7 @@
     const s = G.State.get();
 
     /* Synchronizacja wartości pól ze stanu (po imporcie) */
-    root.querySelectorAll('[data-state]').forEach(function (inp) {
-      const v = G.State.getPath(inp.getAttribute('data-state'));
-      if (inp.type === 'checkbox') inp.checked = !!v;
-      else if (inp.type === 'radio') inp.checked = (inp.value === v);
-      else inp.value = (v == null) ? '' : v;
-    });
+    UI.sync(root);
 
     const wynik = G.Mars5.score(s.mars5);
     const box = root.querySelector('#mars5-wynik');
