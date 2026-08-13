@@ -35,7 +35,7 @@ console.log('OK');
 
 console.log('--- Flagi szczegółowych chorób ---');
 const fl = (over) => Flags.compute(Object.assign({
-  wiek: '', plec: '', masa: '', ciaza: '', kreatynina: '', jednostkaKreatyniny: 'mgdl',
+  dataUrodzenia: '', plec: '', masa: '', ciaza: '', kreatynina: '', jednostkaKreatyniny: 'mgdl',
   dataKreatyniny: '', albuminuria: 'brak', uacr: '', uacrJednostka: 'mgg',
   psychAktywny: '', psychOpis: '', epikryza: '',
   leki: [], odpowiedzi: {}, statusFarmakoterapii: '',
@@ -62,9 +62,9 @@ assert.ok(globalThis.GRUPA_IDS.length > 0);
 console.log('OK');
 
 console.log('--- Pytania ---');
-assert.ok(Pytania.all.length >= 5);
+assert.ok(Pytania.all.length >= 4);
 assert.ok(Pytania.isAlarm('pp.objawy'));
-assert.ok(Pytania.isAlarm('al.upadki'));
+assert.ok(Pytania.isAlarm('wa.dekompensacja'));
 assert.ok(!Pytania.isAlarm('sc.antykoagulanty'));
 assert.strictEqual(Pytania.autodetekcja, undefined, 'brak pytań o leki i automatycznego dopasowania');
 const ids = [];

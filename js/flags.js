@@ -5,7 +5,7 @@
   function compute(s) {
     const flags = [];
     const Calc = G.Calc;
-    const age = Calc.parseNum(s.wiek);
+    const age = Calc.ageFromBirthDate(s.dataUrodzenia);
     const masa = Calc.parseNum(s.masa);
     const wzrost = Calc.parseNum(s.wzrost);
     const scr = Calc.toMgdl(s.kreatynina, s.jednostkaKreatyniny);

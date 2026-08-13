@@ -134,11 +134,32 @@
     ];
   }
 
+  /* Mapowanie charakteru bólu z oceny ogólnej (4.6) na charakter bólu głowy (6.2).
+     Zwraca obiekt { klucz6_2: true, ... } — bez 'dretwienie'/'inny'. */
+  function przeniesCharakter(charakter) {
+    const mapa = {
+      tepy: 'tepy',
+      pulsujacy: 'pulsujacy',
+      uciskajacy: 'uciskowy',
+      rozpierajacy: 'rozpierajacy',
+      piekacy: 'piekacy',
+      ostry: 'przeszywajacy',
+      klujacy: 'przeszywajacy',
+      razenie: 'przeszywajacy'
+    };
+    const out = {};
+    Object.keys(mapa).forEach(function (k) {
+      if (charakter && charakter[k]) out[mapa[k]] = true;
+    });
+    return out;
+  }
+
   G.BolGlowy = {
     sugerujCzestosc: sugerujCzestosc,
     sugerujMOH: sugerujMOH,
     sugerujInterpretacje: sugerujInterpretacje,
     kryteriaTTH: kryteriaTTH,
-    anyTrueExceptBrak: anyTrueExceptBrak
+    anyTrueExceptBrak: anyTrueExceptBrak,
+    przeniesCharakter: przeniesCharakter
   };
 })();

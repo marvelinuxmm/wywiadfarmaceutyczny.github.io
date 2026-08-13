@@ -9,7 +9,7 @@
     { id: 'mars5', label: '3. MARS-5 i stosowanie leczenia', enabled: true },
     { id: 'ocena', label: '4. Ocena bólu', enabled: true },
     { id: 'kontrola', label: '5. Kontrola bólu', enabled: true },
-    { id: 'bolglowy', label: '6. Ból głowy', enabled: true },
+    { id: 'bolglowy', label: '6. Ból głowy', enabled: 'dynamic' },
     { id: 'migrena', label: '7. Moduł migrenowy', enabled: 'dynamic' },
     { id: 'podsumowanie', label: '8. Podsumowanie i raport', enabled: true }
   ];
@@ -44,10 +44,14 @@
     renderContent();
   }
 
+  function bolGlowyAktywna() {
+    const s = G.State.get();
+    return !!(s.ocenaBolu && s.ocenaBolu.lokalizacja && s.ocenaBolu.lokalizacja.glowa);
+  }
+
   function migrenaAktywna() {
     const s = G.State.get();
-    return !!(s.ocenaBolu && ((s.ocenaBolu.lokalizacja && s.ocenaBolu.lokalizacja.glowa) || s.ocenaBolu.modulDalszy === 'bol_glowy')) ||
-      !!(s.bolGlowy && s.bolGlowy.decyzja === 'migrena-modul');
+    return !!(s.bolGlowy && s.bolGlowy.interpretacja === 'migrena');
   }
 
   function renderContent() {
@@ -87,13 +91,20 @@
     if (G.Tab6) G.Tab6.apply();
     if (G.Tab7) G.Tab7.apply();
     if (G.Tab9) G.Tab9.apply();
-    /* Warunkowa dostępność modułu migrenowego */
+    /* Warunkowa dostępność zakładek 6 i 7 */
+    const bgBtn = document.querySelector('.tab-btn[data-tab-id="bolglowy"]');
+    if (bgBtn) {
+      const aktywBG = bolGlowyAktywna();
+      bgBtn.disabled = !aktywBG;
+      bgBtn.title = aktywBG ? '' : 'Zaznacz lokalizację „Głowa” w sekcji 4.5 (zakładka „Ocena bólu”), aby odblokować.';
+      if (!aktywBG && active === 'bolglowy') switchTab('ocena');
+    }
     const migBtn = document.querySelector('.tab-btn[data-tab-id="migrena"]');
     if (migBtn) {
       const aktyw = migrenaAktywna();
       migBtn.disabled = !aktyw;
-      migBtn.title = aktyw ? '' : 'Zaznacz lokalizację „Głowa” w zakładce „Ocena bólu” lub wybierz „Moduł ból głowy”.';
-      if (!aktyw && active === 'migrena') switchTab('ocena');
+      migBtn.title = aktyw ? '' : 'Wybierz interpretację „Migreną” w sekcji 6.7 (zakładka „Ból głowy”), aby odblokować.';
+      if (!aktyw && active === 'migrena') switchTab('bolglowy');
     }
   }
 

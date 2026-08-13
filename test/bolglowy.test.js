@@ -59,4 +59,13 @@ const k2 = B.kryteriaTTH(mig);
 assert.strictEqual(k2[0].met, false, 'jednostronny nie spełnia kryterium obustronności');
 console.log('OK');
 
+console.log('--- Przeniesienie charakteru 4.6 → 6.2 ---');
+assert.deepStrictEqual(B.przeniesCharakter({}), {});
+assert.deepStrictEqual(B.przeniesCharakter({ tepy: true, pulsujacy: true }), { tepy: true, pulsujacy: true });
+assert.deepStrictEqual(B.przeniesCharakter({ uciskajacy: true }), { uciskowy: true });
+assert.deepStrictEqual(B.przeniesCharakter({ rozpierajacy: true, piekacy: true }), { rozpierajacy: true, piekacy: true });
+assert.deepStrictEqual(B.przeniesCharakter({ ostry: true, klujacy: true, razenie: true }), { przeszywajacy: true });
+assert.deepStrictEqual(B.przeniesCharakter({ dretwienie: true, inny: true }), {});
+console.log('OK');
+
 console.log('Wszystkie testy bólu głowy przeszły.');

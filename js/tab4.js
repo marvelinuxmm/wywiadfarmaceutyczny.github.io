@@ -37,12 +37,6 @@
     ['poglebic', 'Obraz wymaga pogłębienia w module szczegółowym'],
     ['konsultacja', 'Rozważyć konsultację lekarską / poradnię leczenia bólu']
   ];
-  const MODULY = [
-    ['bol_glowy', 'Moduł ból głowy'],
-    ['neuropatyczny', 'Moduł ból neuropatyczny'],
-    ['ogolny', 'Moduł przewlekły ból ogólny'],
-    ['brak', 'Brak sugestii na tym etapie']
-  ];
 
   let root = null;
 
@@ -166,13 +160,6 @@
         h('div', { class: 'radio-group radio-col' }, INTERPRETACJA.map(function (i) {
           return radio('ob.interpretacja', i[0], i[1], 'ocenaBolu.interpretacja');
         }))
-      ]),
-      h('div', { class: 'field', style: { marginTop: '12px' } }, [
-        h('label', { class: 'ctl' }, ['Sugerowany moduł dalszy']),
-        h('div', { class: 'radio-group radio-col' }, MODULY.map(function (m) {
-          return radio('ob.modul', m[0], m[1], 'ocenaBolu.modulDalszy');
-        })),
-        h('div', { class: 'hint', id: 'ob-modul-hint' })
       ])
     ]);
   }
@@ -201,6 +188,14 @@
     const key = t.getAttribute && t.getAttribute('data-state');
     if (key) {
       G.State.set(key, t.type === 'checkbox' ? t.checked : t.value);
+      /* Zaznaczenie „Głowa” (4.5) → przeniesienie charakteru bólu do 6.2 */
+      if (key === 'ocenaBolu.lokalizacja.glowa' && t.checked) {
+        const s = G.State.get();
+        const map = G.BolGlowy.przeniesCharakter(s.ocenaBolu.charakter);
+        Object.keys(map).forEach(function (k) {
+          if (!s.bolGlowy.charakterB[k]) G.State.set('bolGlowy.charakterB.' + k, true);
+        });
+      }
       return;
     }
     const cel = t.getAttribute && t.getAttribute('data-cel');
@@ -253,11 +248,6 @@
     root.querySelectorAll('[data-cel="' + cel + '"]').forEach(function (inp) {
       inp.checked = s.ocenaBolu.lekiNaBol.indexOf(parseInt(inp.getAttribute('data-id'), 10)) !== -1;
     });
-
-    /* Podpowiedź o module migrenowym */
-    q('#ob-modul-hint').textContent = (s.ocenaBolu.modulDalszy === 'bol_glowy')
-      ? 'Wybrano moduł bólu głowy — zakładka „Moduł migrenowy” została aktywowana.'
-      : '';
   }
 
   function buildLekSelect() {

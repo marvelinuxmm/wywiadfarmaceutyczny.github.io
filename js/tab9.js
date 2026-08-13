@@ -84,14 +84,14 @@
     const bsa = wazne ? Calc.bsaMosteller(masa, wzrost) : null;
     const ibw = s.plec && wzrost !== null && wzrost >= 130 && wzrost <= 230 ? Calc.idealBodyWeight(s.plec, wzrost) : null;
     const scr = Calc.toMgdl(s.kreatynina, s.jednostkaKreatyniny);
-    const age = Calc.parseNum(s.wiek);
+    const age = Calc.ageFromBirthDate(s.dataUrodzenia);
     const ageOk = age !== null && age >= 18 && age <= 120;
 
     const out = [];
 
     /* 1. Dane pacjenta */
     const daneRows = [
-      ['Wiek', str(s.wiek) + ' lat'],
+      ['Data urodzenia', s.dataUrodzenia ? s.dataUrodzenia + (age !== null ? ' (' + age + ' lat)' : '') : '—'],
       ['Płeć biologiczna', label('plec', s.plec)],
       ['Masa ciała', str(s.masa) + ' kg'],
       ['Wzrost', str(s.wzrost) + ' cm'],
@@ -182,8 +182,7 @@
       ['Przebieg', label('obPrzebieg', ob.przebieg)],
       ['Leki stosowane z powodu bólu', lekNazwy(s.leki, ob.lekiNaBol)],
       ['Czy leczenie zmniejsza ból', label('zmniejsza', ob.leczenieZmniejsza)],
-      ['Interpretacja', label('interpretacjaOcena', ob.interpretacja)],
-      ['Sugerowany moduł', label('modulDalszy', ob.modulDalszy)]
+      ['Interpretacja', label('interpretacjaOcena', ob.interpretacja)]
     ];
     out.push(sekcja('5. Ocena bólu', obRows, epikryzaBlock(ob.epikryza, '')));
 
@@ -223,7 +222,6 @@
         ((bg.mohDni || {}).paracetamolNlpzAsa || '—') + ' / ' + ((bg.mohDni || {}).zlozone || '—') + ' / ' + ((bg.mohDni || {}).tryptany || '—') + ' / ' + ((bg.mohDni || {}).opioidyKodeina || '—')],
       ['Podejrzenie nadużywania leków', label('bgMohOcena', bg.mohOcena)],
       ['Interpretacja', label('bgInterpretacja', bg.interpretacja)],
-      ['Decyzja farmaceutyczna', label('bgDecyzja', bg.decyzja)],
       ['Edukacja', skroty('bgEdukacja', bg.edukacja)]
     ];
     out.push(sekcja('7. Ból głowy', bgRows, epikryzaBlock(bg.epikryza, '')));
@@ -274,20 +272,20 @@
     const ryzyko = G.Ryzyko.compute(s);
 
     const wiersze = [];
-    wiersze.push(['Pacjent', (s.wiek ? s.wiek + ' lat, ' : '') + label('plec', s.plec) + (s.masa ? ', ' + s.masa + ' kg' : '') + (s.wzrost ? ', ' + s.wzrost + ' cm' : '')]);
+    const wiekP = Calc.ageFromBirthDate(s.dataUrodzenia);
+    wiersze.push(['Pacjent', (s.dataUrodzenia ? (wiekP !== null ? wiekP + ' lat, ' : s.dataUrodzenia + ', ') : '') + label('plec', s.plec) + (s.masa ? ', ' + s.masa + ' kg' : '') + (s.wzrost ? ', ' + s.wzrost + ' cm' : '')]);
     wiersze.push(['MARS-5', mars ? mars.sum + ' / 25 — ' + mars.interp.label : '—']);
     if (ryzyko.reakcja.length) wiersze.push(['Ryzyko farmakoterapii — wymaga reakcji', ryzyko.reakcja.join('; ')]);
     if (ryzyko.uwaga.length) wiersze.push(['Ryzyko farmakoterapii — uwagi', ryzyko.uwaga.join('; ')]);
     if (s.statusFarmakoterapii) wiersze.push(['Status farmakoterapii', label('statusFarm', s.statusFarmakoterapii) + (Object.keys(s.przyczyny || {}).some(function (k) { return s.przyczyny[k]; }) ? ' — ' + skroty('przyczyny', s.przyczyny) : '')]);
     const ob = s.ocenaBolu || {};
-    if (ob.interpretacja) wiersze.push(['Ocena bólu — interpretacja', label('interpretacjaOcena', ob.interpretacja) + (ob.modulDalszy ? ' (moduł: ' + label('modulDalszy', ob.modulDalszy) + ')' : '')]);
+    if (ob.interpretacja) wiersze.push(['Ocena bólu — interpretacja', label('interpretacjaOcena', ob.interpretacja)]);
     const kb = s.kontrolaBolu || {};
     if (kb.statusKontroli) wiersze.push(['Kontrola bólu — status', label('statusKontroli', kb.statusKontroli)]);
     if (kb.dalszePostepowanie) wiersze.push(['Kontrola bólu — dalsze postępowanie', kb.dalszePostepowanie]);
     const bg = s.bolGlowy || {};
     if (bg.interpretacja) wiersze.push(['Ból głowy — interpretacja', label('bgInterpretacja', bg.interpretacja)]);
     if (bg.mohOcena) wiersze.push(['Ból głowy — ryzyko MOH', label('bgMohOcena', bg.mohOcena)]);
-    if (bg.decyzja) wiersze.push(['Ból głowy — decyzja', label('bgDecyzja', bg.decyzja)]);
     const mg = s.migrena || {};
     if (hasAny(mg)) {
       if (mg.klasyfikacja) wiersze.push(['Migrena — klasyfikacja', mg.klasyfikacja]);

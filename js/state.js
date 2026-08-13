@@ -4,7 +4,7 @@
 
   function defaultState() {
     return {
-      wiek: '',
+      dataUrodzenia: '',
       plec: '', // 'k' | 'm'
       masa: '',
       wzrost: '',
@@ -67,7 +67,6 @@
         leczenieZmniejsza: '',
         lekiNaBol: [],
         interpretacja: '',
-        modulDalszy: '',
         epikryza: ''
       },
       /* Zakładka 5 — Kontrola bólu */
@@ -110,7 +109,6 @@
         mohDni: { paracetamolNlpzAsa: '', zlozone: '', tryptany: '', opioidyKodeina: '' },
         mohOcena: '',
         interpretacja: '',
-        decyzja: '',
         edukacja: {},
         epikryza: ''
       },
@@ -187,7 +185,7 @@
   function merge(src) {
     const d = defaultState();
     if (src == null || typeof src !== 'object') return d;
-    const scalars = ['wiek', 'plec', 'masa', 'wzrost', 'ciaza', 'kreatynina', 'jednostkaKreatyniny',
+    const scalars = ['dataUrodzenia', 'plec', 'masa', 'wzrost', 'ciaza', 'kreatynina', 'jednostkaKreatyniny',
       'dataKreatyniny', 'albuminuria', 'uacr', 'uacrJednostka', 'psychAktywny',
       'psychOpis', 'epikryza', 'statusFarmakoterapii', 'epikryzaFarmakoterapii',
       'pomocAdherence', 'epikryzaKoncowa'];
@@ -253,7 +251,7 @@
       data: 'str', skala: 'str', nrsAktualne: 'str', nrsSrednie: 'str',
       wplyw: { nastroj: 'str', sen: 'str', funkcjonowanie: 'str', praca: 'str' },
       lokalizacja: 'bool', lokalizacjaOpis: 'str', charakter: 'bool', przebieg: 'str',
-      leczenieZmniejsza: 'str', lekiNaBol: 'arr', interpretacja: 'str', modulDalszy: 'str', epikryza: 'str'
+      leczenieZmniejsza: 'str', lekiNaBol: 'arr', interpretacja: 'str', epikryza: 'str'
     });
     mergeShape(d.kontrolaBolu, src.kontrolaBolu, {
       data: 'str', skalaTryb: 'str', skalaUzasadnienie: 'str',
@@ -269,7 +267,7 @@
       dniWMiesiacu: 'str', miesiace: 'str', czestoscKlasa: 'str',
       objawy: 'bool', wyzwalacze: 'bool', ulga: 'bool',
       mohDni: { paracetamolNlpzAsa: 'str', zlozone: 'str', tryptany: 'str', opioidyKodeina: 'str' },
-      mohOcena: 'str', interpretacja: 'str', decyzja: 'str', edukacja: 'bool', epikryza: 'str'
+      mohOcena: 'str', interpretacja: 'str', edukacja: 'bool', epikryza: 'str'
     });
     mergeShape(d.migrena, src.migrena, {
       rozpoznana: 'str', dniBoluGlowy: 'str', dniMigrenowe: 'str', dniDorzane: 'str', czasTrwania: 'str',

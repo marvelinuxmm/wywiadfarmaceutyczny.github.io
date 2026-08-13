@@ -4,14 +4,14 @@ require('../js/state.js');
 const State = globalThis.State;
 
 const s = State.get();
-s.wiek = '70';
+s.dataUrodzenia = '1956-08-13';
 s.wzrost = '175';
 s.leki.push({ nazwa: 'Nurofen', moc: '200 mg', postac: 'tabl.', tryb: 'przewlekle', schemat: '1-0-0', wskazanie: 'ból', komentarze: '', grupy: ['NLPZ'] });
 s.odpowiedzi['pp.objawy'] = 'tak';
 s.chorobySzczegolowe = { od_astma: true, nw_dializa: true, met_cukrzyca2: false };
 s.choroby.metaboliczne = true;
 s.inneChoroby = { sercowo: 'kardiomiopatia', psychiczne: 'anoreksja' };
-s.ocenaBolu = { data: '2026-08-12', skala: 'nrs', nrsAktualne: '6', nrsSrednie: '5', lekiNaBol: [1, 2], lokalizacja: { glowa: true }, interpretacja: 'umiarkowany', modulDalszy: 'bol_glowy', epikryza: 'x' };
+s.ocenaBolu = { data: '2026-08-12', skala: 'nrs', nrsAktualne: '6', nrsSrednie: '5', lekiNaBol: [1, 2], lokalizacja: { glowa: true }, interpretacja: 'umiarkowany', epikryza: 'x' };
 s.kontrolaBolu = { data: '2026-08-19', ulga: 'mala', dnLista: { krwawienie: true }, statusKontroli: 'niewystarczajaca' };
 s.migrena = { dniBoluGlowy: '12', dniMigrenowe: '9', czFlagi: { piorunujacy: true }, mohDni: { tryptany: '10' }, lekiDorzane: [2], klasyfikacja: 'Migrena wysokoczęsta' };
 s.statusFarmakoterapii = 'polipragmazja';
@@ -22,7 +22,7 @@ s.pomocAdherence = 'pomoc';
 
 const exportData = JSON.parse(JSON.stringify({ dane: s })); // symulacja pliku
 const merged = State.merge(exportData.dane);
-assert.strictEqual(merged.wiek, '70');
+assert.strictEqual(merged.dataUrodzenia, '1956-08-13');
 assert.strictEqual(merged.wzrost, '175');
 assert.strictEqual(merged.leki.length, 1);
 assert.deepStrictEqual(merged.leki[0].grupy, ['NLPZ']);
@@ -44,7 +44,7 @@ assert.strictEqual(merged.inneChoroby.psychiczne, 'anoreksja');
 assert.strictEqual(merged.ocenaBolu.nrsAktualne, '6');
 assert.strictEqual(merged.ocenaBolu.lokalizacja.glowa, true);
 assert.deepStrictEqual(merged.ocenaBolu.lekiNaBol, [1, 2]);
-assert.strictEqual(merged.ocenaBolu.modulDalszy, 'bol_glowy');
+assert.strictEqual(merged.ocenaBolu.interpretacja, 'umiarkowany');
 assert.strictEqual(merged.kontrolaBolu.dnLista.krwawienie, true);
 assert.strictEqual(merged.kontrolaBolu.statusKontroli, 'niewystarczajaca');
 assert.strictEqual(merged.migrena.czFlagi.piorunujacy, true);

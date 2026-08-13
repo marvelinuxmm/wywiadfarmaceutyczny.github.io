@@ -62,9 +62,9 @@
       h('h2', {}, [h('span', { class: 'num', text: '1' }), 'Dane podstawowe']),
       h('div', { class: 'grid' }, [
         h('div', { class: 'field' }, [
-          h('label', { class: 'ctl' }, ['Wiek', h('span', { class: 'req', text: ' *' })]),
-          h('input', { type: 'number', id: 'f-wiek', min: '18', max: '120', step: '1', 'data-state': 'wiek' }),
-          h('div', { class: 'hint', text: 'Zakres 18–120 lat' }),
+          h('label', { class: 'ctl' }, ['Data urodzenia', h('span', { class: 'req', text: ' *' })]),
+          h('input', { type: 'date', id: 'f-data-urodzenia', max: new Date().toISOString().slice(0, 10), 'data-state': 'dataUrodzenia' }),
+          h('div', { class: 'hint', id: 'wiek-val' }),
           h('div', { class: 'hint err', id: 'wiek-hint' })
         ]),
         h('div', { class: 'field' }, [
@@ -125,10 +125,6 @@
     ]);
 
     /* --- 3. Szczegółowe choroby współistniejące + pytania kontrolne --- */
-    const alarmPytania = [];
-    (G.PYTANIA || []).forEach(function (s) {
-      if (s.choroba === '__alarmowe__') s.pytania.forEach(function (p) { alarmPytania.push(p); });
-    });
     const sekSzczegolowe = h('section', { class: 'card' }, [
       h('h2', {}, [h('span', { class: 'num', text: '3' }), 'Szczegółowe choroby współistniejące i pytania uzupełniające']),
       h('p', { class: 'hint', id: 'szczegolowe-hint', text: 'Zaznacz kategorię w sekcji 2, aby rozwinąć jej listę i pytania uzupełniające. Pozycje już zaznaczone na liście nie są pytane ponownie.' }),
@@ -173,13 +169,7 @@
           h('h4', {}, [g.system, h('span', { class: 'grupa-liczba', 'data-liczba': g.system })]),
           h('div', { class: 'checkbox-grid' }, dzieci)
         ]);
-      }),
-      /* Objawy alarmowe — zawsze widoczne */
-      h('div', { class: 'grupa-chorob grupa-alarmowa' }, [
-        h('h4', { text: 'Objawy alarmowe — sprawdź zawsze' }),
-        h('p', { class: 'hint', text: 'Odpowiedź „tak” przy objawie ⚠ uruchamia poziom „Wymaga reakcji” w podsumowaniu ryzyka (zakładka 2).' }),
-        h('div', {}, alarmPytania.map(pytanieRow))
-      ])
+      })
     ]);
 
     /* --- 4. Panel nerkowy --- */
@@ -321,7 +311,7 @@
   function apply() {
     if (!root) return;
     const q = function (sel) { return root.querySelector(sel); };
-    if (!q('#f-wiek')) return; // aktywna jest inna zakładka
+    if (!q('#f-data-urodzenia')) return; // aktywna jest inna zakładka
 
     const s = G.State.get();
     const Calc = G.Calc;
@@ -337,7 +327,7 @@
       else inp.value = (v == null) ? '' : v;
     });
 
-    const age = Calc.parseNum(s.wiek);
+    const age = Calc.ageFromBirthDate(s.dataUrodzenia);
     const masa = Calc.parseNum(s.masa);
     const wzrost = Calc.parseNum(s.wzrost);
     const scr = Calc.toMgdl(s.kreatynina, s.jednostkaKreatyniny);
@@ -375,7 +365,17 @@
     q('#kreatynina-req').style.display = pchn ? '' : 'none';
 
     /* Walidacja zakresów */
-    q('#wiek-hint').textContent = (age !== null && (age < 18 || age > 120)) ? 'Poza zakresem 18–120 lat.' : '';
+    const wiekVal = q('#wiek-val');
+    if (age !== null && s.dataUrodzenia) {
+      wiekVal.textContent = 'Wiek (wyliczony z daty urodzenia): ' + age + ' lat';
+    } else {
+      wiekVal.textContent = 'Podaj datę urodzenia (wiek 18–120 lat).';
+    }
+    const przyszlaData = !!s.dataUrodzenia &&
+      new Date(String(s.dataUrodzenia) + 'T00:00:00').getTime() > Date.now();
+    q('#wiek-hint').textContent = przyszlaData
+      ? 'Data urodzenia w przyszłości — sprawdź wpisaną datę.'
+      : (age !== null && (age < 18 || age > 120)) ? 'Wiek poza zakresem 18–120 lat.' : '';
     q('#masa-hint').textContent = (masa !== null && (masa < 30 || masa > 250)) ? 'Poza zakresem 30–250 kg.' : '';
     q('#wzrost-hint').textContent = (wzrost !== null && !wzrostOk) ? 'Poza zakresem 130–230 cm.' : '';
 
@@ -427,7 +427,7 @@
     }
 
     const missing = [];
-    if (!ageOk) missing.push('wiek');
+    if (!ageOk) missing.push('datę urodzenia');
     if (!s.plec) missing.push('płeć');
     if (!masaOk) missing.push('masę ciała');
     if (scr === null) missing.push('kreatyninę');

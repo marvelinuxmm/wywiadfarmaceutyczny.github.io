@@ -99,6 +99,18 @@
     return (Date.now() - d.getTime()) / 86400000;
   }
 
+  /* Wiek w latach z daty urodzenia (YYYY-MM-DD); refDate dla testów. */
+  function ageFromBirthDate(dateStr, refDate) {
+    if (!dateStr) return null;
+    const d = new Date(String(dateStr) + 'T00:00:00');
+    if (isNaN(d.getTime())) return null;
+    const r = (refDate instanceof Date) ? refDate : new Date();
+    let age = r.getFullYear() - d.getFullYear();
+    const m = r.getMonth() - d.getMonth();
+    if (m < 0 || (m === 0 && r.getDate() < d.getDate())) age--;
+    return age;
+  }
+
   function parseNum(v) {
     if (v === '' || v === null || v === undefined) return null;
     const n = parseFloat(String(v).replace(',', '.'));
@@ -117,6 +129,7 @@
     egfrBand: egfrBand,
     crclBand: crclBand,
     daysSince: daysSince,
+    ageFromBirthDate: ageFromBirthDate,
     parseNum: parseNum
   };
 })();

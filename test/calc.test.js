@@ -58,10 +58,26 @@ assert.strictEqual(Calc.crclBand(45).sev, 'warn');
 assert.strictEqual(Calc.crclBand(20).sev, 'alert');
 console.log('OK');
 
+console.log('--- Wiek z daty urodzenia ---');
+assert.strictEqual(Calc.ageFromBirthDate('', new Date(2026, 7, 13)), null);
+assert.strictEqual(Calc.ageFromBirthDate('zla-data', new Date(2026, 7, 13)), null);
+assert.strictEqual(Calc.ageFromBirthDate('1990-05-20', new Date(2026, 7, 13)), 36);
+assert.strictEqual(Calc.ageFromBirthDate('1990-08-20', new Date(2026, 7, 13)), 35);
+assert.strictEqual(Calc.ageFromBirthDate('1990-08-13', new Date(2026, 7, 13)), 36);
+assert.strictEqual(Calc.ageFromBirthDate('2000-02-29', new Date(2004, 1, 28)), 3);
+console.log('OK');
+
 console.log('--- Flagi: scenariusze ---');
+function birthDate(yearsAgo) {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - yearsAgo);
+  d.setDate(d.getDate() - 1);
+  const pad = function (n) { return String(n).padStart(2, '0'); };
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
 function state(over) {
   const base = {
-    wiek: '', plec: '', masa: '', wzrost: '', ciaza: '', kreatynina: '', jednostkaKreatyniny: 'mgdl',
+    dataUrodzenia: '', plec: '', masa: '', wzrost: '', ciaza: '', kreatynina: '', jednostkaKreatyniny: 'mgdl',
     dataKreatyniny: '', albuminuria: 'brak', uacr: '', uacrJednostka: 'mgg',
     psychAktywny: '', psychOpis: '', epikryza: '',
     choroby: { sercowo: false, oddechowe: false, przewodpokarmowy: false, watroba: false,
@@ -76,22 +92,22 @@ function state(over) {
 const titles = (s) => Flags.compute(s).map(f => f.title);
 const has = (s, ttl) => titles(s).indexOf(ttl) !== -1;
 
-assert.ok(titles(state({ wiek: '16', plec: 'm' })).some(t => t.indexOf('poniżej 18') !== -1), 'wiek <18 → alert');
-assert.ok(titles(state({ wiek: '65', plec: 'm' })).some(t => t.indexOf('65 lat') !== -1), 'wiek ≥65 → flaga');
+assert.ok(titles(state({ dataUrodzenia: birthDate(16), plec: 'm' })).some(t => t.indexOf('poniżej 18') !== -1), 'wiek <18 → alert');
+assert.ok(titles(state({ dataUrodzenia: birthDate(65), plec: 'm' })).some(t => t.indexOf('65 lat') !== -1), 'wiek ≥65 → flaga');
 assert.ok(titles(state({ masa: '50', wzrost: '180' })).some(t => t.indexOf('BMI') !== -1), 'niedowaga → flaga BMI');
 assert.ok(titles(state({ masa: '100', wzrost: '175' })).some(t => t.indexOf('BMI') !== -1), 'otyłość → flaga BMI');
 assert.ok(titles(state({ plec: 'k', ciaza: 'tak' })).some(t => t.indexOf('Ciąża') !== -1), 'ciąża tak → alert');
 assert.ok(titles(state({ plec: 'k', ciaza: 'nw' })).some(t => t.indexOf('Ciąża') !== -1), 'ciąża nie wiem → alert');
 assert.ok(titles(state({ plec: 'k' })).some(t => t.indexOf('brak odpowiedzi') !== -1), 'kobieta bez odpowiedzi → ostrzeżenie');
-assert.ok(has(state({ wiek: '60', plec: 'm', choroby: { sercowo: true } }), 'Choroby sercowo-naczyniowe'), 'sercowo-naczyniowe → flaga');
-assert.ok(has(state({ wiek: '60', plec: 'm', choroby: { oddechowe: true } }), 'Choroba układu oddechowego'), 'oddechowe → flaga');
-assert.ok(has(state({ wiek: '60', plec: 'm', choroby: { przewodpokarmowy: true } }), 'Choroba przewodu pokarmowego'), 'przewód pokarmowy → flaga');
-assert.ok(has(state({ wiek: '60', plec: 'm', choroby: { watroba: true } }), 'Choroba wątroby'), 'wątroba → flaga');
-assert.ok(has(state({ wiek: '60', plec: 'm', choroby: { pchn: true } }), 'Brak wyniku kreatyniny'), 'PChN bez kreatyniny → ostrzeżenie');
-assert.ok(has(state({ wiek: '60', plec: 'm', choroby: { psychiczne: true } }), 'Zaburzenia zdrowia psychicznego / uzależnienia'), 'psychiczne → flaga');
-assert.ok(has(state({ wiek: '60', plec: 'm', dataKreatyniny: '2000-01-01' }), 'Nieaktualny wynik kreatyniny'), 'stara kreatynina → flaga');
+assert.ok(has(state({ dataUrodzenia: birthDate(60), plec: 'm', choroby: { sercowo: true } }), 'Choroby sercowo-naczyniowe'), 'sercowo-naczyniowe → flaga');
+assert.ok(has(state({ dataUrodzenia: birthDate(60), plec: 'm', choroby: { oddechowe: true } }), 'Choroba układu oddechowego'), 'oddechowe → flaga');
+assert.ok(has(state({ dataUrodzenia: birthDate(60), plec: 'm', choroby: { przewodpokarmowy: true } }), 'Choroba przewodu pokarmowego'), 'przewód pokarmowy → flaga');
+assert.ok(has(state({ dataUrodzenia: birthDate(60), plec: 'm', choroby: { watroba: true } }), 'Choroba wątroby'), 'wątroba → flaga');
+assert.ok(has(state({ dataUrodzenia: birthDate(60), plec: 'm', choroby: { pchn: true } }), 'Brak wyniku kreatyniny'), 'PChN bez kreatyniny → ostrzeżenie');
+assert.ok(has(state({ dataUrodzenia: birthDate(60), plec: 'm', choroby: { psychiczne: true } }), 'Zaburzenia zdrowia psychicznego / uzależnienia'), 'psychiczne → flaga');
+assert.ok(has(state({ dataUrodzenia: birthDate(60), plec: 'm', dataKreatyniny: '2000-01-01' }), 'Nieaktualny wynik kreatyniny'), 'stara kreatynina → flaga');
 
-const pelny = state({ wiek: '70', plec: 'k', masa: '60', kreatynina: '1.2', dataKreatyniny: '2026-01-01', choroby: { pchn: true } });
+const pelny = state({ dataUrodzenia: birthDate(70), plec: 'k', masa: '60', kreatynina: '1.2', dataKreatyniny: '2026-01-01', choroby: { pchn: true } });
 assert.ok(titles(pelny).some(t => t.indexOf('eGFR CKD-EPI') !== -1), 'eGFR wyliczony w flagach');
 assert.ok(titles(pelny).some(t => t.indexOf('CrCL') !== -1), 'CrCL wyliczony w flagach');
 

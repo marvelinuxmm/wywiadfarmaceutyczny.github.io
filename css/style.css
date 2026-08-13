@@ -368,6 +368,7 @@ table.mars td.mars-pytanie { text-align: left; font-size: 14px; }
 .komunikat-alert { background: var(--alert-bg); border: 1px solid var(--alert-border); color: var(--alert-text); }
 .komunikat-info { background: var(--info-bg); border: 1px solid var(--info-border); color: var(--info-text); }
 .komunikat-sugestia { background: #f0f5f9; border: 1px solid #cfe0ee; color: var(--primary-dark); }
+.komunikat-ok { background: #eef7ee; border: 1px solid #c5e5c5; color: #2a6f2a; }
 
 .radio.sugerowane {
   background: #e8f3fb;

@@ -75,14 +75,6 @@
     ['wtorny', 'Bólem wtórnym wymagającym konsultacji'],
     ['trudno', 'Nie można ocenić']
   ];
-  const DECYZJE = [
-    ['tth-modul', 'Pacjent może przejść do modułu: Napięciowy ból głowy'],
-    ['migrena-modul', 'Pacjent powinien przejść do modułu: Migrena'],
-    ['moh-ocena', 'Pacjent wymaga oceny ryzyka MOH'],
-    ['lekarz', 'Pacjent wymaga skierowania do lekarza'],
-    ['pilna', 'Pacjent wymaga pilnej pomocy'],
-    ['obserwacja', 'Potrzebna epikryza i obserwacja / dzienniczek bólu']
-  ];
   const EDUKACJA = [
     ['alarm', 'Rozpoznawanie objawów alarmowych'],
     ['bezpieczne', 'Bezpieczne stosowanie leków przeciwbólowych'],
@@ -249,6 +241,7 @@
         }))
       ]),
       h('div', { class: 'komunikat komunikat-sugestia', id: 'bg-interp-sugestia' }),
+      h('div', { class: 'komunikat komunikat-ok', id: 'bg-interp-unlock', style: { display: 'none' } }),
       h('div', { class: 'results', id: 'bg-tth-kryteria', style: { display: 'none' } }, [
         h('h3', { text: 'Kryteria wspierające napięciowy ból głowy' }),
         h('ul', { class: 'kryteria-list', id: 'bg-tth-list' })
@@ -256,21 +249,9 @@
     ]);
   }
 
-  function buildDecyzja() {
-    return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.8' }), 'Decyzja farmaceutyczna']),
-      h('div', { class: 'field' }, [
-        h('div', { class: 'radio-group radio-col' }, DECYZJE.map(function (d) {
-          return radio('bg.decyzja', d[0], d[1], 'bolGlowy.decyzja');
-        }))
-      ]),
-      h('div', { class: 'hint', id: 'bg-decyzja-hint' })
-    ]);
-  }
-
   function buildEdukacja() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.9' }), 'Edukacja pacjenta']),
+      h('h2', {}, [h('span', { class: 'num', text: '6.8' }), 'Edukacja pacjenta']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Omówiono:']),
         h('div', { class: 'checkbox-grid' }, EDUKACJA.map(function (e) {
@@ -282,7 +263,7 @@
 
   function buildEpikryza() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '6.10' }), 'Epikryza zakładki „Ból głowy”']),
+      h('h2', {}, [h('span', { class: 'num', text: '6.9' }), 'Epikryza zakładki „Ból głowy”']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Komentarz farmaceuty']),
         h('textarea', {
@@ -296,7 +277,7 @@
 
   function build() {
     return [buildAlarmowe(), buildCharakter(), buildCzas(), buildObjawy(), buildCzynniki(),
-      buildMoh(), buildInterpretacja(), buildDecyzja(), buildEdukacja(), buildEpikryza()];
+      buildMoh(), buildInterpretacja(), buildEdukacja(), buildEpikryza()];
   }
 
   function handleInput(e) {
@@ -372,6 +353,15 @@
       inp.parentElement.classList.toggle('sugerowane', inp.value === interp.opcja);
     });
 
+    /* Wybór „Migreną” → odblokowanie zakładki 7 */
+    const unlock = q('#bg-interp-unlock');
+    if (bg.interpretacja === 'migrena') {
+      unlock.style.display = '';
+      unlock.textContent = 'Wybrano „Migreną” — zakładka „Moduł migrenowy” została odblokowana.';
+    } else {
+      unlock.style.display = 'none';
+    }
+
     /* Kryteria TTH */
     const kryteria = B.kryteriaTTH(bg);
     const lista = q('#bg-tth-list');
@@ -390,21 +380,6 @@
         ? 'kryteria spełnione (≥2 z 4 + warunki dodatkowe)'
         : 'kryteria niespełnione — rozważ inną diagnozę różnicową')
     ]));
-
-    /* Decyzja — podpowiedzi */
-    const decyzjaHint = q('#bg-decyzja-hint');
-    const d = bg.decyzja;
-    if (d === 'migrena-modul') {
-      decyzjaHint.textContent = 'Wybrano moduł migrenowy — zakładka „Moduł migrenowy” została aktywowana.';
-    } else if (d === 'tth-modul') {
-      decyzjaHint.textContent = 'Obraz napięciowego bólu głowy — bez dedykowanego modułu; obserwacja, edukacja i dzienniczek bólu.';
-    } else if (d === 'moh-ocena') {
-      decyzjaHint.textContent = 'Zweryfikuj progi MOH w sekcji 6.6 i rozważ ograniczenie leków doraźnych.';
-    } else if (d === 'lekarz' || d === 'pilna') {
-      decyzjaHint.textContent = 'Poinformuj pacjenta o zaleceniu konsultacji lekarskiej zgodnie z lokalną procedurą.';
-    } else {
-      decyzjaHint.textContent = '';
-    }
   }
 
   G.Tab6 = { init: init, apply: apply };

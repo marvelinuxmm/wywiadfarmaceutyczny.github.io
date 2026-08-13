@@ -54,10 +54,6 @@
       poglebic: 'Obraz wymaga pogłębienia w module szczegółowym',
       konsultacja: 'Rozważyć konsultację lekarską / poradnię leczenia bólu'
     },
-    modulDalszy: {
-      bol_glowy: 'Moduł ból głowy', neuropatyczny: 'Moduł ból neuropatyczny',
-      ogolny: 'Moduł przewlekły ból ogólny', brak: 'Brak sugestii na tym etapie'
-    },
     /* Kontrola bólu */
     skalaTryb: { 'ta-sama': 'Ta sama skala co poprzednio', inna: 'Inna skala' },
     ulga: { calkowita: 'Całkowita ulga w bólu', umiarkowana: 'Umiarkowana ulga w bólu', mala: 'Mała ulga w bólu', brak: 'Brak ulgi w bólu' },
@@ -133,14 +129,6 @@
       tth: 'Napięciowy ból głowy', migrena: 'Migrena', moh: 'Ból głowy z nadużywania leków',
       zatokowy: 'Ból zatokowy', klaster: 'Klasterowy ból głowy',
       wtorny: 'Ból wtórny wymagający konsultacji', trudno: 'Nie można ocenić'
-    },
-    bgDecyzja: {
-      'tth-modul': 'Przejście do modułu: Napięciowy ból głowy',
-      'migrena-modul': 'Przejście do modułu: Migrena',
-      'moh-ocena': 'Wymaga oceny ryzyka MOH',
-      lekarz: 'Wymaga skierowania do lekarza',
-      pilna: 'Wymaga pilnej pomocy',
-      obserwacja: 'Epikryza i obserwacja / dzienniczek bólu'
     },
     bgEdukacja: [
       ['alarm', 'Rozpoznawanie objawów alarmowych'],

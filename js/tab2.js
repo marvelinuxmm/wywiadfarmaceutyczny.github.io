@@ -312,10 +312,15 @@
       else inp.value = (v == null) ? '' : v;
     });
 
-    /* Tabela leków — przebudowa tylko przy zmianie liczby wierszy */
+    /* Tabela leków — przebudowa tylko przy zmianie liczby wierszy;
+       po przebudowie wiersze są puste, więc uzupełnij je ze stanu */
     const tb = q('#tbody-leki');
-    if (tb.children.length !== s.leki.length) renderRows();
-    else syncRows();
+    if (tb.children.length !== s.leki.length) {
+      renderRows();
+      syncRows();
+    } else {
+      syncRows();
+    }
 
     /* Podsumowanie ryzyka */
     renderRyzyko();
