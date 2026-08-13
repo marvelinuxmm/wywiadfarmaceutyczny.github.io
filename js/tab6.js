@@ -29,13 +29,8 @@
   ];
   const AKTYWNOSC = [['nie', 'Nie'], ['tak', 'Tak'], ['nw', 'Nie wiem']];
   const CZAS_TRWANIA = [
-    ['<30', '<30 minut'], ['30m-4h', '30 minut – 4 godziny'], ['4-72h', '4–72 godziny'],
+    ['<4h', '<4 godziny'], ['4-72h', '4–72 godziny'],
     ['>72h', '>72 godziny'], ['trudno', 'Trudno określić']
-  ];
-  const CZESTOSC = [
-    ['rzadki', 'Rzadki epizodyczny napięciowy ból głowy (<1 dzień/mies.)'],
-    ['czesty', 'Częsty epizodyczny napięciowy ból głowy (1–14 dni/mies. przez >3 mies.)'],
-    ['przewlekly', 'Możliwy przewlekły napięciowy ból głowy (≥15 dni/mies. przez >3 mies.)']
   ];
   const OBJAWY = [
     ['brak', 'Brak objawów towarzyszących'], ['swiatlowstret', 'Światłowstręt'], ['dzwieki', 'Nadwrażliwość na dźwięki'],
@@ -159,18 +154,16 @@
       h('div', { class: 'grid' }, [
         dniField('bolGlowy.dniWMiesiacu', 'Liczba dni z bólem głowy w miesiącu', 'bg-dni'),
         h('div', { class: 'field' }, [
-          h('label', { class: 'ctl' }, ['Od ilu miesięcy występują takie bóle?']),
-          h('input', { type: 'number', id: 'bg-miesiace', min: '0', max: '240', step: '1', 'data-state': 'bolGlowy.miesiace' }),
-          h('div', { class: 'hint', text: 'miesiące' })
+          h('label', { class: 'ctl' }, ['Od jakiego czasu występują takie bóle?']),
+          h('div', { class: 'row-inline' }, [
+            h('input', { type: 'number', id: 'bg-odkiedy', min: '0', max: '999', step: '1', 'data-state': 'bolGlowy.odKiedyIle' }),
+            h('select', { 'data-state': 'bolGlowy.odKiedyJednostka' }, [
+              h('option', { value: 'miesiace', text: 'miesięcy' }),
+              h('option', { value: 'lata', text: 'lat' })
+            ])
+          ])
         ])
-      ]),
-      h('div', { class: 'field', style: { marginTop: '12px' } }, [
-        h('label', { class: 'ctl' }, ['Klasyfikacja robocza częstości']),
-        h('div', { class: 'radio-group radio-col' }, CZESTOSC.map(function (c) {
-          return radio('bg.czestosc', c[0], c[1], 'bolGlowy.czestoscKlasa');
-        }))
-      ]),
-      h('div', { class: 'komunikat komunikat-sugestia', id: 'bg-czestosc-sugestia' })
+      ])
     ]);
   }
 
@@ -321,16 +314,6 @@
     } else {
       alert.style.display = 'none';
     }
-
-    /* Klasyfikacja częstości — auto-sugestia */
-    const cz = B.sugerujCzestosc(bg.dniWMiesiacu, bg.miesiace);
-    q('#bg-czestosc-sugestia').textContent = cz.opcja
-      ? 'Propozycja aplikacji: ' + (CZESTOSC.find(function (x) { return x[0] === cz.opcja; }) || ['', '—'])[1] +
-        '. (' + cz.powody.join('; ') + ')'
-      : 'Podaj liczbę dni z bólem głowy w miesiącu, aby wyświetlić propozycję klasyfikacji.';
-    root.querySelectorAll('[name="bg.czestosc"]').forEach(function (inp) {
-      inp.parentElement.classList.toggle('sugerowane', inp.value === cz.opcja);
-    });
 
     /* MOH — auto-sugestia */
     const moh = B.sugerujMOH(Object.assign({ dniBoluGlowy: bg.dniWMiesiacu }, bg.mohDni || {}));

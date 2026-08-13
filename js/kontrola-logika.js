@@ -92,8 +92,9 @@
     return { label: 'Migrena epizodyczna', opis: 'Ból głowy <15 dni/mies.' };
   }
 
-  /* Wyprowadzone kryteria profilaktyki (7.8) z wcześniejszych odpowiedzi.
+  /* Wyprowadzone kryteria profilaktyki (7.5) z wcześniejszych odpowiedzi.
      d = { czasTrwania, dniWMiesiacu, mohDni, wplyw, skutecznosc2h, aura }.
+     wplyw pochodzi z 4.4 (ocenaBolu.wplyw): wystarcza „umiarkowanie” lub „znacznie”.
      Zwraca obiekt { '72h': bool, wplyw, nieskuteczne, 'czeste-dorzane', aura, przewlekla }. */
   function sugerujProfilaktyka(d) {
     const dni = num(d.dniWMiesiacu);
@@ -103,7 +104,10 @@
     });
     return {
       '72h': d.czasTrwania === '>72h',
-      wplyw: Object.keys(d.wplyw || {}).some(function (k) { return k !== 'brak' && d.wplyw[k]; }),
+      wplyw: Object.keys(d.wplyw || {}).some(function (k) {
+        const v = d.wplyw[k];
+        return v === 'umiarkowanie' || v === 'znacznie';
+      }),
       nieskuteczne: d.skutecznosc2h === 'brak',
       'czeste-dorzane': czeste,
       aura: d.aura !== '' && d.aura !== 'nie' && d.aura !== 'nw',

@@ -4,14 +4,6 @@ require('../js/bolglowy-logika.js');
 require('../js/data/leki.js');
 const B = globalThis.BolGlowy;
 
-console.log('--- Klasyfikacja częstości ---');
-assert.strictEqual(B.sugerujCzestosc('0', '').opcja, 'rzadki');
-assert.strictEqual(B.sugerujCzestosc('5', '6').opcja, 'czesty');
-assert.strictEqual(B.sugerujCzestosc('20', '6').opcja, 'przewlekly');
-assert.strictEqual(B.sugerujCzestosc('20', '').opcja, 'przewlekly');
-assert.strictEqual(B.sugerujCzestosc('', '').opcja, '');
-console.log('OK');
-
 console.log('--- MOH (ból głowy) ---');
 const moh = (over) => Object.assign({ paracetamolNlpzAsa: '', zlozone: '', tryptany: '', opioidyKodeina: '', dniBoluGlowy: '' }, over);
 assert.strictEqual(B.sugerujMOH(moh({})).opcja, 'brak');
@@ -35,7 +27,7 @@ console.log('OK');
 console.log('--- Wstępna interpretacja ---');
 const d = (over) => Object.assign({
   alarmowe: {}, lokalizacja: {}, charakterB: {}, nrs: '', aktywnoscNasila: '',
-  czasTrwania: '', dniWMiesiacu: '', miesiace: '', objawy: {}, wyzwalacze: {}, ulga: {}, mohDni: {}
+  czasTrwania: '', dniWMiesiacu: '', objawy: {}, wyzwalacze: {}, ulga: {}, mohDni: {}
 }, over);
 // czerwone flagi → wtórny
 assert.strictEqual(B.sugerujInterpretacje(d({ alarmowe: { nagly: true } })).opcja, 'wtorny');

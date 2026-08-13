@@ -72,12 +72,7 @@
       ['pulsujacy', 'Pulsujący'], ['przeszywajacy', 'Przeszywający / świdrujący'], ['piekacy', 'Piekący'], ['inny', 'Inny']
     ],
     bgAktywnosc: { nie: 'Nie', tak: 'Tak', nw: 'Nie wiem' },
-    bgCzasTrwania: { '<30': '<30 minut', '30m-4h': '30 minut – 4 godziny', '4-72h': '4–72 godziny', '>72h': '>72 godziny', trudno: 'Trudno określić' },
-    bgCzestosc: {
-      rzadki: 'Rzadki epizodyczny napięciowy ból głowy (<1 dzień/mies.)',
-      czesty: 'Częsty epizodyczny napięciowy ból głowy (1–14 dni/mies. przez >3 mies.)',
-      przewlekly: 'Możliwy przewlekły napięciowy ból głowy (≥15 dni/mies. przez >3 mies.)'
-    },
+    bgCzasTrwania: { '<4h': '<4 godziny', '4-72h': '4–72 godziny', '>72h': '>72 godziny', trudno: 'Trudno określić' },
     bgObjawy: [
       ['brak', 'Brak objawów towarzyszących'], ['swiatlowstret', 'Światłowstręt'], ['dzwieki', 'Nadwrażliwość na dźwięki'],
       ['nudnosci', 'Nudności'], ['wymioty', 'Wymioty'], ['aura', 'Aura / zaburzenia widzenia'],
@@ -130,19 +125,6 @@
       ['jedno-oko', 'Objawy tylko w jednym oku'], ['dluga', 'Aura trwa >60 minut'],
       ['nowa', 'Aura nowa lub istotnie inna niż zwykle'], ['brak', 'Brak powyższych']
     ],
-    mgCzFlagi: [
-      ['piorunujacy', 'Nagły, piorunujący ból głowy'], ['po-50', 'Nowy ból głowy po 50. roku życia'],
-      ['goraczka', 'Ból głowy z gorączką, sztywnością karku lub wysypką'], ['deficyt', 'Nowy deficyt neurologiczny'],
-      ['swiadomosc', 'Zaburzenia świadomości lub splątanie'], ['uraz', 'Ból po urazie głowy'],
-      ['kaszlel', 'Ból nasilany kaszlem, parciem, wysiłkiem lub zmianą pozycji'],
-      ['wzorzec', 'Istotna zmiana wzorca bólu'],
-      ['immunosupresja', 'Nowy ból głowy u pacjenta z immunosupresją'],
-      ['nowotwor', 'Nowy ból głowy u pacjenta z chorobą nowotworową w wywiadzie'], ['brak', 'Brak powyższych']
-    ],
-    mgWplyw: [
-      ['praca', 'Pracę / naukę'], ['dom', 'Obowiązki domowe'], ['fizyczna', 'Aktywność fizyczną'],
-      ['rodzina', 'Życie rodzinne / społeczne'], ['sen', 'Sen'], ['nastroj', 'Nastrój'], ['brak', 'Brak istotnego wpływu']
-    ],
     mgWczesnie: {
       wczesnie: 'Tak, gdy ból jest jeszcze łagodny', pozno: 'Tak, ale dopiero przy umiarkowanym/silnym bólu',
       'za-pozno': 'Zwykle za późno', nw: 'Nie wiem'
@@ -160,16 +142,6 @@
     ],
     mgProfStos: { nie: 'Nie', tak: 'Tak', nw: 'Nie wiem' },
     mgProfEfekt: { tak: 'Tak, wyraźnie', czesciowo: 'Częściowo', nie: 'Nie', 'za-wczesnie': 'Za wcześnie na ocenę', nw: 'Nie wiem' },
-    mgEdukacja: [
-      ['wczesnie', 'Przyjmowanie leku doraźnego wcześnie w fazie bólu'],
-      ['aura-tryptan', 'Nieprzyjmowanie tryptanu wyłącznie w fazie aury'],
-      ['limit-dni', 'Ograniczanie liczby dni stosowania leków doraźnych'],
-      ['moh', 'Ryzyko bólu głowy z nadużywania leków'],
-      ['dzienniczek', 'Prowadzenie dzienniczka bólu głowy'],
-      ['alarm', 'Rozpoznawanie objawów alarmowych'],
-      ['pomoc', 'Kiedy szukać pomocy lekarskiej'],
-      ['profilaktyka', 'Potrzebę konsultacji w sprawie profilaktyki']
-    ],
     mgKrok: {
       edukacja: 'Edukacja i kontynuacja obserwacji',
       optymalizacja: 'Optymalizacja stosowania leczenia doraźnego',

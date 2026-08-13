@@ -20,19 +20,6 @@
     ['jedno-oko', 'Objawy tylko w jednym oku'], ['dluga', 'Aura trwa >60 minut'],
     ['nowa', 'Aura nowa lub istotnie inna niż zwykle'], ['brak', 'Brak powyższych']
   ];
-  const CZ_FLAGI = [
-    ['piorunujacy', 'Nagły, piorunujący ból głowy'], ['po-50', 'Nowy ból głowy po 50. roku życia'],
-    ['goraczka', 'Ból głowy z gorączką, sztywnością karku lub wysypką'], ['deficyt', 'Nowy deficyt neurologiczny'],
-    ['swiadomosc', 'Zaburzenia świadomości lub splątanie'], ['uraz', 'Ból po urazie głowy'],
-    ['kaszlel', 'Ból nasilany kaszlem, parciem, wysiłkiem lub zmianą pozycji'],
-    ['wzorzec', 'Istotna zmiana dotychczasowego wzorca bólu'],
-    ['immunosupresja', 'Nowy ból głowy u pacjenta z immunosupresją'],
-    ['nowotwor', 'Nowy ból głowy u pacjenta z chorobą nowotworową w wywiadzie'], ['brak', 'Brak powyższych']
-  ];
-  const WPLYW_M = [
-    ['praca', 'Pracę / naukę'], ['dom', 'Obowiązki domowe'], ['fizyczna', 'Aktywność fizyczną'],
-    ['rodzina', 'Życie rodzinne / społeczne'], ['sen', 'Sen'], ['nastroj', 'Nastrój'], ['brak', 'Brak istotnego wpływu']
-  ];
   const WCZESNIE = [
     ['wczesnie', 'Tak, gdy ból jest jeszcze łagodny'], ['pozno', 'Tak, ale dopiero przy umiarkowanym/silnym bólu'],
     ['za-pozno', 'Zwykle za późno'], ['nw', 'Nie wiem']
@@ -55,16 +42,6 @@
   const PROF_EFFEKT = [
     ['tak', 'Tak, wyraźnie'], ['czesciowo', 'Częściowo'], ['nie', 'Nie'],
     ['za-wczesnie', 'Za wcześnie na ocenę'], ['nw', 'Nie wiem']
-  ];
-  const EDUKACJA = [
-    ['wczesnie', 'Przyjmowanie leku doraźnego wcześnie w fazie bólu'],
-    ['aura-tryptan', 'Nieprzyjmowanie tryptanu wyłącznie w fazie aury, jeśli ból jeszcze się nie rozpoczął'],
-    ['limit-dni', 'Ograniczanie liczby dni stosowania leków doraźnych'],
-    ['moh', 'Ryzyko bólu głowy z nadużywania leków'],
-    ['dzienniczek', 'Prowadzenie dzienniczka bólu głowy'],
-    ['alarm', 'Rozpoznawanie objawów alarmowych'],
-    ['pomoc', 'Kiedy szukać pomocy lekarskiej'],
-    ['profilaktyka', 'Potrzebę konsultacji w sprawie profilaktyki']
   ];
   const DALSZY_KROK = [
     ['edukacja', 'Edukacja i kontynuacja obserwacji'],
@@ -142,37 +119,7 @@
 
   function buildSek4() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.4' }), 'Czerwone flagi bólu głowy']),
-      h('div', { class: 'field' }, [
-        h('label', { class: 'ctl' }, ['Czy występuje którykolwiek objaw alarmowy?']),
-        h('div', { class: 'checkbox-grid' }, CZ_FLAGI.map(function (f) {
-          return checkboxState('migrena.czFlagi', f[0], f[1]);
-        }))
-      ]),
-      h('div', { class: 'komunikat komunikat-alert', id: 'mg-czf-alert', style: { display: 'none' } })
-    ]);
-  }
-
-  function buildSek5() {
-    return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.5' }), 'Wpływ migreny na funkcjonowanie']),
-      h('div', { class: 'field' }, [
-        h('label', { class: 'ctl' }, ['Czy migrena istotnie wpływa na:']),
-        h('div', { class: 'checkbox-grid' }, WPLYW_M.map(function (w) {
-          return checkboxState('migrena.wplyw', w[0], w[1]);
-        }))
-      ]),
-      h('div', { class: 'field', style: { marginTop: '12px' } }, [
-        h('label', { class: 'ctl' }, ['Liczba dni ograniczonej aktywności w miesiącu']),
-        h('input', { type: 'number', id: 'mg-dni-aktyw', min: '0', max: '31', step: '1', 'data-state': 'migrena.dniOgraniczonejAktywnosci' }),
-        h('div', { class: 'hint', text: 'Wskazania do profilaktyki uwzględniają nie tylko liczbę dni bólu, ale też wpływ na życie osobiste, społeczne i zawodowe.' })
-      ])
-    ]);
-  }
-
-  function buildSek6() {
-    return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.6' }), 'Leczenie doraźne napadu migreny']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.4' }), 'Leczenie doraźne napadu migreny']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Leki stosowane doraźnie w bólu głowy (z zakładki „Farmakoterapia”)']),
         h('div', { id: 'mg-leki-dorzane' })
@@ -205,9 +152,9 @@
     ]);
   }
 
-  function buildSek7() {
+  function buildSek5() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.7' }), 'Profilaktyka migreny']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.5' }), 'Profilaktyka migreny']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Kryteria przesiewowe do rozważenia profilaktyki']),
         h('div', { class: 'checkbox-grid' }, PROF_KR.map(function (p) {
@@ -253,21 +200,9 @@
     ]);
   }
 
-  function buildSek8() {
+  function buildSek6() {
     return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.8' }), 'Elementy edukacji pacjenta']),
-      h('div', { class: 'field' }, [
-        h('label', { class: 'ctl' }, ['Omówiono z pacjentem:']),
-        h('div', { class: 'checkbox-grid' }, EDUKACJA.map(function (e) {
-          return checkboxState('migrena.edukacja', e[0], e[1]);
-        }))
-      ])
-    ]);
-  }
-
-  function buildSek9() {
-    return h('section', { class: 'card' }, [
-      h('h2', {}, [h('span', { class: 'num', text: '7.9' }), 'Podsumowanie farmaceutyczne']),
+      h('h2', {}, [h('span', { class: 'num', text: '7.6' }), 'Podsumowanie farmaceutyczne']),
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Klasyfikacja robocza']),
         h('input', { type: 'text', id: 'mg-klasyfikacja', placeholder: 'Auto-sugestia na podstawie liczby dni z bólem głowy (6.3)…', 'data-state': 'migrena.klasyfikacja' }),
@@ -291,8 +226,7 @@
   }
 
   function build() {
-    return [buildSek1(), buildSek2(), buildSek3(), buildSek4(), buildSek5(),
-      buildSek6(), buildSek7(), buildSek8(), buildSek9()];
+    return [buildSek1(), buildSek2(), buildSek3(), buildSek4(), buildSek5(), buildSek6()];
   }
 
   function handleInput(e) {
@@ -374,15 +308,6 @@
       auraAlert.textContent = 'Nietypowa aura lub objawy neurologiczne. Rozważ pilną konsultację lekarską zgodnie z lokalną procedurą.';
     } else {
       auraAlert.style.display = 'none';
-    }
-
-    /* Czerwone flagi — alert */
-    const czfAlert = q('#mg-czf-alert');
-    if (anyTrueExceptBrak(s.migrena.czFlagi)) {
-      czfAlert.style.display = '';
-      czfAlert.textContent = 'Objaw alarmowy bólu głowy. Moduł migrenowy nie powinien zastępować pilnej oceny lekarskiej.';
-    } else {
-      czfAlert.style.display = 'none';
     }
 
     /* Wymioty → sugestia postaci niedoustnej */

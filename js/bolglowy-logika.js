@@ -22,24 +22,6 @@
     return 'silny';
   }
 
-  /* 3.3 Klasyfikacja robocza częstości. */
-  function sugerujCzestosc(dni, miesiace) {
-    const d = num(dni);
-    const m = num(miesiace);
-    if (d === null) return { opcja: '', powody: [] };
-    if (d < 1) return { opcja: 'rzadki', powody: ['<1 dzień bólu głowy w miesiącu — rzadki epizodyczny napięciowy ból głowy'] };
-    if (d < 15) {
-      const powody = ['1–14 dni bólu głowy w miesiącu'];
-      if (m === null) powody.push('podaj liczbę miesięcy trwania, aby potwierdzić klasyfikację (>3 mies.)');
-      return { opcja: 'czesty', powody: powody };
-    }
-    const powody = ['≥15 dni bólu głowy w miesiącu'];
-    if (m === null) powody.push('potwierdź czas trwania >3 mies. — możliwy przewlekły napięciowy ból głowy');
-    else if (m > 3) powody.push('przez >3 miesiące — możliwy przewlekły napięciowy ból głowy');
-    else powody.push('czas trwania ≤3 mies. — wymaga obserwacji');
-    return { opcja: 'przewlekly', powody: powody };
-  }
-
   /* 6.2 Podejrzenie nadużywania leków (MOH). m = { paracetamolNlpzAsa, zlozone, tryptany, opioidyKodeina, dniBoluGlowy }. */
   function sugerujMOH(m) {
     const an = num(m.paracetamolNlpzAsa);
@@ -185,7 +167,6 @@
   }
 
   G.BolGlowy = {
-    sugerujCzestosc: sugerujCzestosc,
     sugerujMOH: sugerujMOH,
     sugerujInterpretacje: sugerujInterpretacje,
     kryteriaTTH: kryteriaTTH,

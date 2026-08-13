@@ -211,7 +211,8 @@
       ['Nasilenie (NRS)', bg.nrs !== '' ? bg.nrs + '/10' : '—'],
       ['Aktywność fizyczna nasila ból', label('bgAktywnosc', bg.aktywnoscNasila)],
       ['Czas trwania epizodu', label('bgCzasTrwania', bg.czasTrwania)],
-      ['Częstość', (bg.dniWMiesiacu !== '' ? bg.dniWMiesiacu + ' dni/mies. (od ' + (bg.miesiace !== '' ? bg.miesiace + ' mies.)' : '—)') : '—') + ' ' + label('bgCzestosc', bg.czestoscKlasa)],
+      ['Częstość', bg.dniWMiesiacu !== '' ? bg.dniWMiesiacu + ' dni/mies.' : '—'],
+      ['Od jakiego czasu', bg.odKiedyIle !== '' ? bg.odKiedyIle + ' ' + (bg.odKiedyJednostka === 'lata' ? 'lat' : 'mies.') : '—'],
       ['Objawy towarzyszące', skroty('bgObjawy', bg.objawy)],
       ['Wyzwalacze', skroty('bgWyzwalacze', bg.wyzwalacze)],
       ['Co przynosi ulgę', skroty('bgUlga', bg.ulga)],
@@ -235,7 +236,6 @@
         ['Rozpoznanie', label('mgRozpoznana', mg.rozpoznana)],
         ['Aura', label('mgAura', mg.aura) + (mg.aura !== 'nie' && mg.aura !== 'nw' && mg.aura ? ' (' + label('mgAuraCzas', mg.auraCzas) + ')' : '')],
         ['Aura — objawy wymagające ostrożności', skroty('mgAuraOst', mg.auraOstroznosc)],
-        ['Czerwone flagi', skroty('mgCzFlagi', mg.czFlagi)],
         ['Leki doraźne', lekNazwy(s.leki, mg.lekiDorzane)],
         ['Wczesne przyjęcie leku', label('mgWczesnie', mg.wczesnieLek)],
         ['Skuteczność po 2 h', label('mgSkutecznosc', mg.skutecznosc2h)],
@@ -245,7 +245,6 @@
         ['Profilaktyka stosowana', label('mgProfStos', mg.profilaktykaStosowana) + (mg.profilaktykaStosowana === 'tak'
           ? ' — lek: ' + ((mg.profilaktykaSzczegoly || {}).lek || '—') + ', dawka: ' + ((mg.profilaktykaSzczegoly || {}).dawka || '—') + ', od: ' + ((mg.profilaktykaSzczegoly || {}).odkiedy || '—') + ', regularnie: ' + ((mg.profilaktykaSzczegoly || {}).regularnie === 'tak' ? 'tak' : (mg.profilaktykaSzczegoly || {}).regularnie === 'nie' ? 'nie' : '—') : '')],
         ['Efekt profilaktyki', label('mgProfEfekt', mg.profilaktykaEfekt)],
-        ['Edukacja', skroty('mgEdukacja', mg.edukacja)],
         ['Klasyfikacja robocza', str(mg.klasyfikacja)],
         ['Rekomendowany dalszy krok', label('mgKrok', mg.dalszyKrok)]
       ];

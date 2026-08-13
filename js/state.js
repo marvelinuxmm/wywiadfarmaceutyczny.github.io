@@ -89,8 +89,8 @@
         aktywnoscNasila: '',
         czasTrwania: '',
         dniWMiesiacu: '',
-        miesiace: '',
-        czestoscKlasa: '',
+        odKiedyIle: '',
+        odKiedyJednostka: 'miesiace',
         objawy: {},
         wyzwalacze: {},
         ulga: {},
@@ -108,9 +108,6 @@
         aura: '',
         auraCzas: '',
         auraOstroznosc: {},
-        czFlagi: {},
-        wplyw: {},
-        dniOgraniczonejAktywnosci: '',
         lekiDorzane: [],
         wczesnieLek: '',
         skutecznosc2h: '',
@@ -121,7 +118,6 @@
         profilaktykaStosowana: '',
         profilaktykaSzczegoly: { lek: '', dawka: '', odkiedy: '', regularnie: '' },
         profilaktykaEfekt: '',
-        edukacja: {},
         klasyfikacja: '',
         dalszyKrok: '',
         epikryza: ''
@@ -241,7 +237,7 @@
     mergeShape(d.bolGlowy, src.bolGlowy, {
       alarmowe: 'bool', lokalizacja: 'bool', charakterB: 'bool',
       nrs: 'str', aktywnoscNasila: 'str', czasTrwania: 'str',
-      dniWMiesiacu: 'str', miesiace: 'str', czestoscKlasa: 'str',
+      dniWMiesiacu: 'str', odKiedyIle: 'str', odKiedyJednostka: 'str',
       objawy: 'bool', wyzwalacze: 'bool', ulga: 'bool',
       mohDni: { paracetamolNlpzAsa: 'str', zlozone: 'str', tryptany: 'str', opioidyKodeina: 'str' },
       mohLeki: { paracetamolNlpzAsa: 'str', zlozone: 'str', tryptany: 'str', opioidyKodeina: 'str' },
@@ -250,12 +246,12 @@
     mergeShape(d.migrena, src.migrena, {
       rozpoznana: 'str',
       prodrom: 'bool',
-      aura: 'str', auraCzas: 'str', auraOstroznosc: 'bool', czFlagi: 'bool',
-      wplyw: 'bool', dniOgraniczonejAktywnosci: 'str', lekiDorzane: 'arr',
+      aura: 'str', auraCzas: 'str', auraOstroznosc: 'bool',
+      lekiDorzane: 'arr',
       wczesnieLek: 'str', skutecznosc2h: 'str', nawrot: 'str', wymioty: 'str',
       profilaktykaKryteria: 'bool', profAuto: 'bool', profilaktykaStosowana: 'str',
       profilaktykaSzczegoly: { lek: 'str', dawka: 'str', odkiedy: 'str', regularnie: 'str' },
-      profilaktykaEfekt: 'str', edukacja: 'bool',
+      profilaktykaEfekt: 'str',
       klasyfikacja: 'str', dalszyKrok: 'str', epikryza: 'str'
     });
     return d;

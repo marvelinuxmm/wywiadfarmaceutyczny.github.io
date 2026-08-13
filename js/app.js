@@ -235,12 +235,12 @@
         });
       }
 
-      /* 7.7: autozaznaczenie kryteriów profilaktyki na podstawie wcześniejszych odpowiedzi (raz) */
+      /* 7.5: autozaznaczenie kryteriów profilaktyki na podstawie wcześniejszych odpowiedzi (raz) */
       const kryteria = G.Kontrola.sugerujProfilaktyka({
         czasTrwania: s.bolGlowy.czasTrwania,
         dniWMiesiacu: s.bolGlowy.dniWMiesiacu,
         mohDni: s.bolGlowy.mohDni,
-        wplyw: s.migrena.wplyw,
+        wplyw: s.ocenaBolu.wplyw,
         skutecznosc2h: s.migrena.skutecznosc2h,
         aura: s.migrena.aura
       });

@@ -48,8 +48,10 @@ assert.deepStrictEqual(K.sugerujProfilaktyka(pr({})), {
 });
 assert.strictEqual(K.sugerujProfilaktyka(pr({ czasTrwania: '>72h' }))['72h'], true);
 assert.strictEqual(K.sugerujProfilaktyka(pr({ czasTrwania: '4-72h' }))['72h'], false);
-assert.strictEqual(K.sugerujProfilaktyka(pr({ wplyw: { praca: true } })).wplyw, true);
-assert.strictEqual(K.sugerujProfilaktyka(pr({ wplyw: { brak: true } })).wplyw, false);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ wplyw: { praca: 'umiarkowanie' } })).wplyw, true, 'umiarkowany wpływ z 4.4 wystarcza');
+assert.strictEqual(K.sugerujProfilaktyka(pr({ wplyw: { sen: 'znacznie' } })).wplyw, true);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ wplyw: { praca: 'nie' } })).wplyw, false);
+assert.strictEqual(K.sugerujProfilaktyka(pr({ wplyw: { praca: '' } })).wplyw, false);
 assert.strictEqual(K.sugerujProfilaktyka(pr({ skutecznosc2h: 'brak' })).nieskuteczne, true);
 assert.strictEqual(K.sugerujProfilaktyka(pr({ skutecznosc2h: 'poprawa' })).nieskuteczne, false);
 assert.strictEqual(K.sugerujProfilaktyka(pr({ mohDni: { tryptany: '8' } }))['czeste-dorzane'], true);
