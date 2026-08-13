@@ -9,8 +9,9 @@
     { id: 'mars5', label: '3. MARS-5 i stosowanie leczenia', enabled: true },
     { id: 'ocena', label: '4. Ocena bólu', enabled: true },
     { id: 'kontrola', label: '5. Kontrola bólu', enabled: true },
-    { id: 'migrena', label: '6. Moduł migrenowy', enabled: 'dynamic' },
-    { id: 'podsumowanie', label: '7. Podsumowanie i raport', enabled: false }
+    { id: 'bolglowy', label: '6. Ból głowy', enabled: true },
+    { id: 'migrena', label: '7. Moduł migrenowy', enabled: 'dynamic' },
+    { id: 'podsumowanie', label: '8. Podsumowanie i raport', enabled: true }
   ];
   let active = 'profil';
   let statusTimer = null;
@@ -45,7 +46,8 @@
 
   function migrenaAktywna() {
     const s = G.State.get();
-    return !!(s.ocenaBolu && (s.ocenaBolu.lokalizacja.glowa || s.ocenaBolu.modulDalszy === 'bol_glowy'));
+    return !!(s.ocenaBolu && ((s.ocenaBolu.lokalizacja && s.ocenaBolu.lokalizacja.glowa) || s.ocenaBolu.modulDalszy === 'bol_glowy')) ||
+      !!(s.bolGlowy && s.bolGlowy.decyzja === 'migrena-modul');
   }
 
   function renderContent() {
@@ -61,8 +63,12 @@
       G.Tab4.init(c);
     } else if (active === 'kontrola') {
       G.Tab5.init(c);
-    } else if (active === 'migrena') {
+    } else if (active === 'bolglowy') {
       G.Tab6.init(c);
+    } else if (active === 'migrena') {
+      G.Tab7.init(c);
+    } else if (active === 'podsumowanie') {
+      G.Tab9.init(c);
     } else {
       c.appendChild(h('div', { class: 'card' }, [
         h('p', { class: 'hint', text: 'Moduł w przygotowaniu.' })
@@ -79,6 +85,8 @@
     if (G.Tab4) G.Tab4.apply();
     if (G.Tab5) G.Tab5.apply();
     if (G.Tab6) G.Tab6.apply();
+    if (G.Tab7) G.Tab7.apply();
+    if (G.Tab9) G.Tab9.apply();
     /* Warunkowa dostępność modułu migrenowego */
     const migBtn = document.querySelector('.tab-btn[data-tab-id="migrena"]');
     if (migBtn) {
@@ -175,7 +183,6 @@
         status('Rozpoczęto nowy wywiad.');
       }
     });
-    document.getElementById('btn-export').addEventListener('click', exportJson);
     document.getElementById('btn-import').addEventListener('click', function () {
       document.getElementById('import-file').click();
     });
@@ -189,6 +196,12 @@
       applyAll();
       renderFlags();
     });
+
+    /* Akcje udostępniane zakładce „Podsumowanie i raport” (eksport JSON) */
+    G.Akcje = {
+      eksport: exportJson,
+      status: status
+    };
 
     renderContent();
   }

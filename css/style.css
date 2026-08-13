@@ -377,6 +377,44 @@ table.mars td.mars-pytanie { text-align: left; font-size: 14px; }
   margin: -3px 0;
 }
 
+.kryteria-list { margin: 0; padding-left: 20px; }
+.kryteria-list li { font-size: 13.5px; margin: 3px 0; }
+.kryteria-list li.met { color: #1d5c20; }
+.kryteria-list li.nie { color: #8a4b00; }
+
+/* Raport (zakładka 8) */
+.raport-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+.raport-sep { width: 1px; align-self: stretch; background: var(--border); margin: 0 6px; }
+.raport-sekcja { margin-bottom: 20px; page-break-inside: avoid; }
+.raport-sekcja h3 {
+  font-size: 15px;
+  color: var(--primary-dark);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin: 0 0 8px;
+}
+table.raport-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.raport-table td { padding: 3px 8px; border-bottom: 1px solid #eef2f6; vertical-align: top; }
+.raport-table td.r-key { width: 42%; color: var(--muted); }
+.r-epikryza {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: #fafcfd;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13.5px;
+}
+.r-podsekcja { margin-top: 8px; font-weight: 600; font-size: 13.5px; color: var(--primary-dark); }
+
+@media print {
+  .topbar, .tabs, .flags, .status, .raport-toolbar { display: none !important; }
+  .layout { display: block; padding: 0; max-width: none; }
+  .content { gap: 0; }
+  body { background: #fff; }
+  .card { border: none; padding: 0; }
+  .raport-sekcja h3 { page-break-after: avoid; }
+}
+
 @media (max-width: 980px) {
   .layout { grid-template-columns: 1fr; }
   .flags { position: static; }

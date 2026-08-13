@@ -92,7 +92,29 @@
         dalszePostepowanie: '',
         epikryza: ''
       },
-      /* Zakładka 6 — Moduł migrenowy */
+      /* Zakładka 6 — Ból głowy */
+      bolGlowy: {
+        alarmowe: {},
+        lokalizacja: {},
+        charakterB: {},
+        nrs: '',
+        nasilenie: '',
+        aktywnoscNasila: '',
+        czasTrwania: '',
+        dniWMiesiacu: '',
+        miesiace: '',
+        czestoscKlasa: '',
+        objawy: {},
+        wyzwalacze: {},
+        ulga: {},
+        mohDni: { paracetamolNlpzAsa: '', zlozone: '', tryptany: '', opioidyKodeina: '' },
+        mohOcena: '',
+        interpretacja: '',
+        decyzja: '',
+        edukacja: {},
+        epikryza: ''
+      },
+      /* Zakładka 7 — Moduł migrenowy */
       migrena: {
         rozpoznana: '',
         dniBoluGlowy: '',
@@ -123,7 +145,9 @@
         klasyfikacja: '',
         dalszyKrok: '',
         epikryza: ''
-      }
+      },
+      /* Zakładka 8 — Podsumowanie */
+      epikryzaKoncowa: ''
     };
   }
 
@@ -166,7 +190,7 @@
     const scalars = ['wiek', 'plec', 'masa', 'wzrost', 'ciaza', 'kreatynina', 'jednostkaKreatyniny',
       'dataKreatyniny', 'albuminuria', 'uacr', 'uacrJednostka', 'psychAktywny',
       'psychOpis', 'epikryza', 'statusFarmakoterapii', 'epikryzaFarmakoterapii',
-      'pomocAdherence'];
+      'pomocAdherence', 'epikryzaKoncowa'];
     scalars.forEach(function (k) {
       if (typeof src[k] === 'string' || typeof src[k] === 'number') d[k] = src[k];
     });
@@ -238,6 +262,14 @@
       dzialaniaNiepozadane: 'str', dnLista: 'bool', dnKorygowane: 'str',
       stosowanieZmiana: 'str', stosowanieZmianaOpis: 'str', statusKontroli: 'str',
       dalszePostepowanie: 'str', epikryza: 'str'
+    });
+    mergeShape(d.bolGlowy, src.bolGlowy, {
+      alarmowe: 'bool', lokalizacja: 'bool', charakterB: 'bool',
+      nrs: 'str', nasilenie: 'str', aktywnoscNasila: 'str', czasTrwania: 'str',
+      dniWMiesiacu: 'str', miesiace: 'str', czestoscKlasa: 'str',
+      objawy: 'bool', wyzwalacze: 'bool', ulga: 'bool',
+      mohDni: { paracetamolNlpzAsa: 'str', zlozone: 'str', tryptany: 'str', opioidyKodeina: 'str' },
+      mohOcena: 'str', interpretacja: 'str', decyzja: 'str', edukacja: 'bool', epikryza: 'str'
     });
     mergeShape(d.migrena, src.migrena, {
       rozpoznana: 'str', dniBoluGlowy: 'str', dniMigrenowe: 'str', dniDorzane: 'str', czasTrwania: 'str',
