@@ -451,6 +451,7 @@
     if (!ageOk) missing.push('datę urodzenia');
     if (!s.plec) missing.push('płeć');
     if (!masaOk) missing.push('masę ciała');
+    if (!wzrostOk) missing.push('wzrost');
     if (scr === null) missing.push('kreatyninę');
     q('#renal-hint').textContent = missing.length
       ? 'Wprowadź: ' + missing.join(', ') + ' — aby wyliczyć eGFR i CrCL.'
