@@ -17,7 +17,8 @@
         { id: 'sc_arytmie', label: 'Arytmie' },
         { id: 'sc_zawal', label: 'Przebyty zawał serca' },
         { id: 'sc_udar', label: 'Przebyty udar / TIA' },
-        { id: 'sc_zakrzepowa', label: 'Choroba zakrzepowo-zatorowa' }
+        { id: 'sc_zakrzepowa', label: 'Choroba zakrzepowo-zatorowa' },
+        { id: 'sc_naczynia_obwodowe', label: 'Choroba naczyń obwodowych' }
       ]
     },
     {
