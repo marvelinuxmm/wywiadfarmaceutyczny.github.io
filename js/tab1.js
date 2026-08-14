@@ -215,10 +215,24 @@
             ])
           ]),
           h('div', { class: 'res-row' }, [
+            h('span', { text: 'eGFR odindeksowany (BSA)' }),
+            h('div', { class: 'res-valbox' }, [
+              h('div', { class: 'res-val', id: 'egfr-odindeks-val', text: '—' }),
+              h('div', { class: 'res-band', id: 'egfr-odindeks-band' })
+            ])
+          ]),
+          h('div', { class: 'res-row' }, [
             h('span', { text: 'CrCL (Cockcroft-Gault)' }),
             h('div', { class: 'res-valbox' }, [
               h('div', { class: 'res-val', id: 'crcl-val', text: '—' }),
               h('div', { class: 'res-band', id: 'crcl-band' })
+            ])
+          ]),
+          h('div', { class: 'res-row' }, [
+            h('span', { text: 'CrCL nieskorygowany (masa rzeczywista)' }),
+            h('div', { class: 'res-valbox' }, [
+              h('div', { class: 'res-val', id: 'crcl-niekor-val', text: '—' }),
+              h('div', { class: 'res-band', id: 'crcl-niekor-band' })
             ])
           ]),
           h('div', { class: 'hint', id: 'crcl-weight' }),
@@ -402,6 +416,15 @@
       q('#egfr-band').textContent = '';
     }
 
+    const egfrOdindeks = (egfr !== null && isFinite(egfr) && bsaValue !== null) ? Calc.egfrOdindeksowany(egfr, bsaValue) : null;
+    if (egfrOdindeks !== null && isFinite(egfrOdindeks)) {
+      q('#egfr-odindeks-val').textContent = Math.round(egfrOdindeks) + ' ml/min';
+      q('#egfr-odindeks-band').textContent = 'eGFR × BSA / 1,73 m²';
+    } else {
+      q('#egfr-odindeks-val').textContent = '—';
+      q('#egfr-odindeks-band').textContent = (egfr !== null && isFinite(egfr)) ? 'Podaj masę i wzrost (BSA), aby odindeksować.' : '';
+    }
+
     const selectedWeight = masaOk && s.plec ? Calc.crclWeight(s.plec, masa, wzrostOk ? wzrost : null) : null;
     const crcl = (scr !== null && s.plec && ageOk && selectedWeight) ? Calc.cockcroftGault(scr, age, selectedWeight.weight, s.plec) : null;
     if (crcl !== null && isFinite(crcl)) {
@@ -413,6 +436,15 @@
       q('#crcl-val').textContent = '—';
       q('#crcl-band').textContent = '';
       q('#crcl-weight').textContent = '';
+    }
+
+    const crclNiekor = (scr !== null && s.plec && ageOk && masaOk) ? Calc.cockcroftGault(scr, age, masa, s.plec) : null;
+    if (crclNiekor !== null && isFinite(crclNiekor)) {
+      q('#crcl-niekor-val').textContent = Math.round(crclNiekor) + ' ml/min';
+      q('#crcl-niekor-band').textContent = Calc.crclBand(crclNiekor).label;
+    } else {
+      q('#crcl-niekor-val').textContent = '—';
+      q('#crcl-niekor-band').textContent = '';
     }
 
     const missing = [];

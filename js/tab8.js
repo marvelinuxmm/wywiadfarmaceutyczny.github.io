@@ -135,11 +135,15 @@
     const egfr = (scr !== null && s.plec && ageOk) ? Calc.ckdEpi(scr, age, s.plec) : null;
     const wybMasa = masa !== null && s.plec ? Calc.crclWeight(s.plec, masa, wzrost !== null && wzrost >= 130 && wzrost <= 230 ? wzrost : null) : null;
     const crcl = (scr !== null && s.plec && ageOk && wybMasa) ? Calc.cockcroftGault(scr, age, wybMasa.weight, s.plec) : null;
+    const egfrOdindeks = (egfr !== null && bsa !== null) ? Calc.egfrOdindeksowany(egfr, bsa) : null;
+    const crclNiekor = (scr !== null && s.plec && ageOk && masa !== null) ? Calc.cockcroftGault(scr, age, masa, s.plec) : null;
     const nerkowe = [
       ['Kreatynina', scr !== null ? scr.toFixed(2).replace('.', ',') + ' mg/dL' + ' (' + s.dataKreatyniny + ')' : '—'],
       ['Albuminuria', label('albuminuria', s.albuminuria) + (s.albuminuria === 'liczba' && s.uacr ? ' (UACR ' + s.uacr + ' ' + label('uacrJednostka', s.uacrJednostka) + ')' : '')],
       ['eGFR (CKD-EPI 2021)', egfr !== null ? Math.round(egfr) + ' ml/min/1,73 m² — ' + Calc.egfrBand(egfr).label : '—'],
-      ['CrCL (Cockcroft-Gault)', crcl !== null ? Math.round(crcl) + ' ml/min (masa ' + wybMasa.mode + ' ' + wybMasa.weight.toFixed(1).replace('.', ',') + ' kg) — ' + Calc.crclBand(crcl).label : '—']
+      ['eGFR odindeksowany (BSA)', egfrOdindeks !== null ? Math.round(egfrOdindeks) + ' ml/min' : '—'],
+      ['CrCL (Cockcroft-Gault)', crcl !== null ? Math.round(crcl) + ' ml/min (masa ' + wybMasa.mode + ' ' + wybMasa.weight.toFixed(1).replace('.', ',') + ' kg) — ' + Calc.crclBand(crcl).label : '—'],
+      ['CrCL nieskorygowany (masa rzeczywista)', crclNiekor !== null ? Math.round(crclNiekor) + ' ml/min — ' + Calc.crclBand(crclNiekor).label : '—']
     ];
     out.push(sekcja('2. Choroby współistniejące', chRows));
     out.push(sekcja('3. Funkcja nerek', nerkowe));

@@ -37,6 +37,19 @@ assert.strictEqual(Calc.bmiBand(27).sev, 'info');
 assert.strictEqual(Calc.bmiBand(32).sev, 'warn');
 console.log('OK');
 
+console.log('--- eGFR odindeksowany ---');
+near(Calc.egfrOdindeksowany(91.7, 1.8447), 97.8, 0.5);
+near(Calc.egfrOdindeksowany(119.2, 1.5), 103.4, 0.5);
+assert.strictEqual(Calc.egfrOdindeksowany(null, 1.8), null);
+assert.strictEqual(Calc.egfrOdindeksowany(91.7, null), null);
+assert.strictEqual(Calc.egfrOdindeksowany(91.7, 0), null);
+console.log('OK');
+
+console.log('--- CrCL niekorygowany (masa rzeczywista) ---');
+near(Calc.cockcroftGault(1.2, 70, 100, 'm'), 81.0, 0.2);
+assert.strictEqual(Calc.crclWeight('m', 100, 175).mode, 'korygowana');
+console.log('OK');
+
 console.log('--- IBW i masa do CrCL ---');
 near(Calc.idealBodyWeight('m', 175), 70.5, 0.1);
 near(Calc.idealBodyWeight('k', 165), 56.9, 0.1);

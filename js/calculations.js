@@ -86,6 +86,13 @@
     return { sev: 'alert', label: '<15 ml/min/1,73 m² — alert bardzo wysoki: schyłkowa niewydolność nerek / pilna ostrożność.' };
   }
 
+  /* eGFR odindeksowany (de-indexed): koryguje wartość indeksowaną (ml/min/1,73 m²)
+     do rzeczywistej powierzchni ciała pacjenta (BSA). Wynik w ml/min. */
+  function egfrOdindeksowany(egfr, bsa) {
+    if (egfr === null || egfr === undefined || bsa === null || bsa === undefined || bsa <= 0) return null;
+    return egfr * bsa / 1.73;
+  }
+
   function crclBand(crcl) {
     if (crcl >= 60) return { sev: 'info', label: '≥60 ml/min — brak lub umiarkowana ostrożność.' };
     if (crcl >= 30) return { sev: 'warn', label: '30–59 ml/min — sprawdzić dawkowanie leków zależnych od funkcji nerek.' };
@@ -127,6 +134,7 @@
     bsaMosteller: bsaMosteller,
     bmiBand: bmiBand,
     egfrBand: egfrBand,
+    egfrOdindeksowany: egfrOdindeksowany,
     crclBand: crclBand,
     daysSince: daysSince,
     ageFromBirthDate: ageFromBirthDate,
