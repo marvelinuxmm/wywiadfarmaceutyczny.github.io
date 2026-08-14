@@ -8,6 +8,8 @@
       plec: '', // 'k' | 'm'
       masa: '',
       wzrost: '',
+      cisnienieSkurczowe: '', // mmHg
+      cisnienieRozkurczowe: '', // mmHg
       ciaza: '', // 'tak' | 'nie' | 'nda' | 'nw'
       choroby: {
         sercowo: false,
@@ -164,7 +166,8 @@
   function merge(src) {
     const d = defaultState();
     if (src == null || typeof src !== 'object') return d;
-    const scalars = ['dataUrodzenia', 'plec', 'masa', 'wzrost', 'ciaza', 'kreatynina', 'jednostkaKreatyniny',
+    const scalars = ['dataUrodzenia', 'plec', 'masa', 'wzrost', 'cisnienieSkurczowe', 'cisnienieRozkurczowe',
+      'ciaza', 'kreatynina', 'jednostkaKreatyniny',
       'dataKreatyniny', 'albuminuria', 'uacr', 'uacrJednostka', 'psychAktywny',
       'psychOpis', 'epikryza', 'epikryzaFarmakoterapii',
       'pomocAdherence', 'marsProblemy', 'epikryzaKoncowa'];
@@ -226,7 +229,7 @@
       data: 'str', skala: 'str', nrsAktualne: 'str', nrsSrednie: 'str',
       wplyw: { nastroj: 'str', sen: 'str', funkcjonowanie: 'str', praca: 'str' },
       lokalizacja: 'bool', lokalizacjaOpis: 'str', charakter: 'bool', przebieg: 'str',
-      leczenieZmniejsza: 'str', lekiNaBol: 'arr', epikryza: 'str'
+      leczenieZmniejsza: 'str', lekiNaBol: 'arr', priorytety: 'str', epikryza: 'str'
     });
     mergeShape(d.kontrolaBolu, src.kontrolaBolu, {
       data: 'str', skalaTryb: 'str', skalaUzasadnienie: 'str',

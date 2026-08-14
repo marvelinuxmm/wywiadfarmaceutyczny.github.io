@@ -71,6 +71,16 @@
           h('input', { type: 'number', id: 'f-wzrost', min: '130', max: '230', step: '1', 'data-state': 'wzrost' }),
           h('div', { class: 'hint', text: 'Zakres 130–230 cm. Wymagany do BMI i BSA.' }),
           h('div', { class: 'hint err', id: 'wzrost-hint' })
+        ]),
+        h('div', { class: 'field' }, [
+          h('label', { class: 'ctl' }, ['Ciśnienie tętnicze (mmHg)']),
+          h('div', { class: 'row-inline' }, [
+            h('input', { type: 'number', id: 'f-cisnienie-sk', min: '40', max: '300', step: '1', placeholder: 'skurczowe', 'data-state': 'cisnienieSkurczowe' }),
+            h('span', { text: '/' }),
+            h('input', { type: 'number', id: 'f-cisnienie-rozk', min: '20', max: '200', step: '1', placeholder: 'rozkurczowe', 'data-state': 'cisnienieRozkurczowe' })
+          ]),
+          h('div', { class: 'hint', text: 'Wynik pomiaru ciśnienia tętniczego, np. 120/80.' }),
+          h('div', { class: 'hint err', id: 'cisnienie-hint' })
         ])
       ]),
       h('div', { class: 'results antropometria', id: 'bmi-bsa-results', style: { display: 'none' } }, [
@@ -351,6 +361,12 @@
       : (age !== null && (age < 18 || age > 120)) ? 'Wiek poza zakresem 18–120 lat.' : '';
     q('#masa-hint').textContent = (masa !== null && (masa < 30 || masa > 250)) ? 'Poza zakresem 30–250 kg.' : '';
     q('#wzrost-hint').textContent = (wzrost !== null && !wzrostOk) ? 'Poza zakresem 130–230 cm.' : '';
+    const sk = Calc.parseNum(s.cisnienieSkurczowe);
+    const rozk = Calc.parseNum(s.cisnienieRozkurczowe);
+    q('#cisnienie-hint').textContent =
+      (sk !== null && (sk < 40 || sk > 300)) ? 'Ciśnienie skurczowe poza zakresem 40–300.' :
+      (rozk !== null && (rozk < 20 || rozk > 200)) ? 'Ciśnienie rozkurczowe poza zakresem 20–200.' :
+      (sk !== null && rozk !== null && rozk >= sk) ? 'Ciśnienie rozkurczowe nie może być ≥ skurczowego.' : '';
 
     /* BMI i BSA Mostellera */
     const bmiValue = masaOk && wzrostOk ? Calc.bmi(masa, wzrost) : null;

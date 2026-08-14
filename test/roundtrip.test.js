@@ -6,6 +6,8 @@ const State = globalThis.State;
 const s = State.get();
 s.dataUrodzenia = '1956-08-13';
 s.wzrost = '175';
+s.cisnienieSkurczowe = '128';
+s.cisnienieRozkurczowe = '82';
 s.leki.push({ nazwa: 'Nurofen', moc: '200 mg', postac: 'tabl.', tryb: 'przewlekle', schemat: '1-0-0', wskazanie: 'ból', komentarze: '', grupy: ['NLPZ'] });
 s.odpowiedzi['pp.objawy'] = 'tak';
 s.chorobySzczegolowe = { od_astma: true, nw_dializa: true, met_cukrzyca2: false };
@@ -26,6 +28,8 @@ const exportData = JSON.parse(JSON.stringify({ dane: s })); // symulacja pliku
 const merged = State.merge(exportData.dane);
 assert.strictEqual(merged.dataUrodzenia, '1956-08-13');
 assert.strictEqual(merged.wzrost, '175');
+assert.strictEqual(merged.cisnienieSkurczowe, '128');
+assert.strictEqual(merged.cisnienieRozkurczowe, '82');
 assert.strictEqual(merged.leki.length, 1);
 assert.deepStrictEqual(merged.leki[0].grupy, ['NLPZ']);
 assert.strictEqual(merged.leki[0].tryb, 'przewlekle');

@@ -102,6 +102,9 @@
       ['Płeć biologiczna', label('plec', s.plec)],
       ['Masa ciała', str(s.masa) + ' kg'],
       ['Wzrost', str(s.wzrost) + ' cm'],
+      ['Ciśnienie tętnicze', (s.cisnienieSkurczowe || s.cisnienieRozkurczowe)
+        ? str(s.cisnienieSkurczowe) + ' / ' + str(s.cisnienieRozkurczowe) + ' mmHg'
+        : '—'],
       ['BMI', bmi !== null ? bmi.toFixed(1).replace('.', ',') + ' kg/m²' + ' (' + Calc.bmiBand(bmi).label + ')' : '—'],
       ['BSA (Mosteller)', bsa !== null ? bsa.toFixed(2).replace('.', ',') + ' m²' : '—'],
       ['Masa idealna (IBW, Devine)', ibw !== null ? ibw.toFixed(1).replace('.', ',') + ' kg' : '—'],
