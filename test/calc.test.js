@@ -45,7 +45,7 @@ assert.strictEqual(Calc.egfrOdindeksowany(91.7, null), null);
 assert.strictEqual(Calc.egfrOdindeksowany(91.7, 0), null);
 console.log('OK');
 
-console.log('--- CrCL niekorygowany (masa rzeczywista) ---');
+console.log('--- CrCL (masa rzeczywista) ---');
 near(Calc.cockcroftGault(1.2, 70, 100, 'm'), 81.0, 0.2);
 assert.strictEqual(Calc.crclWeight('m', 100, 175).mode, 'korygowana');
 console.log('OK');

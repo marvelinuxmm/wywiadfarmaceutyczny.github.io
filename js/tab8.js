@@ -142,8 +142,8 @@
       ['Albuminuria', label('albuminuria', s.albuminuria) + (s.albuminuria === 'liczba' && s.uacr ? ' (UACR ' + s.uacr + ' ' + label('uacrJednostka', s.uacrJednostka) + ')' : '')],
       ['eGFR (CKD-EPI 2021)', egfr !== null ? Math.round(egfr) + ' ml/min/1,73 m² — ' + Calc.egfrBand(egfr).label : '—'],
       ['eGFR odindeksowany (BSA)', egfrOdindeks !== null ? Math.round(egfrOdindeks) + ' ml/min' : '—'],
-      ['CrCL (Cockcroft-Gault)', crcl !== null ? Math.round(crcl) + ' ml/min (masa ' + wybMasa.mode + ' ' + wybMasa.weight.toFixed(1).replace('.', ',') + ' kg) — ' + Calc.crclBand(crcl).label : '—'],
-      ['CrCL nieskorygowany (masa rzeczywista)', crclNiekor !== null ? Math.round(crclNiekor) + ' ml/min — ' + Calc.crclBand(crclNiekor).label : '—']
+      ['CrCL skorygowany (Cockcroft-Gault)', crcl !== null ? Math.round(crcl) + ' ml/min (masa ' + wybMasa.mode + ' ' + wybMasa.weight.toFixed(1).replace('.', ',') + ' kg) — ' + Calc.crclBand(crcl).label : '—'],
+      ['CrCL (masa rzeczywista)', crclNiekor !== null ? Math.round(crclNiekor) + ' ml/min — ' + Calc.crclBand(crclNiekor).label : '—']
     ];
     out.push(sekcja('2. Choroby współistniejące', chRows));
     out.push(sekcja('3. Funkcja nerek', nerkowe));

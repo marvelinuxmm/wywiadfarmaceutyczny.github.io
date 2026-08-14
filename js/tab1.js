@@ -222,14 +222,14 @@
             ])
           ]),
           h('div', { class: 'res-row' }, [
-            h('span', { text: 'CrCL (Cockcroft-Gault)' }),
+            h('span', { text: 'CrCL skorygowany (Cockcroft-Gault)' }),
             h('div', { class: 'res-valbox' }, [
               h('div', { class: 'res-val', id: 'crcl-val', text: '—' }),
               h('div', { class: 'res-band', id: 'crcl-band' })
             ])
           ]),
           h('div', { class: 'res-row' }, [
-            h('span', { text: 'CrCL nieskorygowany (masa rzeczywista)' }),
+            h('span', { text: 'CrCL (masa rzeczywista)' }),
             h('div', { class: 'res-valbox' }, [
               h('div', { class: 'res-val', id: 'crcl-niekor-val', text: '—' }),
               h('div', { class: 'res-band', id: 'crcl-niekor-band' })
