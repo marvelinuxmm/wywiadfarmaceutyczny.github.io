@@ -287,6 +287,30 @@ body {
 .checkbox:has(input:checked) { background: #eff6ff; border-color: #93c5fd; }
 .checkbox input { accent-color: var(--primary); width: 16px; height: 16px; flex: none; }
 
+/* Pozycja „dzienniczek” w 6.8 — checkbox + link do pliku PDF */
+.edu-dzienniczek { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.edu-dzienniczek .checkbox { flex: 1; min-width: 220px; }
+.edu-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+.edu-link:hover { color: var(--primary-dark); }
+
+/* HALT-90 (4.4a) — rozwijana część karty 4.4 */
+.halt-box {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  background: #fbfdff;
+}
+.halt-box h3 { margin: 0 0 6px; font-size: 14px; color: var(--primary-dark); }
+.halt-box .field { margin-top: 10px; }
+.halt-box .results { margin-top: 14px; }
+
 /* Wyniki automatyczne */
 .results {
   background: #f5f9ff;

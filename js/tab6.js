@@ -171,7 +171,20 @@
       h('div', { class: 'field' }, [
         h('label', { class: 'ctl' }, ['Omówiono:']),
         h('div', { class: 'checkbox-grid' }, EDUKACJA.map(function (e) {
-          return checkboxState('bolGlowy.edukacja', e[0], e[1]);
+          const cb = checkboxState('bolGlowy.edukacja', e[0], e[1]);
+          if (e[0] === 'dzienniczek') {
+            return h('div', { class: 'edu-dzienniczek' }, [
+              cb,
+              h('a', {
+                class: 'edu-link',
+                href: 'http://www.ptbg.pl/pdf/Dzienniczek_migreny.pdf',
+                target: '_blank',
+                rel: 'noopener',
+                text: 'Pobierz dzienniczek (PDF)'
+              })
+            ]);
+          }
+          return cb;
         }))
       ])
     ]);

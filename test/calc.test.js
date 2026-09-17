@@ -2,6 +2,7 @@
 const assert = require('assert');
 require('../js/calculations.js');
 require('../js/flags.js');
+require('../js/bolglowy-logika.js');
 const Calc = globalThis.Calc;
 const Flags = globalThis.Flags;
 
@@ -120,8 +121,42 @@ assert.ok(has(state({ dataUrodzenia: birthDate(60), plec: 'm', choroby: { pchn: 
 assert.ok(has(state({ dataUrodzenia: birthDate(60), plec: 'm', choroby: { psychiczne: true } }), 'Zaburzenia zdrowia psychicznego / uzależnienia'), 'psychiczne → flaga');
 assert.ok(has(state({ dataUrodzenia: birthDate(60), plec: 'm', dataKreatyniny: '2000-01-01' }), 'Nieaktualny wynik kreatyniny'), 'stara kreatynina → flaga');
 
+/* Ból głowy — częstość (6.3) */
+assert.ok(has(state({ bolGlowy: { dniWMiesiacu: '15' } }), 'Przewlekły ból głowy'), '≥15 dni/mies. → flaga przewlekłego bólu głowy');
+assert.ok(has(state({ bolGlowy: { dniWMiesiacu: '20' } }), 'Przewlekły ból głowy'), '≥15 dni/mies. (20) → flaga przewlekłego bólu głowy');
+assert.ok(!has(state({ bolGlowy: { dniWMiesiacu: '14' } }), 'Przewlekły ból głowy'), '14 dni/mies. → brak flagi');
+assert.ok(!has(state({ bolGlowy: { dniWMiesiacu: '' } }), 'Przewlekły ból głowy'), 'puste → brak flagi');
+
+/* MOH (6.6) — nieopioidowe analgetyki (N02B/M01A/M01B) ≥15 dni; opioidy (N02A/N02C) ≥10 dni */
+const mohT = (dni) => titles(state({ bolGlowy: { mohDni: dni } }));
+const hasMOH = (dni) => mohT(dni).some(function (t) { return t.indexOf('Ryzyko MOH') !== -1; });
+assert.ok(hasMOH({ paracetamolNlpzAsa: '15' }), 'nieopioidowe analgetyki ≥15 dni → ryzyko MOH');
+assert.ok(hasMOH({ paracetamolNlpzAsa: '20' }), 'nieopioidowe analgetyki ≥15 dni (20) → ryzyko MOH');
+assert.ok(hasMOH({ opioidyKodeina: '10' }), 'opioidy ≥10 dni → ryzyko MOH');
+assert.ok(hasMOH({ opioidyKodeina: '12' }), 'opioidy ≥10 dni (12) → ryzyko MOH');
+assert.ok(!hasMOH({ paracetamolNlpzAsa: '14' }), 'nieopioidowe analgetyki 14 dni → brak ryzyka MOH');
+assert.ok(!hasMOH({ opioidyKodeina: '9' }), 'opioidy 9 dni → brak ryzyka MOH');
+assert.ok(!hasMOH({}), 'puste dni → brak ryzyka MOH');
+
 const pelny = state({ dataUrodzenia: birthDate(70), plec: 'k', masa: '60', kreatynina: '1.2', dataKreatyniny: '2026-01-01', choroby: { pchn: true } });
 assert.ok(titles(pelny).some(t => t.indexOf('eGFR CKD-EPI') !== -1), 'eGFR wyliczony w flagach');
 assert.ok(titles(pelny).some(t => t.indexOf('CrCL') !== -1), 'CrCL wyliczony w flagach');
+
+/* Tryptany (N02CC) — przeciwwskazania */
+const tryptan = (over) => state(Object.assign({ leki: [{ nazwa: 'Sumigra', atc: 'N02CC01', grupy: [] }] }, over));
+const maTryptan = (s) => titles(s).some(t => t.indexOf('Przeciwwskazanie do tryptanów') !== -1);
+assert.ok(maTryptan(tryptan({ cisnienieSkurczowe: '185', cisnienieRozkurczowe: '115' })), 'tryptan + RR ≥180/110 → przeciwwskazanie');
+assert.ok(maTryptan(tryptan({ cisnienieSkurczowe: '145', cisnienieRozkurczowe: '95' })), 'tryptan + RR ≥140/90 (nieleczone) → przeciwwskazanie');
+assert.ok(maTryptan(tryptan({ chorobySzczegolowe: { sc_zawal: true } })), 'tryptan + przebyty zawał → przeciwwskazanie');
+assert.ok(maTryptan(tryptan({ chorobySzczegolowe: { sc_udar: true } })), 'tryptan + udar/TIA → przeciwwskazanie');
+assert.ok(maTryptan(tryptan({ chorobySzczegolowe: { sc_naczynia_obwodowe: true } })), 'tryptan + choroba naczyń obwodowych → przeciwwskazanie');
+assert.ok(maTryptan(tryptan({ choroby: { watroba: true } })), 'tryptan + niewydolność wątroby → przeciwwskazanie');
+assert.ok(maTryptan(tryptan({ kreatynina: '3.5', plec: 'm', dataUrodzenia: birthDate(60) })), 'tryptan + eGFR <30 → przeciwwskazanie');
+assert.ok(maTryptan(tryptan({ chorobySzczegolowe: { met_dyslipidemia: true, met_otylosc: true } })), 'tryptan + 2 czynniki ryzyka (dyslipidemia+otyłość) → przeciwwskazanie');
+assert.ok(maTryptan(tryptan({ palenie: 'tak', dataUrodzenia: birthDate(55), plec: 'k' })), 'tryptan + 2 czynniki ryzyka (palenie+wiek) → przeciwwskazanie');
+assert.ok(!maTryptan(tryptan({})), 'tryptan bez przeciwwskazań → brak flagi');
+assert.ok(!maTryptan(tryptan({ chorobySzczegolowe: { met_dyslipidemia: true } })), 'tryptan + 1 czynnik ryzyka → brak flagi');
+assert.ok(!maTryptan(tryptan({ cisnienieSkurczowe: '135', cisnienieRozkurczowe: '85' })), 'tryptan + RR <140/90 → brak flagi');
+assert.ok(!maTryptan(state({ leki: [{ nazwa: 'Apap', atc: 'N02BE01', grupy: [] }], cisnienieSkurczowe: '185' })), 'inny lek niż tryptan + RR → brak flagi tryptanowej');
 
 console.log('Wszystkie testy przeszły pomyślnie.');

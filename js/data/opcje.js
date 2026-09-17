@@ -11,6 +11,7 @@
   const OPCJE = {
     /* --- Wspólne (zakładka 1) --- */
     plec: [['k', 'Kobieta'], ['m', 'Mężczyzna']],
+    palenie: [['tak', 'Pali'], ['nie', 'Nie pali'], ['nw', 'Nie wiem']],
     ciaza: [['tak', 'Tak'], ['nie', 'Nie'], ['nda', 'Nie dotyczy'], ['nw', 'Nie wiem']],
     takNieNw: [['tak', 'Tak'], ['nie', 'Nie'], ['nw', 'Nie wiem']],
     tryb: [['dorazne', 'Doraźnie'], ['przewlekle', 'Przewlekle']],

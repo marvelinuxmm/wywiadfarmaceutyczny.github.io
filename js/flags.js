@@ -152,6 +152,87 @@
       }
     }
 
+    /* Ból głowy — częstość (6.3) */
+    const dniBG = Calc.parseNum((s.bolGlowy || {}).dniWMiesiacu);
+    if (dniBG !== null && dniBG >= 15) {
+      flags.push({
+        sev: 'warn',
+        title: 'Przewlekły ból głowy',
+        text: 'Częstość ≥15 dni z bólem głowy w miesiącu. Może wynikać z nadużywania leków.'
+      });
+    }
+
+    /* MOH — nadużywanie leków przeciwbólowych (6.6):
+       nieopioidowe analgetyki (ATC N02B, M01A, M01B) ≥15 dni/mies.,
+       opioidy (ATC N02A, N02C) oraz leki złożone i tryptany ≥10 dni/mies. */
+    const bgMOH = s.bolGlowy || {};
+    const moh = G.BolGlowy && G.BolGlowy.sugerujMOH
+      ? G.BolGlowy.sugerujMOH(Object.assign({ dniBoluGlowy: bgMOH.dniWMiesiacu }, bgMOH.mohDni || {}))
+      : null;
+    if (moh && moh.opcja === 'wysokie') {
+      flags.push({
+        sev: 'warn',
+        title: 'Ryzyko MOH — nadużywanie leków przeciwbólowych',
+        text: moh.powody.join('; ') + '. Zweryfikuj częstość stosowania i rozważ edukację o ryzyku bólu głowy z nadużywania leków.'
+      });
+    }
+
+    /* Tryptany (N02CC) — przeciwwskazania z wywiadu wstępnego */
+    const uzywaTryptanu = (Array.isArray(s.leki) ? s.leki : []).some(function (l) {
+      return String((l && l.atc) || '').split('+').some(function (k) {
+        return k.trim().toUpperCase().indexOf('N02CC') === 0;
+      });
+    });
+    if (uzywaTryptanu) {
+      const sk = Calc.parseNum(s.cisnienieSkurczowe);
+      const rozk = Calc.parseNum(s.cisnienieRozkurczowe);
+      const chsz = s.chorobySzczegolowe || {};
+      const powody = [];
+
+      /* Ciśnienie tętnicze */
+      if ((sk !== null && sk >= 180) || (rozk !== null && rozk >= 110)) {
+        powody.push('ciśnienie tętnicze ≥180/110 mmHg');
+      } else if ((sk !== null && sk >= 140) || (rozk !== null && rozk >= 90)) {
+        powody.push('nieleczone/niekontrolowane nadciśnienie tętnicze (RR ≥140/90 mmHg)');
+      }
+
+      /* Choroby sercowo-naczyniowe i inne */
+      if (chsz.sc_zawal) powody.push('przebyty zawał serca');
+      if (chsz.sc_udar) powody.push('przebyty udar / TIA');
+      if (chsz.sc_naczynia_obwodowe) powody.push('choroba naczyń obwodowych');
+      if (s.choroby.watroba || chsz.nw_watroba || chsz.nw_marskosc || chsz.nw_wzw) {
+        powody.push('niewydolność wątroby');
+      }
+
+      /* Ciężka choroba nerek (eGFR <30) */
+      const egfrT = (scr !== null && s.plec && ageOk) ? Calc.ckdEpi(scr, age, s.plec) : null;
+      if (egfrT !== null && egfrT < 30) {
+        powody.push('ciężka choroba nerek (eGFR <30 ml/min/1,73 m²)');
+      }
+
+      /* ≥2 czynniki ryzyka sercowo-naczyniowego */
+      const czynniki = [];
+      if (chsz.met_dyslipidemia) czynniki.push('dyslipidemia');
+      if (chsz.met_otylosc) czynniki.push('otyłość');
+      if (chsz.met_cukrzyca1 || chsz.met_cukrzyca2) czynniki.push('cukrzyca');
+      if (s.palenie === 'tak') czynniki.push('palenie tytoniu');
+      if (chsz.sc_rodzinne_cvd) czynniki.push('choroby układu krążenia w rodzinie przed 60. r.ż.');
+      if (age !== null && s.plec === 'k' && age > 50) czynniki.push('wiek >50 lat (kobieta)');
+      if (age !== null && s.plec === 'm' && age > 40) czynniki.push('wiek >40 lat (mężczyzna)');
+      if (czynniki.length >= 2) {
+        powody.push('≥2 czynniki ryzyka sercowo-naczyniowego: ' + czynniki.join(', '));
+      }
+
+      if (powody.length) {
+        flags.push({
+          sev: 'alert',
+          title: 'Przeciwwskazanie do tryptanów (N02CC)',
+          text: 'Pacjent stosuje tryptan (N02CC). Przeciwwskazania z wywiadu: ' + powody.join('; ') +
+            '. Wymagana konsultacja lekarska przed zastosowaniem.'
+        });
+      }
+    }
+
     return flags;
   }
 

@@ -41,6 +41,7 @@ global.document = {
   'js/mars5.js',
   'js/kontrola-logika.js',
   'js/bolglowy-logika.js',
+  'js/halt.js',
   'js/etykiety.js',
   'js/tab1.js',
   'js/tab2.js',
@@ -72,7 +73,7 @@ console.log('OK');
 
 console.log('--- G.OPCJE — format i kompletność ---');
 const DOMENY = [
-  'plec', 'ciaza', 'takNieNw', 'tryb', 'jednostkaKreatyniny', 'albuminuria', 'uacrJednostka',
+  'plec', 'palenie', 'ciaza', 'takNieNw', 'tryb', 'jednostkaKreatyniny', 'albuminuria', 'uacrJednostka',
   'marsPytania', 'marsSkala',
   'skalaOcena', 'wplywPytania', 'wplyw', 'obLokalizacje', 'obCharakter', 'obPrzebieg', 'zmniejsza',
   'skalaTryb', 'ulga', 'satysfakcja', 'miedzy', 'dnLista', 'dnOdp', 'dnKorygowane', 'zmiana', 'statusKontroli',
@@ -108,6 +109,9 @@ console.log('OK');
 console.log('--- Usunięte martwe eksporty ---');
 assert.strictEqual(G.Kontrola.sugerujMOH, undefined, 'Kontrola.sugerujMOH usunięty (duplikat BolGlowy.sugerujMOH)');
 assert.ok(G.BolGlowy.sugerujMOH, 'BolGlowy.sugerujMOH nadal dostępny');
+assert.strictEqual(typeof G.Halt.total, 'function', 'Halt.total');
+assert.strictEqual(typeof G.Halt.grade, 'function', 'Halt.grade');
+assert.strictEqual(G.Halt.PYTANIA.length, 5, 'Halt: 5 pytań');
 console.log('OK');
 
 console.log('--- Rejestr leków (z CSV) ---');

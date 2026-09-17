@@ -10,6 +10,7 @@
       wzrost: '',
       cisnienieSkurczowe: '', // mmHg
       cisnienieRozkurczowe: '', // mmHg
+      palenie: '', // 'tak' | 'nie' | 'nw'
       ciaza: '', // 'tak' | 'nie' | 'nda' | 'nw'
       choroby: {
         sercowo: false,
@@ -52,6 +53,7 @@
         nrsAktualne: '',
         nrsSrednie: '',
         wplyw: { nastroj: '', sen: '', funkcjonowanie: '', praca: '' },
+        halt: { q1: '', q2: '', q3: '', q4: '', q5: '' },
         lokalizacja: {},
         lokalizacjaOpis: '',
         charakter: {},
@@ -167,7 +169,7 @@
     const d = defaultState();
     if (src == null || typeof src !== 'object') return d;
     const scalars = ['dataUrodzenia', 'plec', 'masa', 'wzrost', 'cisnienieSkurczowe', 'cisnienieRozkurczowe',
-      'ciaza', 'kreatynina', 'jednostkaKreatyniny',
+      'palenie', 'ciaza', 'kreatynina', 'jednostkaKreatyniny',
       'dataKreatyniny', 'albuminuria', 'uacr', 'uacrJednostka', 'psychAktywny',
       'psychOpis', 'epikryza', 'epikryzaFarmakoterapii',
       'pomocAdherence', 'marsProblemy', 'epikryzaKoncowa'];
@@ -228,6 +230,7 @@
     mergeShape(d.ocenaBolu, src.ocenaBolu, {
       data: 'str', skala: 'str', nrsAktualne: 'str', nrsSrednie: 'str',
       wplyw: { nastroj: 'str', sen: 'str', funkcjonowanie: 'str', praca: 'str' },
+      halt: { q1: 'str', q2: 'str', q3: 'str', q4: 'str', q5: 'str' },
       lokalizacja: 'bool', lokalizacjaOpis: 'str', charakter: 'bool', przebieg: 'str',
       leczenieZmniejsza: 'str', lekiNaBol: 'arr', priorytety: 'str', epikryza: 'str'
     });

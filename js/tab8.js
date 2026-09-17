@@ -105,6 +105,7 @@
       ['Ciśnienie tętnicze', (s.cisnienieSkurczowe || s.cisnienieRozkurczowe)
         ? str(s.cisnienieSkurczowe) + ' / ' + str(s.cisnienieRozkurczowe) + ' mmHg'
         : '—'],
+      ['Status palenia', label('palenie', s.palenie)],
       ['BMI', bmi !== null ? bmi.toFixed(1).replace('.', ',') + ' kg/m²' + ' (' + Calc.bmiBand(bmi).label + ')' : '—'],
       ['BSA (Mosteller)', bsa !== null ? bsa.toFixed(2).replace('.', ',') + ' m²' : '—'],
       ['Masa idealna (IBW, Devine)', ibw !== null ? ibw.toFixed(1).replace('.', ',') + ' kg' : '—'],
@@ -191,6 +192,11 @@
       ['NRS aktualne / średnie', (ob.nrsAktualne !== '' ? ob.nrsAktualne : '—') + ' / ' + (ob.nrsSrednie !== '' ? ob.nrsSrednie : '—')],
       ['Wpływ: nastrój / sen / funkcjonowanie / praca',
         label('wplyw', (ob.wplyw || {}).nastroj) + ' / ' + label('wplyw', (ob.wplyw || {}).sen) + ' / ' + label('wplyw', (ob.wplyw || {}).funkcjonowanie) + ' / ' + label('wplyw', (ob.wplyw || {}).praca)],
+      ['HALT-90 (suma dni / stopień)', (function () {
+        const total = G.Halt.total(ob.halt);
+        const g = G.Halt.grade(total);
+        return total !== null ? total + ' dni / stopień ' + g.stopien + ' (' + g.label + ')' : '—';
+      })()],
       ['Lokalizacja', skroty('obLokalizacje', ob.lokalizacja) + (ob.lokalizacjaOpis ? ' (' + ob.lokalizacjaOpis + ')' : '')],
       ['Charakter', skroty('obCharakter', ob.charakter)],
       ['Przebieg', label('obPrzebieg', ob.przebieg)],

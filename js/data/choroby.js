@@ -18,7 +18,8 @@
         { id: 'sc_zawal', label: 'Przebyty zawał serca' },
         { id: 'sc_udar', label: 'Przebyty udar / TIA' },
         { id: 'sc_zakrzepowa', label: 'Choroba zakrzepowo-zatorowa' },
-        { id: 'sc_naczynia_obwodowe', label: 'Choroba naczyń obwodowych' }
+        { id: 'sc_naczynia_obwodowe', label: 'Choroba naczyń obwodowych' },
+        { id: 'sc_rodzinne_cvd', label: 'Choroby układu krążenia w rodzinie (przed 60. r.ż.)' }
       ]
     },
     {

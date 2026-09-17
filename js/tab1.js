@@ -81,6 +81,12 @@
           ]),
           h('div', { class: 'hint', text: 'Wynik pomiaru ciśnienia tętniczego, np. 120/80.' }),
           h('div', { class: 'hint err', id: 'cisnienie-hint' })
+        ]),
+        h('div', { class: 'field' }, [
+          h('label', { class: 'ctl' }, ['Status palenia']),
+          h('div', { class: 'radio-group' }, G.OPCJE.palenie.map(function (p) {
+            return radio('palenie', p[0], p[1]);
+          }))
         ])
       ]),
       h('div', { class: 'results antropometria', id: 'bmi-bsa-results', style: { display: 'none' } }, [

@@ -59,7 +59,32 @@
             return radio('ob.wplyw.' + f[0], o[0], o[1], 'ocenaBolu.wplyw.' + f[0]);
           }))
         ]);
-      })
+      }),
+      buildHalt()
+    ]);
+  }
+
+  function buildHalt() {
+    const pytania = G.Halt.PYTANIA;
+    return h('div', { class: 'halt-box', id: 'ob-halt', style: { display: 'none' } }, [
+      h('h3', { text: 'HALT-90 — wpływ bólu głowy na funkcjonowanie' }),
+      h('p', { class: 'hint', text: 'Pytania dotyczą ostatnich 3 miesięcy (Headache-Attributed Lost Time – 90 days; na podstawie pierwszych pięciu pytań MIDAS).' }),
+      pytania.map(function (p) {
+        return h('div', { class: 'field' }, [
+          h('label', { class: 'ctl' }, [p[1]]),
+          h('input', { type: 'number', id: 'halt-' + p[0], min: '0', max: '90', step: '1', placeholder: 'liczba dni', 'data-state': 'ocenaBolu.halt.' + p[0] })
+        ]);
+      }),
+      h('div', { class: 'results' }, [
+        h('div', { class: 'res-row' }, [
+          h('span', { text: 'Wynik HALT-90 (suma dni)' }),
+          h('div', { class: 'res-valbox' }, [
+            h('div', { class: 'res-val', id: 'halt-total', text: '—' }),
+            h('div', { class: 'res-band', id: 'halt-grade' })
+          ])
+        ])
+      ]),
+      h('div', { class: 'hint', style: { marginTop: '8px' }, text: 'Stopień: I (0–5), II (6–10), III (11–20), IV (>20). Stopień III lub IV wskazuje na dużą potrzebę opieki medycznej.' })
     ]);
   }
 
@@ -186,6 +211,17 @@
 
     /* Synchronizacja wartości pól */
     UI.sync(root);
+
+    /* HALT-90 — pokaż, gdy 4.4 „codzienne funkcjonowanie” = umiarkowanie/znacznie */
+    const halt = q('#ob-halt');
+    const funkcjonowanie = s.ocenaBolu.wplyw.funkcjonowanie;
+    const pokazHalt = funkcjonowanie === 'umiarkowanie' || funkcjonowanie === 'znacznie';
+    halt.style.display = pokazHalt ? '' : 'none';
+
+    const total = G.Halt.total(s.ocenaBolu.halt);
+    const g = G.Halt.grade(total);
+    q('#halt-total').textContent = total !== null ? total + ' dni' : '—';
+    q('#halt-grade').textContent = g ? 'Stopień ' + g.stopien + ' — ' + g.label : '';
 
     /* Wybór leków na ból */
     const cel = 'ocenaBolu.lekiNaBol';
