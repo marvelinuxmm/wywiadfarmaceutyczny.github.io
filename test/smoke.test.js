@@ -42,6 +42,7 @@ global.document = {
   'js/kontrola-logika.js',
   'js/bolglowy-logika.js',
   'js/halt.js',
+  'js/pcmai-logika.js',
   'js/etykiety.js',
   'js/tab1.js',
   'js/tab2.js',
@@ -51,18 +52,19 @@ global.document = {
   'js/tab6.js',
   'js/tab7.js',
   'js/tab8.js',
+  'js/tab9.js',
   'js/app.js'
 ].forEach(function (f) { require('../' + f); });
 
 const G = globalThis;
 
 console.log('--- Moduły zakładek ---');
-['Tab1', 'Tab2', 'Tab3', 'Tab4', 'Tab5', 'Tab6', 'Tab7', 'Tab8'].forEach(function (n) {
+['Tab1', 'Tab2', 'Tab3', 'Tab4', 'Tab5', 'Tab6', 'Tab7', 'Tab8', 'Tab9'].forEach(function (n) {
   assert.ok(G[n], 'brak modułu ' + n);
   assert.strictEqual(typeof G[n].init, 'function', n + '.init');
   assert.strictEqual(typeof G[n].apply, 'function', n + '.apply');
 });
-assert.strictEqual(G.Tab9, undefined, 'Tab9 powinien być przemianowany na Tab8');
+assert.strictEqual(G.Tab10, undefined, 'brak modułu Tab10');
 console.log('OK');
 
 console.log('--- Pomoce UI ---');

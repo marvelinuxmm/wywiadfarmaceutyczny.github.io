@@ -151,9 +151,9 @@
     return h('section', { class: 'card' }, [
       h('h2', {}, [h('span', { class: 'num', text: '6.7' }), 'Wstępna interpretacja']),
       h('div', { class: 'field' }, [
-        h('label', { class: 'ctl' }, ['Obraz najbardziej zgodny z:']),
-        h('div', { class: 'radio-group radio-col' }, INTERPRETACJE.map(function (i) {
-          return radio('bg.interp', i[0], i[1], 'bolGlowy.interpretacja');
+        h('label', { class: 'ctl' }, ['Obraz najbardziej zgodny z (można zaznaczyć kilka — propozycja aplikacji podświetlona):']),
+        h('div', { class: 'checkbox-grid' }, INTERPRETACJE.map(function (i) {
+          return checkboxState('bolGlowy.interpretacja', i[0], i[1]);
         }))
       ]),
       h('div', { class: 'komunikat komunikat-sugestia', id: 'bg-interp-sugestia' }),
@@ -255,13 +255,14 @@
       ? 'Propozycja aplikacji: ' + (INTERPRETACJE.find(function (x) { return x[0] === interp.opcja; }) || ['', '—'])[1] +
         '. (' + interp.powody.join('; ') + ')'
       : 'Uzupełnij dane, aby wyświetlić propozycję.';
-    root.querySelectorAll('[name="bg.interp"]').forEach(function (inp) {
-      inp.parentElement.classList.toggle('sugerowane', inp.value === interp.opcja);
+    root.querySelectorAll('[data-state^="bolGlowy.interpretacja."]').forEach(function (inp) {
+      const id = inp.getAttribute('data-state').split('.').pop();
+      inp.parentElement.classList.toggle('sugerowane', !!interp.opcja && id === interp.opcja);
     });
 
     /* Wybór „Migreną” → odblokowanie zakładki 7 */
     const unlock = q('#bg-interp-unlock');
-    if (bg.interpretacja === 'migrena') {
+    if (bg.interpretacja && bg.interpretacja.migrena) {
       unlock.style.display = '';
       unlock.textContent = 'Wybrano „Migreną” — zakładka „Moduł migrenowy” została odblokowana.';
     } else {

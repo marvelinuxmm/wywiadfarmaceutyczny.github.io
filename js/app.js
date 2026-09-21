@@ -11,7 +11,8 @@
     { id: 'kontrola', label: '5. Kontrola bólu', enabled: true },
     { id: 'bolglowy', label: '6. Ból głowy', enabled: 'dynamic' },
     { id: 'migrena', label: '7. Moduł migrenowy', enabled: 'dynamic' },
-    { id: 'podsumowanie', label: '8. Podsumowanie i raport', enabled: true }
+    { id: 'pcmai', label: '8. PC-MAI (medication appropriateness index)', enabled: true },
+    { id: 'podsumowanie', label: '9. Podsumowanie i raport', enabled: true }
   ];
   let active = 'profil';
   let statusTimer = null;
@@ -75,7 +76,7 @@
 
   function migrenaAktywna() {
     const s = G.State.get();
-    return !!(s.bolGlowy && s.bolGlowy.interpretacja === 'migrena');
+    return !!(s.bolGlowy && s.bolGlowy.interpretacja && s.bolGlowy.interpretacja.migrena);
   }
 
   /* Czy zakładka ma wypełnione kluczowe dane (wskaźnik ukończenia w pasku zakładek).
@@ -91,7 +92,7 @@
       const ob = s.ocenaBolu || {};
       return wyp(ob.nrsAktualne) || wyp(ob.nrsSrednie) || anyTrue(ob.lokalizacja) || anyTrue(ob.charakter) ||
         Object.keys(ob.wplyw || {}).some(function (k) { return wyp(ob.wplyw[k]); }) ||
-        wyp(ob.przebieg) || wyp(ob.leczenieZmniejsza);
+        anyTrue(ob.przebieg) || wyp(ob.leczenieZmniejsza);
     }
     if (id === 'kontrola') {
       const kb = s.kontrolaBolu || {};
@@ -103,6 +104,15 @@
       return bolGlowyAktywna() && !!(s.bolGlowy.nrs !== '' || Object.keys(s.bolGlowy.lokalizacja || {}).length);
     }
     if (id === 'migrena') return migrenaAktywna() && s.migrena.rozpoznana !== '';
+    if (id === 'pcmai') {
+      const p = s.pcmai || {};
+      return Object.keys(p.odpowiedzi || {}).some(function (lekId) {
+        return Object.keys(p.odpowiedzi[lekId] || {}).some(function (k) {
+          const v = p.odpowiedzi[lekId][k];
+          return v === 'tak' || v === 'nie';
+        });
+      });
+    }
     if (id === 'podsumowanie') return s.epikryzaKoncowa !== '';
     return false;
   }
@@ -124,8 +134,10 @@
       G.Tab6.init(c);
     } else if (active === 'migrena') {
       G.Tab7.init(c);
-    } else if (active === 'podsumowanie') {
+    } else if (active === 'pcmai') {
       G.Tab8.init(c);
+    } else if (active === 'podsumowanie') {
+      G.Tab9.init(c);
     } else {
       c.appendChild(h('div', { class: 'card' }, [
         h('p', { class: 'hint', text: 'Moduł w przygotowaniu.' })
@@ -144,6 +156,7 @@
     if (G.Tab6) G.Tab6.apply();
     if (G.Tab7) G.Tab7.apply();
     if (G.Tab8) G.Tab8.apply();
+    if (G.Tab9) G.Tab9.apply();
     /* Warunkowa dostępność zakładek 6 i 7 */
     const bgBtn = document.querySelector('.tab-btn[data-tab-id="bolglowy"]');
     if (bgBtn) {

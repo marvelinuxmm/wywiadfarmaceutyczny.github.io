@@ -241,9 +241,9 @@ document.body = document.createElement('body');
 [
   'js/ui.js', 'js/state.js', 'js/calculations.js', 'js/flags.js',
   'js/data/leki.js', 'js/data/leki-rejestr.js', 'js/data/pytania.js', 'js/data/choroby.js', 'js/data/opcje.js',
-  'js/ryzyko.js', 'js/mars5.js', 'js/kontrola-logika.js', 'js/bolglowy-logika.js',
+  'js/ryzyko.js', 'js/mars5.js', 'js/kontrola-logika.js', 'js/bolglowy-logika.js', 'js/halt.js', 'js/pcmai-logika.js',
   'js/etykiety.js', 'js/tab1.js', 'js/tab2.js', 'js/tab3.js', 'js/tab4.js', 'js/tab5.js',
-  'js/tab6.js', 'js/tab7.js', 'js/tab8.js', 'js/app.js'
+  'js/tab6.js', 'js/tab7.js', 'js/tab8.js', 'js/tab9.js', 'js/app.js'
 ].forEach(function (f) { require('../' + f); });
 
 const G = globalThis;
@@ -263,7 +263,7 @@ function przejdzDo(id) {
 }
 
 console.log('--- Przełączanie zakładek ---');
-assert.strictEqual(document.querySelectorAll('.tab-btn').length, 8);
+assert.strictEqual(document.querySelectorAll('.tab-btn').length, 9);
 przejdzDo('farmakoterapia');
 assert.ok(document.querySelector('.tab-btn[data-tab-id="farmakoterapia"]').classList.contains('active'));
 console.log('OK');
@@ -370,6 +370,31 @@ G.State.set('ocenaBolu.nrsAktualne', '6');
 assert.ok(document.querySelector('.tab-btn[data-tab-id="ocena"]').classList.contains('done'), '✓ dla oceny po wpisaniu NRS');
 G.State.reset();
 document._domReady.forEach(function () {});
+console.log('OK');
+
+console.log('--- Zakładka 8: PC-MAI (matryca) ---');
+G.State.reset();
+G.State.get().leki.push({ id: 1, nazwa: 'Nurofen', moc: '200 mg', postac: '', atc: 'M01AE01', tryb: 'przewlekle', schemat: '1-0-0', wskazanie: 'ból', komentarze: '', grupy: ['NLPZ'] });
+G.State.get().leki.push({ id: 2, nazwa: 'Apap', moc: '500 mg', postac: '', atc: 'N02BE01', tryb: 'doraźne', schemat: '1-0-1', wskazanie: 'ból', komentarze: '', grupy: ['paracetamol'] });
+przejdzDo('pcmai');
+assert.ok(document.querySelector('.tab-btn[data-tab-id="pcmai"]').classList.contains('active'), 'zakładka 8 aktywna');
+assert.ok(document.getElementById('pc-matrix'), 'matryca PC-MAI w DOM');
+const tbodyPc = document.getElementById('pc-tbody');
+assert.ok(tbodyPc.children.length >= 1, 'co najmniej jeden wiersz leku w matrycy');
+klik('btn-pc-autouzupelnij');
+const pc = G.State.get().pcmai;
+assert.ok(pc.odpowiedzi[1], 'auto-odpowiedzi zapisane dla leku 1');
+assert.ok(pc.odpowiedzi[1].wskazanie === 'tak', 'wskazanie autouzupełnione na Tak');
+const wynikPc = G.Pcmai.policz(pc.odpowiedzi[1]);
+assert.ok(wynikPc.ocenione > 0, 'policzone kryteria');
+console.log('OK');
+
+console.log('--- Zakładka 9: raport (pełny i skrócony) z PC-MAI ---');
+przejdzDo('podsumowanie');
+assert.ok(document.getElementById('raport-widok'), 'widok raportu w DOM');
+assert.ok(document.querySelectorAll('#raport-widok .raport-sekcja').length > 0, 'sekcje raportu pełnego wyrenderowane');
+klik('btn-raport-skrocony');
+assert.ok(document.querySelectorAll('#raport-widok .raport-sekcja').length > 0, 'sekcje raportu skróconego wyrenderowane');
 console.log('OK');
 
 console.log('Wszystkie testy przepływów UI przeszły.');

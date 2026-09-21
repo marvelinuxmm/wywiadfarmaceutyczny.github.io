@@ -57,7 +57,7 @@
         lokalizacja: {},
         lokalizacjaOpis: '',
         charakter: {},
-        przebieg: '',
+        przebieg: {}, // mapa: { staly: true, … } — wielokrotny wybór
         leczenieZmniejsza: '',
         lekiNaBol: [],
         priorytety: '',
@@ -102,7 +102,7 @@
         mohDni: { paracetamolNlpzAsa: '', zlozone: '', tryptany: '', opioidyKodeina: '' },
         mohLeki: { paracetamolNlpzAsa: '', zlozone: '', tryptany: '', opioidyKodeina: '' },
         mohOcena: '',
-        interpretacja: '',
+        interpretacja: {}, // mapa: { tth: true, migrena: true, … } — wielokrotny wybór
         edukacja: {},
         epikryza: ''
       },
@@ -127,7 +127,16 @@
         dalszyKrok: '',
         epikryza: ''
       },
-      /* Zakładka 8 — Podsumowanie */
+      /* Zakładka 8 — PC-MAI (matryca leków przeciwbólowych) */
+      pcmai: {
+        data: '',
+        dodatkowe: [], // id leków dodanych ręcznie do matrycy
+        odpowiedzi: {}, // { [lekId]: { wskazanie: 'tak'|'nie'|'', … } }
+        komentarze: {}, // { [lekId]: { wskazanie: 'opis', … } }
+        auto: {}, // { [lekId]: { wskazanie: true } } — które komórki wypełniono auto-sugestią
+        epikryza: ''
+      },
+      /* Zakładka 9 — Podsumowanie */
       epikryzaKoncowa: ''
     };
   }
@@ -231,7 +240,7 @@
       data: 'str', skala: 'str', nrsAktualne: 'str', nrsSrednie: 'str',
       wplyw: { nastroj: 'str', sen: 'str', funkcjonowanie: 'str', praca: 'str' },
       halt: { q1: 'str', q2: 'str', q3: 'str', q4: 'str', q5: 'str' },
-      lokalizacja: 'bool', lokalizacjaOpis: 'str', charakter: 'bool', przebieg: 'str',
+      lokalizacja: 'bool', lokalizacjaOpis: 'str', charakter: 'bool', przebieg: 'bool',
       leczenieZmniejsza: 'str', lekiNaBol: 'arr', priorytety: 'str', epikryza: 'str'
     });
     mergeShape(d.kontrolaBolu, src.kontrolaBolu, {
@@ -249,7 +258,7 @@
       objawy: 'bool', wyzwalacze: 'bool', ulga: 'bool',
       mohDni: { paracetamolNlpzAsa: 'str', zlozone: 'str', tryptany: 'str', opioidyKodeina: 'str' },
       mohLeki: { paracetamolNlpzAsa: 'str', zlozone: 'str', tryptany: 'str', opioidyKodeina: 'str' },
-      mohOcena: 'str', interpretacja: 'str', edukacja: 'bool', epikryza: 'str'
+      mohOcena: 'str', interpretacja: 'bool', edukacja: 'bool', epikryza: 'str'
     });
     mergeShape(d.migrena, src.migrena, {
       rozpoznana: 'str',
@@ -267,7 +276,60 @@
         src.migrena.aura !== '' && src.migrena.aura !== 'nie' && src.migrena.aura !== 'nw') {
       d.migrena.aura[src.migrena.aura] = true;
     }
+    /* Migracja: dawny przebieg bólu (pojedynczy string) → mapa wielokrotnego wyboru */
+    if (src.ocenaBolu && typeof src.ocenaBolu.przebieg === 'string' && src.ocenaBolu.przebieg !== '') {
+      d.ocenaBolu.przebieg[src.ocenaBolu.przebieg] = true;
+    }
+    /* Migracja: dawna wstępna interpretacja (pojedynczy string) → mapa wielokrotnego wyboru */
+    if (src.bolGlowy && typeof src.bolGlowy.interpretacja === 'string' &&
+        src.bolGlowy.interpretacja !== '' && src.bolGlowy.interpretacja !== 'nw') {
+      d.bolGlowy.interpretacja[src.bolGlowy.interpretacja] = true;
+    }
+    mergePcmai(d.pcmai, src.pcmai);
     return d;
+  }
+
+  /* PC-MAI (zakładka 8) — scalanie z kluczami dynamicznymi (id leku jako klucz). */
+  function mergePcmai(d, src) {
+    if (!src || typeof src !== 'object') return;
+    if (typeof src.data === 'string') d.data = src.data;
+    if (typeof src.epikryza === 'string') d.epikryza = src.epikryza;
+    if (Array.isArray(src.dodatkowe)) {
+      d.dodatkowe = src.dodatkowe.filter(function (v) { return typeof v === 'number' && isFinite(v); });
+    }
+    if (src.odpowiedzi && typeof src.odpowiedzi === 'object') {
+      Object.keys(src.odpowiedzi).forEach(function (lekId) {
+        const wiersz = src.odpowiedzi[lekId];
+        if (!wiersz || typeof wiersz !== 'object') return;
+        const cel = {};
+        Object.keys(wiersz).forEach(function (k) {
+          if (typeof wiersz[k] === 'string') cel[k] = wiersz[k];
+        });
+        d.odpowiedzi[lekId] = cel;
+      });
+    }
+    if (src.komentarze && typeof src.komentarze === 'object') {
+      Object.keys(src.komentarze).forEach(function (lekId) {
+        const wiersz = src.komentarze[lekId];
+        if (!wiersz || typeof wiersz !== 'object') return;
+        const cel = {};
+        Object.keys(wiersz).forEach(function (k) {
+          if (typeof wiersz[k] === 'string') cel[k] = wiersz[k];
+        });
+        d.komentarze[lekId] = cel;
+      });
+    }
+    if (src.auto && typeof src.auto === 'object') {
+      Object.keys(src.auto).forEach(function (lekId) {
+        const wiersz = src.auto[lekId];
+        if (!wiersz || typeof wiersz !== 'object') return;
+        const cel = {};
+        Object.keys(wiersz).forEach(function (k) {
+          if (typeof wiersz[k] === 'boolean') cel[k] = wiersz[k];
+        });
+        d.auto[lekId] = cel;
+      });
+    }
   }
 
   /* shape: { klucz: 'str' | 'bool' | 'arr' | { zagnieżdżone } } */

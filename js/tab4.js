@@ -108,9 +108,9 @@
         return checkboxState('ocenaBolu.charakter', c[0], c[1]);
       })),
       h('div', { class: 'field', style: { marginTop: '12px' } }, [
-        h('label', { class: 'ctl' }, ['Przebieg bólu']),
-        h('div', { class: 'radio-group' }, PRZEBIEG.map(function (p) {
-          return radio('ob.przebieg', p[0], p[1], 'ocenaBolu.przebieg');
+        h('label', { class: 'ctl' }, ['Przebieg bólu (można zaznaczyć kilka)']),
+        h('div', { class: 'checkbox-grid' }, PRZEBIEG.map(function (p) {
+          return checkboxState('ocenaBolu.przebieg', p[0], p[1]);
         }))
       ])
     ]);

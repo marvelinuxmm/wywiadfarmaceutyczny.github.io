@@ -72,6 +72,27 @@ const migAuraMapa = State.merge({ migrena: { aura: { czuciowa: true, mowy: true 
 assert.deepStrictEqual(migAuraMapa.migrena.aura, { czuciowa: true, mowy: true });
 assert.deepStrictEqual(State.merge({ migrena: { aura: 'nie' } }).migrena.aura, {}, '„nie”/„nw” z dawnego exportu nie tworzą typów');
 
+// Migracja przebiegu bólu (dawny string → mapa wielokrotnego wyboru)
+assert.deepStrictEqual(State.merge({ ocenaBolu: { przebieg: 'staly' } }).ocenaBolu.przebieg, { staly: true });
+assert.deepStrictEqual(State.merge({ ocenaBolu: { przebieg: { napadowy: true, zmienny: true } } }).ocenaBolu.przebieg,
+  { napadowy: true, zmienny: true }, 'nowa mapa przechodzi bez zmian');
+
+// Migracja wstępnej interpretacji (dawny string → mapa)
+assert.deepStrictEqual(State.merge({ bolGlowy: { interpretacja: 'migrena' } }).bolGlowy.interpretacja, { migrena: true });
+assert.deepStrictEqual(State.merge({ bolGlowy: { interpretacja: 'nw' } }).bolGlowy.interpretacja, {}, '„nw” nie tworzy wpisu');
+assert.deepStrictEqual(State.merge({ bolGlowy: { interpretacja: { tth: true, migrena: true } } }).bolGlowy.interpretacja,
+  { tth: true, migrena: true });
+
+// PC-MAI — scalanie z kluczami dynamicznymi
+const pcMerged = State.merge({ pcmai: { data: '2026-08-13', dodatkowe: [2], odpowiedzi: { '1': { wskazanie: 'tak' } }, komentarze: { '1': { wskazanie: 'x' } }, epikryza: 'ok' } });
+assert.strictEqual(pcMerged.pcmai.data, '2026-08-13');
+assert.deepStrictEqual(pcMerged.pcmai.dodatkowe, [2]);
+assert.strictEqual(pcMerged.pcmai.odpowiedzi['1'].wskazanie, 'tak');
+assert.strictEqual(pcMerged.pcmai.komentarze['1'].wskazanie, 'x');
+assert.strictEqual(pcMerged.pcmai.epikryza, 'ok');
+assert.deepStrictEqual(State.merge({ pcmai: 'x' }).pcmai.odpowiedzi, {}, 'zepsute poddrzewo pcmai nie wywala');
+assert.deepStrictEqual(State.merge({ pcmai: { odpowiedzi: { '1': { wskazanie: 5 } } } }).pcmai.odpowiedzi['1'], {}, 'niełańcuchowe odpowiedzi odrzucane');
+
 // zepsute poddrzewa — nie wywala
 const zly2 = State.merge({ ocenaBolu: 'x', kontrolaBolu: null, migrena: { prodrom: 'nie' } });
 assert.strictEqual(zly2.ocenaBolu.data, '');

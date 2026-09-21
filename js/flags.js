@@ -233,6 +233,40 @@
       }
     }
 
+    /* PC-MAI — adekwatność leków przeciwbólowych (zakładka 8) */
+    if (G.Pcmai && s.pcmai) {
+      const wiersze = G.Pcmai.wybierzWiersze(s.leki, s.pcmai.dodatkowe);
+      let sumaMAI = 0;
+      let maxMAI = 0;
+      const wysokie = [];
+      wiersze.forEach(function (w) {
+        const wyn = G.Pcmai.policz((s.pcmai.odpowiedzi || {})[w.id] || {});
+        sumaMAI += wyn.suma;
+        maxMAI += wyn.max;
+        if (wyn.suma >= 6) wysokie.push(w.nazwa + ' (' + wyn.suma + '/' + wyn.max + ')');
+      });
+      if (wysokie.length) {
+        flags.push({
+          sev: 'warn',
+          title: 'PC-MAI — wysoka nieodpowiedniość leku',
+          text: 'Leki z wysokim wynikiem MAI (≥6 pkt): ' + wysokie.join(', ') +
+            '. Zweryfikuj wskazanie, dawkowanie, interakcje i duplikację.'
+        });
+      } else if (maxMAI > 0 && sumaMAI >= 12) {
+        flags.push({
+          sev: 'warn',
+          title: 'PC-MAI — wysoka suma nieodpowiedniości',
+          text: 'Suma PC-MAI wynosi ' + sumaMAI + '/' + maxMAI + ' pkt. Rozważ przegląd farmakoterapii przeciwbólowej.'
+        });
+      } else if (sumaMAI > 0) {
+        flags.push({
+          sev: 'info',
+          title: 'PC-MAI — uwagi do farmakoterapii',
+          text: 'Suma PC-MAI wynosi ' + sumaMAI + '/' + maxMAI + ' pkt.'
+        });
+      }
+    }
+
     return flags;
   }
 
